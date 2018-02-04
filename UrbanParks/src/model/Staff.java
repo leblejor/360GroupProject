@@ -1,5 +1,9 @@
 package model;
 
-public class Staff {
+public class Staff extends User {
+
+	public Staff(String theUsername, String theName) {
+		super(theUsername, theName);
+	}
 
 }
