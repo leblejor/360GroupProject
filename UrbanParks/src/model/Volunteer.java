@@ -41,7 +41,7 @@ public class Volunteer extends User{
 	 * Returns false if there is no conflict, and true
 	 * if there is a conflict.
 	 */
-	private boolean isSameDay(Job theJob) { 
+	public boolean isSameDay(Job theJob) { 
 		boolean conflict = false;
 		for(Job j : myJobs) {
 			if(j.isOverlap(theJob)) {
@@ -59,14 +59,29 @@ public class Volunteer extends User{
 	 * Returns false if the job happens at least two days in advance
 	 * Returns true if the job will start in less than two days.
 	 */
-	private boolean checkDaysUntilJob(Job theJob) {
+	public boolean checkDaysUntilJob(Job theJob) {
 		boolean conflict = false;
 		Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-		int day = calendar.get(Calendar.DATE);
-		int month = calendar.get(Calendar.MONTH) + 1;
-		int year = calendar.get(Calendar.YEAR);
+		int day = calendar.get(Calendar.DAY_OF_WEEK);
+		int month = calendar.get(Calendar.DAY_OF_MONTH);
+		int year = calendar.get(Calendar.DAY_OF_YEAR);
 		
-		//todo
+		if(year < theJob.getStartDate().get(Calendar.YEAR) {
+			conflict = true;
+		} else if(month < theJob.getStartDate().get(Calendar.MONTH)) {
+			conflict = true;
+		} 
+		
+		//Adding two days to the current date
+		calendar.add(Calendar.DATE, 2);
+		
+		//Compare the current date +2 with the start date of the job
+		//True if it is less than two days.
+		if (calendar.getTime().compareTo(theJob.getStartDate().getTime() > 0)) {
+			conflict = true;
+		}
+		
+		return conflict;
 		
 	}
 	
