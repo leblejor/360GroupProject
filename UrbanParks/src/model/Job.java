@@ -1,12 +1,18 @@
 package model;
 
+
+import java.lang.IllegalArgumentException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class Job {
 	
-	private String myJobName;
+	
+	private static final int MAX_JOB_LENGTH = 3;
+	private static final int MILLIS_IN_DAY = 86400000;
+  private String myJobName;
 	private Calendar myStartDate;
 	private Calendar myEndDate;
 	
@@ -17,6 +23,16 @@ public class Job {
 		myEndDate = Calendar.getInstance();
 
 	}
+  
+  public Job(int theStartMonth, int theStartDay, int theStartYear,
+				int theEndMonth, int theEndDay, int theEndYear) {
+		
+		Calendar myStartDate = new GregorianCalendar(theStartYear, theStartMonth, theStartDay);
+		Calendar myEndDate = new GregorianCalendar(theEndYear, theEndMonth, theEndDay);
+		
+		if((myEndDate.getTimeInMillis() - myStartDate.getTimeInMillis()) > MAX_JOB_LENGTH * MILLIS_IN_DAY) {
+			throw new IllegalArgumentException();
+		}
 	
 	
 	// getters
@@ -154,6 +170,7 @@ public class Job {
 				getEndDate().get(Calendar.DAY_OF_MONTH) == theOtherStartDate.get(Calendar.DAY_OF_MONTH)
 				&& getEndDate().get(Calendar.DAY_OF_WEEK) == theOtherStartDate.get(Calendar.DAY_OF_WEEK);
 	}
+
 
 
 }
