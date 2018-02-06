@@ -62,16 +62,7 @@ public class Volunteer extends User{
 	public boolean checkDaysUntilJob(Job theJob) {
 		boolean conflict = false;
 		Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-		int day = calendar.get(Calendar.DAY_OF_WEEK);
-		int month = calendar.get(Calendar.DAY_OF_MONTH);
-		int year = calendar.get(Calendar.DAY_OF_YEAR);
-		
-		if(year < theJob.getStartDate().get(Calendar.YEAR) {
-			conflict = true;
-		} else if(month < theJob.getStartDate().get(Calendar.MONTH)) {
-			conflict = true;
-		} 
-		
+
 		//Adding two days to the current date
 		calendar.add(Calendar.DATE, 2);
 		
