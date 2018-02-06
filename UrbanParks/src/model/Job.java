@@ -93,10 +93,26 @@ public class Job {
 	// other methods
 	public boolean isOverlap(Job theOther) {
 		
-		return isSameStartDateConflicting(theOther) ||
-				isSameEndDateConflicting(theOther) ||
-				isMyStartOtherEndDateConflicting(theOther) ||
-				isMyEndOtherStartDateConflicting(theOther);
+		boolean isOverlap = false;
+		Calendar theOtherStartDate = theOther.getStartDate();
+		Calendar theOtherEndDate = theOther.getEndDate();
+		
+		// check if otherStartDate is during myStartDate and myEndDate
+		if (theOtherStartDate.after(myStartDate) && theOtherStartDate.before(myEndDate) ) {
+			isOverlap = true;
+		}
+		
+		// check if otherEndDate is during my StartDate and myEndDate
+		else if (theOtherEndDate.after(myStartDate) && theOtherEndDate.before(myEndDate) ) {
+			isOverlap = true;
+		}
+		
+		// check for other potential overlapping cases
+		return isOverlap || isSameStartDateConflicting(theOther) || isSameEndDateConflicting(theOther)
+				|| isMyStartOtherEndDateConflicting(theOther) || isMyEndOtherStartDateConflicting(theOther);
+		
+		
+
 	}
 	
 	//private methods for isOverlap()
