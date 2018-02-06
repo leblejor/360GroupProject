@@ -24,7 +24,7 @@ public class Job {
 
 	}
   
-  public Job(int theStartMonth, int theStartDay, int theStartYear,
+	public Job(int theStartMonth, int theStartDay, int theStartYear,
 				int theEndMonth, int theEndDay, int theEndYear) {
 		
 		Calendar myStartDate = new GregorianCalendar(theStartYear, theStartMonth, theStartDay);
@@ -33,6 +33,7 @@ public class Job {
 		if((myEndDate.getTimeInMillis() - myStartDate.getTimeInMillis()) > MAX_JOB_LENGTH * MILLIS_IN_DAY) {
 			throw new IllegalArgumentException();
 		}
+  	}
 	
 	
 	// getters
