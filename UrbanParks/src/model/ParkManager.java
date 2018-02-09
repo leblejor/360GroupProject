@@ -11,5 +11,13 @@ public class ParkManager extends User {
 		myJobs = new ArrayList<Job>();
 	}
 
-	
+	public void createJob(UrbanParksSystem ups, String theJobName, int theStartMonth, int theStartDay, int theStartYear,
+			   				int theEndMonth, int theEndDay, int theEndYear) {
+		Job theJob = new Job(theJobName, "", theStartMonth, theStartDay, theStartYear,
+								theEndMonth, theEndDay, theEndYear);
+		
+		myJobs.add(theJob); // Do we need this?
+		
+		ups.getCalendar().addJob(theJob);
+	}
 }

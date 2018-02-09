@@ -34,6 +34,10 @@ public class UrbanParksSystem {
 
 	}
 	
+	public Calendar getCalendar() {
+		return myCalendar;
+	}
+	
 	public User signIn(String theUsername) {
 		
 		return myUsers.get(theUsername);		
