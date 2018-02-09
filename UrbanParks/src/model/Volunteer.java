@@ -16,7 +16,7 @@ public class Volunteer extends User{
 	private List<Job> myJobs;
 	
 	public Volunteer(final String theUsername, final String theName) {
-		super(theUsername, theName);
+		super(theUsername, theName, "Volunteer");
 		myJobs = new ArrayList<Job>();
 	}
 	
@@ -109,10 +109,6 @@ public class Volunteer extends User{
 		return conflict;
 	}
 
-	@Override
-	public String getDescription() {
-		return "Volunteer";
-	}
 	
 	public List<Job> getJobsList() {
 		return myJobs;

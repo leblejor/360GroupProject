@@ -144,7 +144,7 @@ public class UrbanParksSystem {
 					
 					Job currentJob = myCalendar.getSinglePendingJob(parsedLine[i]);
 					
-					final boolean success = ((Volunteer) currentUser).signup(currentJob);
+					((Volunteer) currentUser).signup(currentJob);
 					
 				}
 				
