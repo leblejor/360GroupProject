@@ -23,9 +23,11 @@ public class Job implements java.io.Serializable {
 
 	}
   
-	public Job(int theStartMonth, int theStartDay, int theStartYear,
-				int theEndMonth, int theEndDay, int theEndYear) {
+	public Job(String theJobName, String theJobDescription, 
+			   int theStartMonth, int theStartDay, int theStartYear,
+			   int theEndMonth, int theEndDay, int theEndYear) {
 		
+		myJobName = theJobName;
 		myStartDate = new GregorianCalendar(theStartYear, theStartMonth, theStartDay);
 		myEndDate = new GregorianCalendar(theEndYear, theEndMonth, theEndDay);
 		
@@ -129,6 +131,11 @@ public class Job implements java.io.Serializable {
 		
 		
 
+	}
+	
+	@Override
+	public String toString() {
+		return myJobName;
 	}
 	
 	//private methods for isOverlap()

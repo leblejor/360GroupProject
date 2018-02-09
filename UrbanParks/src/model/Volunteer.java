@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 public class Volunteer extends User{
@@ -12,7 +13,7 @@ public class Volunteer extends User{
 	//Volunteer cannot sign up for job that begins in MIN_SIGNUP_DAYS
 	private static final int MIN_SIGNUP_DAYS = 2;
 	
-	private ArrayList<Job> myJobs;
+	private List<Job> myJobs;
 	
 	public Volunteer(final String theUsername, final String theName) {
 		super(theUsername, theName);
@@ -70,12 +71,18 @@ public class Volunteer extends User{
 	 */
 	public boolean checkDaysUntilJob(Job theJob) throws ParseException {
 		boolean conflict = false;
-		Calendar calendar = Calendar.getInstance();
-		
+
+		Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+
 		//Adding MIN_SIGNUP_DAYS days to the current date
 		calendar.add(Calendar.DAY_OF_YEAR, MIN_SIGNUP_DAYS);
 
-		
+		//Compare the current date +2 with the start date of the job
+		//True if it is less than two days.
+		if ( calendar.getTime().compareTo(theJob.getStartDate().getTime()) > 0)  {
+			conflict = true;
+		}
+
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		int day = theJob.getStartDate().get(Calendar.DAY_OF_MONTH);
 		int month = theJob.getStartDate().get(Calendar.MONTH);
@@ -100,7 +107,15 @@ public class Volunteer extends User{
 		}
 		
 		return conflict;
-		
+	}
+
+	@Override
+	public String getDescription() {
+		return "Volunteer";
+	}
+	
+	public List<Job> getJobsList() {
+		return myJobs;
 	}
 	
 }
