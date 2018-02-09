@@ -92,18 +92,24 @@ public class Volunteer extends User{
 		int month1 = calendar.get(Calendar.MONTH) + 1;
 		int year1 = calendar.get(Calendar.YEAR);
 		
-		Date date1 = sdf.parse(day + "-" + month + "-" + year);
-		Date date2 = sdf.parse(day1 + "-" + month1 + "-" + year1);
-		
-		Calendar cal1 = Calendar.getInstance();
-		Calendar cal2 = Calendar.getInstance();
-		cal1.setTime(date1);
-		cal2.setTime(date2);
-		
-		//Compare the current date + MIN_SIGNUP_DAYS with the start date of the job
-		//True if it is less than MIN_SIGNUP_DAYS days.
-		if (cal1.compareTo(cal2) < 0) {
-			conflict = true;
+		try {
+			Date date1 = sdf.parse(day + "-" + month + "-" + year);
+			Date date2 = sdf.parse(day1 + "-" + month1 + "-" + year1);
+			Calendar cal1 = Calendar.getInstance();
+			Calendar cal2 = Calendar.getInstance();
+			cal1.setTime(date1);
+			cal2.setTime(date2);
+			
+			//Compare the current date + MIN_SIGNUP_DAYS with the start date of the job
+			//True if it is less than MIN_SIGNUP_DAYS days.
+			if (cal1.compareTo(cal2) < 0) {
+				conflict = true;
+			}
+			
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return conflict;

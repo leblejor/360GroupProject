@@ -2,6 +2,7 @@ package model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -143,9 +144,12 @@ public class UrbanParksSystem {
 					
 					
 					Job currentJob = myCalendar.getSinglePendingJob(parsedLine[i]);
-					
-					((Volunteer) currentUser).signup(currentJob);
-					
+					try {
+						((Volunteer) currentUser).signup(currentJob);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				
 			}
