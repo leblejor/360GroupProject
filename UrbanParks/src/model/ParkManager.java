@@ -11,5 +11,10 @@ public class ParkManager extends User {
 		myJobs = new ArrayList<Job>();
 	}
 
+	@Override
+	public String getDescription() {
+		return "Park Manager";
+	}
+
 	
 }

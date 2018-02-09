@@ -6,4 +6,9 @@ public class Staff extends User {
 		super(theUsername, theName);
 	}
 
+	@Override
+	public String getDescription() {
+		return "Staff";
+	}
+
 }
