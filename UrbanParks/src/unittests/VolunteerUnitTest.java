@@ -1,11 +1,8 @@
 package unittests;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 import java.text.ParseException;
 import java.util.Calendar;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import model.Job;
@@ -14,51 +11,50 @@ import model.Volunteer;
 class VolunteerUnitTest {
 
 	@Test
-	final void checkDaysUntilJob_MuchMoreDays_False() throws ParseException {
+	final void checkDaysUntilJob_MoreThanMinDays_False() throws ParseException {
 		Volunteer volunteerNoJobs = new Volunteer("testUsername", "testName");
-		Job jobInFarFuture = new Job();
-		Calendar futureDate = jobInFarFuture.getStartDate();
-		futureDate.add(Calendar.DATE, 14); //Adds 14 days in the future from current date
+		Job jobMoreThanMinDays = new Job();
+		Calendar futureDate = jobMoreThanMinDays.getStartDate();
+		futureDate.add(Calendar.DATE, 14);
 		int day = futureDate.get(Calendar.DAY_OF_MONTH);
 		int month = futureDate.get(Calendar.MONTH) + 1;
 		int year = futureDate.get(Calendar.YEAR);
 		
-		//Sets start date to 14 days in the future
-		jobInFarFuture.setStartDate(month, day, year);
+		jobMoreThanMinDays.setStartDate(month, day, year);
 		
-		assertFalse(volunteerNoJobs.checkDaysUntilJob(jobInFarFuture));
+		assertFalse(volunteerNoJobs.checkDaysUntilJob(jobMoreThanMinDays));
 	}
 
 	@Test
-	final void checkDaysUntilJob_JobExactlyTwoDaysLater_False() throws ParseException {
+	final void checkDaysUntilJob_JobExactlyMinDaysLater_False() throws ParseException {
 		Volunteer volunteerNoJobs = new Volunteer("testUsername", "testName");
-		Job jobTwoDaysLater = new Job();
-		Calendar futureDate = jobTwoDaysLater.getStartDate();
-		futureDate.add(Calendar.DATE, 2); //Adds 2 days in the future from current date
+		Job jobMinDaysLater = new Job();
+		Calendar futureDate = jobMinDaysLater.getStartDate();
+		futureDate.add(Calendar.DATE, 2);
 		int day = futureDate.get(Calendar.DAY_OF_MONTH);
 		int month = futureDate.get(Calendar.MONTH) + 1;
 		int year = futureDate.get(Calendar.YEAR);
 		
 		//Sets start date to 2 days in the future
-		jobTwoDaysLater.setStartDate(month, day, year);
+		jobMinDaysLater.setStartDate(month, day, year);
 		
-		assertFalse(volunteerNoJobs.checkDaysUntilJob(jobTwoDaysLater));
+		assertFalse(volunteerNoJobs.checkDaysUntilJob(jobMinDaysLater));
 	}
 	
 	@Test
-	final void checkDaysUntilJob_JobLessThanTwoDays_True() throws ParseException {
+	final void checkDaysUntilJob_JobLessThanMinDays_True() throws ParseException {
 		Volunteer volunteerNoJobs = new Volunteer("testUsername", "testName");
-		Job jobLessThanTwoDays = new Job();
-		Calendar futureDate = jobLessThanTwoDays.getStartDate();
+		Job jobLessThanMinDays = new Job();
+		Calendar futureDate = jobLessThanMinDays.getStartDate();
 		futureDate.add(Calendar.DATE, 1); //Adds 1 day in the future from current date
 		int day = futureDate.get(Calendar.DAY_OF_MONTH);
 		int month = futureDate.get(Calendar.MONTH) + 1;
 		int year = futureDate.get(Calendar.YEAR);
 		
 		//Sets start date to 1 day in the future
-		jobLessThanTwoDays.setStartDate(month, day, year);
+		jobLessThanMinDays.setStartDate(month, day, year);
 		
-		assertTrue(volunteerNoJobs.checkDaysUntilJob(jobLessThanTwoDays));
+		assertTrue(volunteerNoJobs.checkDaysUntilJob(jobLessThanMinDays));
 	}
 
 }

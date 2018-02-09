@@ -19,27 +19,31 @@ public class Volunteer extends User{
 		myJobs = new ArrayList<Job>();
 	}
 	
-	/*
-	 * Attemps to sign up for a job. If successful, returns true
-	 * and the job is added to myJobs. And if unsuccessful, returns 
-	 * false. 
+	/**
+	 * Attempts to sign up for a job. 
+	 * Returns 0 if the signup is successful
+	 * Returns 1 if the volunteer already has a job on that day
+	 * Returns 2 if the job starts less than MIN_SIGNUP_DAYS away
 	 */
-	public boolean signup(Job theJob) throws ParseException {
-		boolean successful = true;
+	public int signup(Job theJob) throws ParseException {
+		int successful = 0;
+		int sameDayConflict = 1;
+		int minDaysConflict = 2;
 		boolean sameDay = isSameDay(theJob);
 		boolean daysUntilJob = checkDaysUntilJob(theJob);
 		
-		if(sameDay || daysUntilJob) {
-			successful = false;
-		}
-		if(successful == true) {
+		if (sameDay) {
+			return sameDayConflict;
+		} else if(daysUntilJob) {
+			return minDaysConflict;
+		} else {
 			myJobs.add(theJob);
 		}
 		
 		return successful;		
 	}
 	
-	/*
+	/**
 	 * Checks to see if the job being signed up for
 	 * confilcts with a job the volunteer already has 
 	 * signed up for in the past.
@@ -57,7 +61,7 @@ public class Volunteer extends User{
 		return conflict;
 	}
 	
-	/*
+	/**
 	 * Checks the jobs startDate to make sure that the job
 	 * starts at least MIN_SIGNUP_DAYS days in the future. You cannot sign
 	 * up for a job if it starts in MIN_SIGNUP_DAYS days.
