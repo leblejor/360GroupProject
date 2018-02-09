@@ -23,8 +23,6 @@ public class UrbanParksMain {
 		
 		String theUsername = theScanner.nextLine();
 		
-		// theScanner.close();
-		
 		// Next several lines of code searches the records for username match with the database
 		
 		// Please put in the appropriate file path to the user list here
