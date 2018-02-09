@@ -11,7 +11,7 @@ import model.Volunteer;
 class VolunteerUnitTest {
 
 	@Test
-	final void checkDaysUntilJob_MoreThanMinDays_False() throws ParseException {
+	final void checkDaysUntilJob_MoreThanMinDays_False() {
 		Volunteer volunteerNoJobs = new Volunteer("testUsername", "testName");
 		Job jobMoreThanMinDays = new Job();
 		Calendar futureDate = jobMoreThanMinDays.getStartDate();
@@ -26,7 +26,7 @@ class VolunteerUnitTest {
 	}
 
 	@Test
-	final void checkDaysUntilJob_JobExactlyMinDaysLater_False() throws ParseException {
+	final void checkDaysUntilJob_JobExactlyMinDaysLater_False() {
 		Volunteer volunteerNoJobs = new Volunteer("testUsername", "testName");
 		Job jobMinDaysLater = new Job();
 		Calendar futureDate = jobMinDaysLater.getStartDate();
@@ -42,7 +42,7 @@ class VolunteerUnitTest {
 	}
 	
 	@Test
-	final void checkDaysUntilJob_JobLessThanMinDays_True() throws ParseException {
+	final void checkDaysUntilJob_JobLessThanMinDays_True() {
 		Volunteer volunteerNoJobs = new Volunteer("testUsername", "testName");
 		Job jobLessThanMinDays = new Job();
 		Calendar futureDate = jobLessThanMinDays.getStartDate();
