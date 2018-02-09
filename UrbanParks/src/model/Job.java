@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-public class Job {
+public class Job implements java.io.Serializable {
 	private static final int MAX_JOB_LENGTH = 3;
 	private static final int MILLIS_IN_DAY = 86400000;
 	

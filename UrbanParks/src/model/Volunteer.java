@@ -1,11 +1,17 @@
 package model;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
 public class Volunteer extends User{
+	
+	//Volunteer cannot sign up for job that begins in MIN_SIGNUP_DAYS
+	private static final int MIN_SIGNUP_DAYS = 2;
+	
 	private ArrayList<Job> myJobs;
 	
 	public Volunteer(final String theUsername, final String theName) {
@@ -13,28 +19,31 @@ public class Volunteer extends User{
 		myJobs = new ArrayList<Job>();
 	}
 	
-	/*
-	 * Attemps to sign up for a job. If successful, returns true
-	 * and the job is added to myJobs. And if unsuccessful, returns 
-	 * false. 
+	/**
+	 * Attempts to sign up for a job. 
+	 * Returns 0 if the signup is successful
+	 * Returns 1 if the volunteer already has a job on that day
+	 * Returns 2 if the job starts less than MIN_SIGNUP_DAYS away
 	 */
-	public boolean signup(Job theJob) {
-		boolean successful = true;
+	public int signup(Job theJob) throws ParseException {
+		int successful = 0;
+		int sameDayConflict = 1;
+		int minDaysConflict = 2;
 		boolean sameDay = isSameDay(theJob);
 		boolean daysUntilJob = checkDaysUntilJob(theJob);
 		
-		if(sameDay || daysUntilJob) {
-			successful = false;
-		}
-		if(successful == true) {
+		if (sameDay) {
+			return sameDayConflict;
+		} else if(daysUntilJob) {
+			return minDaysConflict;
+		} else {
 			myJobs.add(theJob);
 		}
 		
-		return successful;
-		
+		return successful;		
 	}
 	
-	/*
+	/**
 	 * Checks to see if the job being signed up for
 	 * confilcts with a job the volunteer already has 
 	 * signed up for in the past.
@@ -52,23 +61,46 @@ public class Volunteer extends User{
 		return conflict;
 	}
 	
-	/*
+	/**
 	 * Checks the jobs startDate to make sure that the job
-	 * starts at least two days in the future. You cannot sign
-	 * up for a job if it starts in two days.
-	 * Returns false if the job happens at least two days in advance
-	 * Returns true if the job will start in less than two days.
+	 * starts at least MIN_SIGNUP_DAYS days in the future. You cannot sign
+	 * up for a job if it starts in MIN_SIGNUP_DAYS days.
+	 * Returns false if the job happens at least MIN_SIGNUP_DAYS days in advance
+	 * Returns true if the job will start in less than MIN_SIGNUP_DAYS days.
 	 */
-	public boolean checkDaysUntilJob(Job theJob) {
+	public boolean checkDaysUntilJob(Job theJob) throws ParseException {
 		boolean conflict = false;
-		Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-		int day = calendar.get(Calendar.DATE);
-		int month = calendar.get(Calendar.MONTH) + 1;
-		int year = calendar.get(Calendar.YEAR);
+		Calendar calendar = Calendar.getInstance();
 		
+		//Adding MIN_SIGNUP_DAYS days to the current date
+		calendar.add(Calendar.DAY_OF_YEAR, MIN_SIGNUP_DAYS);
+
 		
-		//todo
-		return false;
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		int day = theJob.getStartDate().get(Calendar.DAY_OF_MONTH);
+		int month = theJob.getStartDate().get(Calendar.MONTH);
+		int year = theJob.getStartDate().get(Calendar.YEAR);
+		
+		int day1 = calendar.get(Calendar.DAY_OF_MONTH);
+		int month1 = calendar.get(Calendar.MONTH) + 1;
+		int year1 = calendar.get(Calendar.YEAR);
+		
+		Date date1 = sdf.parse(day + "-" + month + "-" + year);
+		Date date2 = sdf.parse(day1 + "-" + month1 + "-" + year1);
+		
+		Calendar cal1 = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		cal1.setTime(date1);
+		cal2.setTime(date2);
+		
+		//Compare the current date + MIN_SIGNUP_DAYS with the start date of the job
+		//True if it is less than MIN_SIGNUP_DAYS days.
+		if (cal1.compareTo(cal2) < 0) {
+			conflict = true;
+		}
+		
+		return conflict;
+		
 	}
 	
 }
