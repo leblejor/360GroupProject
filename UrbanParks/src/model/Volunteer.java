@@ -3,10 +3,11 @@ package model;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 public class Volunteer extends User{
-	private ArrayList<Job> myJobs;
+	private List<Job> myJobs;
 	
 	public Volunteer(final String theUsername, final String theName) {
 		super(theUsername, theName);
@@ -62,13 +63,26 @@ public class Volunteer extends User{
 	public boolean checkDaysUntilJob(Job theJob) {
 		boolean conflict = false;
 		Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-		int day = calendar.get(Calendar.DATE);
-		int month = calendar.get(Calendar.MONTH) + 1;
-		int year = calendar.get(Calendar.YEAR);
+
+		//Adding two days to the current date
+		calendar.add(Calendar.DATE, 2);
 		
+		//Compare the current date +2 with the start date of the job
+		//True if it is less than two days.
+		if ( calendar.getTime().compareTo(theJob.getStartDate().getTime()) > 0)  {
+			conflict = true;
+		}
 		
-		//todo
-		return false;
+		return conflict;
+	}
+
+	@Override
+	public String getDescription() {
+		return "Volunteer";
+	}
+	
+	public List<Job> getJobsList() {
+		return myJobs;
 	}
 	
 }
