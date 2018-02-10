@@ -2,14 +2,18 @@ package model;
 
 
 import java.lang.IllegalArgumentException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class Job implements java.io.Serializable {
-	private static final int MAX_JOB_LENGTH = 3;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final int MILLIS_IN_DAY = 86400000;
+	
+	public static final int MAX_JOB_LENGTH = 3;
+	public static final int MAX_END_DATE_IN_ADVANCE = 75;
 	
 	private String myJobName;
 	private Calendar myStartDate;
@@ -50,20 +54,7 @@ public class Job implements java.io.Serializable {
 		return myEndDate;
 	}
 	
-	public Date getStartTime() {
-		return myStartDate.getTime();
-	}
-	
-	public Date getEndTime() {
-		return myEndDate.getTime();
-	}
-	
-	
-	public int getMaxJobLength() {
-		return MAX_JOB_LENGTH;
-	}
-	
-	
+
 	
 	// setters
 	public void setName(String theJobName) {
@@ -77,35 +68,6 @@ public class Job implements java.io.Serializable {
 	public void setEndDate(int theMonth, int theDay, int theYear) {
 		myEndDate.set(theYear, theMonth, theDay);
 	}
-	
-	public void setStartTime(int theHour, int theMinute) {
-		if (myStartDate == null) {
-			throw new NullPointerException();
-		}
-		
-		if ( (theHour > 12 && theHour < 0)  || (theMinute > 59 && theMinute < 0) ){
-			throw new IllegalArgumentException();
-		}
-		
-		// uses 12-hour clock; not 24-hour clock
-		myStartDate.set(Calendar.HOUR, theHour);
-		myStartDate.set(Calendar.MINUTE, theMinute);
-	}
-	
-	public void setEndTime(int theHour, int theMinute) {
-		if (myStartDate == null) {
-			throw new NullPointerException();
-		}
-		
-		if ( (theHour > 12 && theHour < 0)  || (theMinute > 59 && theMinute < 0) ){
-			throw new IllegalArgumentException();
-		}
-		
-		// uses 12-hour clock; not 24-hour clock
-		myEndDate.set(Calendar.HOUR, theHour);
-		myEndDate.set(Calendar.MINUTE, theMinute);
-	}
-	
 	
 
 	
@@ -137,8 +99,25 @@ public class Job implements java.io.Serializable {
 	
 	@Override
 	public String toString() {
-		return myJobName;
+		
+		StringBuilder str = new StringBuilder();
+		int startYear = myStartDate.get(Calendar.YEAR);
+		int startMonth = myStartDate.get(Calendar.MONTH);
+		int startDay = myStartDate.get(Calendar.DATE);
+		
+		int endYear = myEndDate.get(Calendar.YEAR);
+		int endMonth = myEndDate.get(Calendar.MONTH);
+		int endDay = myEndDate.get(Calendar.DATE);
+		
+		str.append(myJobName + ": ");
+		str.append(startMonth + "/" + startDay + "/" + startYear);
+		str.append(" - ");
+		str.append(endMonth + "/" + endDay + "/" + endYear);
+
+		return str.toString();
+		
 	}
+	
 	
 	//private methods for isOverlap()
 	

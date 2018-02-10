@@ -5,8 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Calendar {
-	
+public class Calendar implements java.io.Serializable {
+	   
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	Map<String, Job> myPendingJobs;
 	
 	public Calendar() {
@@ -26,6 +31,8 @@ public class Calendar {
 	public Job getSinglePendingJob(String theJobName) {
 		return myPendingJobs.get(theJobName);
 	}
+	
+	
 	
 	
 

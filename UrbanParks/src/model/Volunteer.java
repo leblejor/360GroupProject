@@ -10,6 +10,11 @@ import java.util.TimeZone;
 
 public class Volunteer extends User{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	//Volunteer cannot sign up for job that begins in MIN_SIGNUP_DAYS
 	private static final int MIN_SIGNUP_DAYS = 2;
 	
@@ -119,5 +124,7 @@ public class Volunteer extends User{
 	public List<Job> getJobsList() {
 		return myJobs;
 	}
+	
+	
 	
 }
