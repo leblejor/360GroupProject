@@ -1,8 +1,14 @@
 package model;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,18 +16,26 @@ import java.util.Scanner;
 
 public class UrbanParksSystem {
 	
-	private static final String userListFile = "./storage/userList.csv";
-	private static final String pendingJobsListFile = "./storage/pendingJobsList.csv";
-	private static final String userJobsListFile = "./storage/userJobsList.csv";
+	
+	private static final String USER_LIST_FILE = "./storage/userList.csv";
+	private static final String PENDING_JOBS_LIST_FILE = "./storage/pendingJobsList.csv";
+	private static final String VOLUNTEER_JOBS_LIST_FILE = "./storage/userJobsList.csv";
+	
+	private static final String SERIALIZED_USERS_FILE = "./storage/serializedUser.ser";
+	private static final String SERIALIZED_JOBS_FILE = "./storage/serializedJobs.ser";
 	
 	private Map<String, User> myUsers;
+	//private Map<String, Job> myPendingJobs;
 	private Scanner inputFile;
-	private static Calendar myCalendar;
+	private Calendar myCalendar;
 	
 	public UrbanParksSystem() {
 		
-		myUsers = new HashMap<String, User>();
+		// used to initialize storage with data
+		/*
+		myUsers = new HashMap<>();
 		myCalendar = new Calendar();
+
 		
 		// read data from userList.csv and store it in myUsers
 		readUserList();
@@ -30,7 +44,15 @@ public class UrbanParksSystem {
 		readPendingJobsList();
 		
 		// read data from userJobsList.csv and add these jobs to the user
-		readUserJobsList();
+		readVolunteerJobsList();
+		
+		saveUsers(myUsers);
+		saveJobs(myCalendar);
+		*/
+		
+		loadUsers();
+		loadJobs();
+		
 
 	}
 	
@@ -44,11 +66,111 @@ public class UrbanParksSystem {
 		
 	}
 	
+	public Map<String, User> getUsers() {
+		return myUsers;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void loadUsers() {
+		try {
+           
+            // Reading the object from a file
+            FileInputStream file = new FileInputStream(SERIALIZED_USERS_FILE);
+            ObjectInputStream in = new ObjectInputStream(file);
+             
+            // Method for deserialization of object
+            myUsers = (Map<String, User>) in.readObject();
+             
+            in.close();
+            file.close();
+             
+     
+        } catch(IOException ex) {
+            System.out.println("IOException is caught");
+            ex.printStackTrace();
+            
+        } catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public void loadJobs() {
+		try {
+	           
+            // Reading the object from a file
+            FileInputStream file = new FileInputStream(SERIALIZED_JOBS_FILE);
+            ObjectInputStream in = new ObjectInputStream(file);
+             
+            // Method for deserialization of object
+            myCalendar = (Calendar) in.readObject();
+             
+            in.close();
+            file.close();
+             
+     
+        } catch(IOException ex) {
+            System.out.println("IOException is caught");
+            ex.printStackTrace();
+            
+        } catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveUsers(Map<String, User> theUsers) {
+		try {
+           
+            // Reading the object from a file
+            FileOutputStream file = new FileOutputStream(SERIALIZED_USERS_FILE);
+            ObjectOutputStream out = new ObjectOutputStream(file);
+             
+            // Method for deserialization of object
+            out.writeObject(theUsers);
+             
+            out.close();
+            file.close();
+             
+     
+        } catch(IOException ex) {
+            System.out.println("IOException is caught");
+            ex.printStackTrace();
+            
+        } 
+		
+	}
+	
+	
+	public void saveJobs(Calendar thePendingJobs) {
+		try {
+	           
+            // Reading the object from a file
+            FileOutputStream file = new FileOutputStream(SERIALIZED_JOBS_FILE);
+            ObjectOutputStream out = new ObjectOutputStream(file);
+             
+            // Method for deserialization of object
+            out.writeObject(thePendingJobs);
+             
+            out.close();
+            file.close();
+             
+     
+        } catch(IOException ex) {
+            System.out.println("IOException is caught");
+            ex.printStackTrace();
+            
+        }
+	}
+	
+	
 	
 	private void readUserList() {
 
 		try {
-			File userFile = new File(userListFile);
+			File userFile = new File(USER_LIST_FILE);
 			inputFile = new Scanner(userFile);
 
 			// read past column headers
@@ -89,7 +211,7 @@ public class UrbanParksSystem {
 	private void readPendingJobsList() {
 		
 		try {
-			File pendingJobsFile = new File(pendingJobsListFile);
+			File pendingJobsFile = new File(PENDING_JOBS_LIST_FILE);
 			inputFile = new Scanner(pendingJobsFile);
 			
 
@@ -130,9 +252,9 @@ public class UrbanParksSystem {
 		
 	}
 	
-	private void readUserJobsList() {
+	private void readVolunteerJobsList() {
 		try {
-			File userJobsFile = new File(userJobsListFile);
+			File userJobsFile = new File(VOLUNTEER_JOBS_LIST_FILE);
 			inputFile = new Scanner(userJobsFile);
 
 			// read past column headers
@@ -170,17 +292,17 @@ public class UrbanParksSystem {
 	
 	
 	
+	
+	
 	public static void main(String[] args) {
-		UrbanParksSystem system = new UrbanParksSystem();
-		User user = system.signIn("derickZ");
-		
-		List<Job> calendarJobs = myCalendar.getPendingJobsList();
-		//System.out.println("Calendar List: " + calendarJobs);
-		
-		System.out.println("User: " + user.getName());
-		System.out.println("User Job List: " + ((Volunteer) user).getJobsList());
+		UrbanParksSystem system = new UrbanParksSystem();	
+		User user1 = system.signIn("paolo186");
+		System.out.println("My jobs: " + ((Volunteer)user1).getJobsList());
+		System.out.println("My info: " + user1.toString());
+		System.out.println("\nEnd of Program");
 		
 	}
+	
 	
 	
 
