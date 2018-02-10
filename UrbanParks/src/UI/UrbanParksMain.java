@@ -1,9 +1,7 @@
 package UI;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import model.Job;
