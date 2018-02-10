@@ -26,7 +26,7 @@ public class Job implements java.io.Serializable {
 		myEndDate = Calendar.getInstance();
 
 	}
-  
+	
 	public Job(String theJobName, String theJobDescription, 
 			   int theStartMonth, int theStartDay, int theStartYear,
 			   int theEndMonth, int theEndDay, int theEndYear) {
@@ -54,8 +54,7 @@ public class Job implements java.io.Serializable {
 		return myEndDate;
 	}
 	
-	
-	
+
 	
 	// setters
 	public void setName(String theJobName) {
