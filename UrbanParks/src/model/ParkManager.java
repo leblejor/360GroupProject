@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ParkManager extends User {
@@ -16,7 +17,24 @@ public class ParkManager extends User {
 		myJobs = new ArrayList<Job>();
 	}
 	
-	public void createJob(Job theJob) {
+	
+	/**
+	 * 
+	 * @param theJob
+	 * @return 0 -> success, 
+	 */
+	public int createJob(Job theJob, PendingJobs thePendingJobs) {
+		
+		int code = 0;
+		Date startDate = theJob.getStartDate().getTime();
+		Date endDate = theJob.getEndDate().getTime();
+		
+		myJobs.add(theJob);
+		
+		return code;
+		
+		
+		
 		
 	}
 
@@ -32,10 +50,17 @@ public class ParkManager extends User {
 		// This saves the job list for park manager object
 		
 		// this line adds the job to the overall Pending Jobs list
-		ups.getCalendar().addJob(theJob);
+		ups.getPendingJobs().addJob(theJob);
 	}
 	
 	public List<Job> getJobsList() {
 		return myJobs;
+	}
+	
+	public static void main(String[] args) {
+		ParkManager mgr = new ParkManager("paolo186", "Bryan");
+		Job job1 = new Job("Park Cleaning", "", 4, 3, 2018, 4, 7, 2018);
+		int code = mgr.createJob(job1, new PendingJobs());
+		System.out.println("Code: " + code);
 	}
 }

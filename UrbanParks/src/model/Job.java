@@ -10,8 +10,10 @@ public class Job implements java.io.Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final int MAX_JOB_LENGTH = 3;
 	private static final int MILLIS_IN_DAY = 86400000;
+	
+	public static final int MAX_JOB_LENGTH = 3;
+	public static final int MAX_END_DATE_IN_ADVANCE = 75;
 	
 	private String myJobName;
 	private Calendar myStartDate;

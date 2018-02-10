@@ -19,7 +19,7 @@ public class UrbanParksSystem {
 	
 	private static final String USER_LIST_FILE = "./storage/userList.csv";
 	private static final String PENDING_JOBS_LIST_FILE = "./storage/pendingJobsList.csv";
-	private static final String VOLUNTEER_JOBS_LIST_FILE = "./storage/userJobsList.csv";
+	private static final String VOLUNTEER_JOBS_LIST_FILE = "./storage/volunteerJobsList.csv";
 	
 	private static final String SERIALIZED_USERS_FILE = "./storage/serializedUser.ser";
 	private static final String SERIALIZED_JOBS_FILE = "./storage/serializedJobs.ser";
@@ -27,14 +27,14 @@ public class UrbanParksSystem {
 	private Map<String, User> myUsers;
 	//private Map<String, Job> myPendingJobs;
 	private Scanner inputFile;
-	private Calendar myCalendar;
+	private PendingJobs myPendingJobs;
 	
 	public UrbanParksSystem() {
 		
 		// used to initialize storage with data
 		/*
 		myUsers = new HashMap<>();
-		myCalendar = new Calendar();
+		myPendingJobs = new PendingJobs();
 
 		
 		// read data from userList.csv and store it in myUsers
@@ -47,7 +47,7 @@ public class UrbanParksSystem {
 		readVolunteerJobsList();
 		
 		saveUsers(myUsers);
-		saveJobs(myCalendar);
+		saveJobs(myPendingJobs);
 		*/
 		
 		loadUsers();
@@ -56,8 +56,8 @@ public class UrbanParksSystem {
 
 	}
 	
-	public Calendar getCalendar() {
-		return myCalendar;
+	public PendingJobs getPendingJobs() {
+		return myPendingJobs;
 	}
 	
 	public User signIn(String theUsername) {
@@ -105,7 +105,7 @@ public class UrbanParksSystem {
             ObjectInputStream in = new ObjectInputStream(file);
              
             // Method for deserialization of object
-            myCalendar = (Calendar) in.readObject();
+            myPendingJobs = (PendingJobs) in.readObject();
              
             in.close();
             file.close();
@@ -144,7 +144,7 @@ public class UrbanParksSystem {
 	}
 	
 	
-	public void saveJobs(Calendar thePendingJobs) {
+	public void saveJobs(PendingJobs thePendingJobs) {
 		try {
 	           
             // Reading the object from a file
@@ -236,7 +236,7 @@ public class UrbanParksSystem {
 						          startMonth, startDay, startYear,
 						          endMonth, endDay, endYear);
 				
-				myCalendar.addJob(job);
+				myPendingJobs.addJob(job);
 				
 				
 			}
@@ -269,7 +269,7 @@ public class UrbanParksSystem {
 				for (int i = 1; i < parsedLine.length; i++) {
 					
 					
-					Job currentJob = myCalendar.getSinglePendingJob(parsedLine[i]);
+					Job currentJob = myPendingJobs.getSinglePendingJob(parsedLine[i]);
 					try {
 						((Volunteer) currentUser).signup(currentJob);
 					} catch (ParseException e) {
