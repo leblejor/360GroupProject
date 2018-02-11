@@ -125,6 +125,8 @@ public class Volunteer extends User{
 		return myJobs;
 	}
 	
-	
+	public int getMinSingupDays() {
+		return MIN_SIGNUP_DAYS;
+	}
 	
 }
