@@ -124,7 +124,7 @@ public class TestMain {
 		} else if(success == 2) {
 			System.out.println("Unable to sign up for job.");
 			System.out.println("You can only sign up for jobs that begin " + 
-								theVolunteer.getMinSingupDays() + " or more days from today.");
+								theVolunteer.getMinSignupDays() + " or more days from today.");
 		}
 	}
 	
