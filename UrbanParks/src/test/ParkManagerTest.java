@@ -100,7 +100,7 @@ public class ParkManagerTest {
 		validJobDuration.setEndDate(month, day, year);
 		
 		assertFalse(myParkManager.checkJobEndDateMax(validJobDuration));
-		}
+	}
 	
 	@Test
 	public void checkJobEndDateMax_ExactlyMaximumDays_False() {
