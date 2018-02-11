@@ -50,7 +50,7 @@ public class Volunteer extends User {
 	
 	/**
 	 * Checks to see if the job being signed up for
-	 * confilcts with a job the volunteer already has 
+	 * conflicts with a job the volunteer already has 
 	 * signed up for in the past.
 	 * Returns false if there is no conflict, and true
 	 * if there is a conflict.
@@ -98,6 +98,4 @@ public class Volunteer extends User {
 	public int getMinSignupDays() {
 		return MIN_SIGNUP_DAYS;
 	}
-	
-	
 }

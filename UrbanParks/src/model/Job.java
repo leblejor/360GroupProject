@@ -1,30 +1,23 @@
 package model;
 
 
-import java.lang.IllegalArgumentException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Job implements java.io.Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
-	private static final int MILLIS_IN_DAY = 86400000;
-	
-	public static final int MAX_JOB_LENGTH = 3;
-	public static final int MAX_END_DATE_IN_ADVANCE = 75;
 	
 	private String myJobName;
+	private String myJobDescription;
 	private Calendar myStartDate;
 	private Calendar myEndDate;
 	
-	
+
 	public Job() {
 		myJobName = "";
 		myStartDate = Calendar.getInstance();
 		myEndDate = Calendar.getInstance();
-
 	}
 	
 	public Job(String theJobName, String theJobDescription, 
@@ -32,18 +25,19 @@ public class Job implements java.io.Serializable {
 			   int theEndMonth, int theEndDay, int theEndYear) {
 		
 		myJobName = theJobName;
+		myJobDescription = theJobDescription;
 		myStartDate = new GregorianCalendar(theStartYear, theStartMonth, theStartDay);
 		myEndDate = new GregorianCalendar(theEndYear, theEndMonth, theEndDay);
-		
-		if((myEndDate.getTimeInMillis() - myStartDate.getTimeInMillis()) > MAX_JOB_LENGTH * MILLIS_IN_DAY) {
-			throw new IllegalArgumentException();
-		}
   	}
 	
 	
 	// getters
 	public String getJobName() {
 		return myJobName;
+	}
+	
+	public String getJobDescription() {
+		return myJobDescription;
 	}
 	
 	public Calendar getStartDate() {
@@ -53,12 +47,16 @@ public class Job implements java.io.Serializable {
 	public Calendar getEndDate() {
 		return myEndDate;
 	}
-	
 
+	
 	
 	// setters
 	public void setName(String theJobName) {
 		myJobName = theJobName;
+	}
+	
+	public void setJobDescription(String theJobDescription) {
+		myJobDescription = theJobDescription;
 	}
 	
 	public void setStartDate(int theMonth, int theDay, int theYear) {
@@ -70,7 +68,6 @@ public class Job implements java.io.Serializable {
 	}
 	
 
-	
 	
 	// other methods
 	public boolean isOverlap(Job theOther) {
@@ -92,8 +89,6 @@ public class Job implements java.io.Serializable {
 		// check for other potential overlapping cases
 		return isOverlap || isSameStartDateConflicting(theOther) || isSameEndDateConflicting(theOther)
 				|| isMyStartOtherEndDateConflicting(theOther) || isMyEndOtherStartDateConflicting(theOther);
-		
-		
 
 	}
 	
@@ -115,7 +110,6 @@ public class Job implements java.io.Serializable {
 		str.append(endMonth + "/" + endDay + "/" + endYear);
 
 		return str.toString();
-		
 	}
 	
 	
@@ -137,7 +131,6 @@ public class Job implements java.io.Serializable {
 		return getEndDate().get(Calendar.DAY_OF_YEAR) == theOtherEndDate.get(Calendar.DAY_OF_YEAR) &&
 				getEndDate().get(Calendar.DAY_OF_MONTH) == theOtherEndDate.get(Calendar.DAY_OF_MONTH)
 				&& getEndDate().get(Calendar.DAY_OF_WEEK) == theOtherEndDate.get(Calendar.DAY_OF_WEEK);
-		
 	}
 	
 	private boolean isMyStartOtherEndDateConflicting(Job theOther) {
@@ -146,8 +139,7 @@ public class Job implements java.io.Serializable {
 		
 		return getStartDate().get(Calendar.DAY_OF_YEAR) == theOtherEndDate.get(Calendar.DAY_OF_YEAR) &&
 				getStartDate().get(Calendar.DAY_OF_MONTH) == theOtherEndDate.get(Calendar.DAY_OF_MONTH)
-				&& getStartDate().get(Calendar.DAY_OF_WEEK) == theOtherEndDate.get(Calendar.DAY_OF_WEEK);
-		
+				&& getStartDate().get(Calendar.DAY_OF_WEEK) == theOtherEndDate.get(Calendar.DAY_OF_WEEK);	
 	}
 	
 	private boolean isMyEndOtherStartDateConflicting(Job theOther) {
@@ -158,7 +150,4 @@ public class Job implements java.io.Serializable {
 				getEndDate().get(Calendar.DAY_OF_MONTH) == theOtherStartDate.get(Calendar.DAY_OF_MONTH)
 				&& getEndDate().get(Calendar.DAY_OF_WEEK) == theOtherStartDate.get(Calendar.DAY_OF_WEEK);
 	}
-
-
-
 }
