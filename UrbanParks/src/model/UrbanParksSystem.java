@@ -270,12 +270,12 @@ public class UrbanParksSystem {
 					
 					
 					Job currentJob = myPendingJobs.getSinglePendingJob(parsedLine[i]);
-					try {
+					//try {
 						((Volunteer) currentUser).signup(currentJob);
-					} catch (ParseException e) {
+					//} catch (ParseException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					//	e.printStackTrace();
+					//}
 				}
 				
 			}
