@@ -49,6 +49,21 @@ public class Volunteer extends User {
 		return successful;		
 	}
 	
+	public int removeJob(Job theJob) {
+		
+		if (!myJobs.contains(theJob)) {
+			return 1;
+		}
+		
+		for (int i = 0; i < myJobs.size(); i++) {
+			if (myJobs.get(i).equals(theJob)) {
+				myJobs.remove(i);
+			}
+		}
+		
+		return 0;
+	}
+	
 	/**
 	 * Checks to see if the Job being signed up for conflicts with a Job in this Volunteer's
 	 * job list. Conflicts occur when there is overlap in the start and/or end days of two Jobs.
@@ -83,10 +98,14 @@ public class Volunteer extends User {
 		//Add MIN_SIGNUP_DAYS days to the current date
 		futureDay.add(Calendar.DAY_OF_YEAR, MIN_SIGNUP_DAYS);
 
-		//Compare the current date + MIN_SIGNUP_DAYS with the start date of the job
-		if (futureDay.compareTo(theJob.getStartDate()) < 0) {
+		//Compare the current date +MIN_SIGNUP_DAYS with the start date of the job
+		//True if it is greater than the MIN_SIGNUP_DAYS
+		if (futureDay.compareTo(theJob.getStartDate()) > 0) {
 			conflict = true;
 		}
+		
+		
+		
 		
 		return conflict;
 	}
@@ -99,4 +118,5 @@ public class Volunteer extends User {
 	public int getMinSignupDays() {
 		return MIN_SIGNUP_DAYS;
 	}
+	
 }

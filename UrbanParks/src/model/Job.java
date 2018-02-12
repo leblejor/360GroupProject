@@ -41,8 +41,12 @@ public class Job implements java.io.Serializable {
 		myStartDate = new GregorianCalendar(theStartYear, theStartMonth - 1, theStartDay);
 		myEndDate = new GregorianCalendar(theEndYear, theEndMonth - 1, theEndDay);
 		
+
 		// months start at 0 -> January, 1 -> February, ...
-	}
+
+  	}
+	
+
 	
 	/**
 	 * Checks if this Job overlaps with the other Job.
@@ -74,6 +78,7 @@ public class Job implements java.io.Serializable {
 			   isConflictingWithMyEndDate(theOtherEndDate);
 				
 	}
+	
 	
 
 
@@ -170,4 +175,7 @@ public class Job implements java.io.Serializable {
 
 		return str.toString();
 	}
+	
+	
+
 }
