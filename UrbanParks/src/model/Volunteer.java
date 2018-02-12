@@ -84,7 +84,7 @@ public class Volunteer extends User {
 		futureDay.add(Calendar.DAY_OF_YEAR, MIN_SIGNUP_DAYS);
 
 		//Compare the current date + MIN_SIGNUP_DAYS with the start date of the job
-		if (futureDay.compareTo(theJob.getStartDate()) < 0) {
+		if (futureDay.compareTo(theJob.getStartDate()) > 0) {
 			conflict = true;
 		}
 		
