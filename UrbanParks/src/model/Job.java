@@ -2,10 +2,12 @@ package model;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 /**
  * Represents a Job. A Job holds a title, a start date, and an end date. 
  * 
+ * @author Bryan Santos
  * @version 11 February 2018
  */
 public class Job implements java.io.Serializable {
@@ -36,9 +38,11 @@ public class Job implements java.io.Serializable {
 	public Job(String theJobName, int theStartMonth, int theStartDay, int theStartYear,
 			   					  int theEndMonth,   int theEndDay,   int theEndYear) {
 		myJobName = theJobName;
-		myStartDate = new GregorianCalendar(theStartYear, theStartMonth, theStartDay);
-		myEndDate = new GregorianCalendar(theEndYear, theEndMonth, theEndDay);
-  	}
+		myStartDate = new GregorianCalendar(theStartYear, theStartMonth - 1, theStartDay);
+		myEndDate = new GregorianCalendar(theEndYear, theEndMonth - 1, theEndDay);
+		
+		// months start at 0 -> January, 1 -> February, ...
+	}
 	
 	/**
 	 * Checks if this Job overlaps with the other Job.
@@ -47,6 +51,7 @@ public class Job implements java.io.Serializable {
 	 * @return True if there is an overlap with this Job and the other Job, false otherwise.
 	 */
 	public boolean isOverlap(Job theOther) {
+		
 		boolean isOverlap = false;
 		Calendar theOtherStartDate = theOther.getStartDate();
 		Calendar theOtherEndDate = theOther.getEndDate();
@@ -62,46 +67,38 @@ public class Job implements java.io.Serializable {
 		}
 		
 		// check for other potential overlapping cases
-		return isOverlap || isSameStartDateConflicting(theOther) || isSameEndDateConflicting(theOther)
-				|| isMyStartOtherEndDateConflicting(theOther) || isMyEndOtherStartDateConflicting(theOther);
+		return isOverlap ||
+			   isConflictingWithMyStartDate(theOtherStartDate) ||
+			   isConflictingWithMyStartDate(theOtherEndDate) ||
+			   isConflictingWithMyEndDate(theOtherStartDate) ||
+			   isConflictingWithMyEndDate(theOtherEndDate);
+				
+	}
+	
 
+
+	
+	
+	
+	//private methods for isOverlap()
+	
+	
+	private boolean isConflictingWithMyStartDate(Calendar theOther) {
+		
+		return myStartDate.get(Calendar.DAY_OF_YEAR) == theOther.get(Calendar.DAY_OF_YEAR) &&
+				myStartDate.get(Calendar.DAY_OF_MONTH) == theOther.get(Calendar.DAY_OF_MONTH)
+				&& myStartDate.get(Calendar.DAY_OF_WEEK) == theOther.get(Calendar.DAY_OF_WEEK);
+		
 	}
 	
-	private boolean isSameStartDateConflicting(Job theOther) {
+	private boolean isConflictingWithMyEndDate(Calendar theOther) {
 		
-		Calendar theOtherStartDate = theOther.getStartDate();
+		return myEndDate.get(Calendar.DAY_OF_YEAR) == theOther.get(Calendar.DAY_OF_YEAR) &&
+				myEndDate.get(Calendar.DAY_OF_MONTH) == theOther.get(Calendar.DAY_OF_MONTH)
+				&& myEndDate.get(Calendar.DAY_OF_WEEK) == theOther.get(Calendar.DAY_OF_WEEK);
 		
-		return getStartDate().get(Calendar.DAY_OF_YEAR) == theOtherStartDate.get(Calendar.DAY_OF_YEAR) &&
-				getStartDate().get(Calendar.DAY_OF_MONTH) == theOtherStartDate.get(Calendar.DAY_OF_MONTH)
-				&& getStartDate().get(Calendar.DAY_OF_WEEK) == theOtherStartDate.get(Calendar.DAY_OF_WEEK);
 	}
 	
-	private boolean isSameEndDateConflicting(Job theOther) {
-		
-		Calendar theOtherEndDate = theOther.getEndDate();
-		
-		return getEndDate().get(Calendar.DAY_OF_YEAR) == theOtherEndDate.get(Calendar.DAY_OF_YEAR) &&
-				getEndDate().get(Calendar.DAY_OF_MONTH) == theOtherEndDate.get(Calendar.DAY_OF_MONTH)
-				&& getEndDate().get(Calendar.DAY_OF_WEEK) == theOtherEndDate.get(Calendar.DAY_OF_WEEK);
-	}
-	
-	private boolean isMyStartOtherEndDateConflicting(Job theOther) {
-		
-		Calendar theOtherEndDate = theOther.getEndDate();
-		
-		return getStartDate().get(Calendar.DAY_OF_YEAR) == theOtherEndDate.get(Calendar.DAY_OF_YEAR) &&
-				getStartDate().get(Calendar.DAY_OF_MONTH) == theOtherEndDate.get(Calendar.DAY_OF_MONTH)
-				&& getStartDate().get(Calendar.DAY_OF_WEEK) == theOtherEndDate.get(Calendar.DAY_OF_WEEK);	
-	}
-	
-	private boolean isMyEndOtherStartDateConflicting(Job theOther) {
-		
-		Calendar theOtherStartDate = theOther.getStartDate();
-		
-		return getEndDate().get(Calendar.DAY_OF_YEAR) == theOtherStartDate.get(Calendar.DAY_OF_YEAR) &&
-				getEndDate().get(Calendar.DAY_OF_MONTH) == theOtherStartDate.get(Calendar.DAY_OF_MONTH)
-				&& getEndDate().get(Calendar.DAY_OF_WEEK) == theOtherStartDate.get(Calendar.DAY_OF_WEEK);
-	}
 	
 	
 	/*********** Getters and Setters ***********/
@@ -127,6 +124,31 @@ public class Job implements java.io.Serializable {
 	
 	public void setEndDate(int theMonth, int theDay, int theYear) {
 		myEndDate.set(theYear, theMonth, theDay);
+	}
+	
+	@Override
+	public boolean equals(final Object theOther) {
+	
+		if (this == theOther) {
+			return true;
+		}
+		
+		if (theOther == null) {
+			return false;
+		}
+		
+		if (getClass() != theOther.getClass()) {
+			return false;
+		}
+		
+		final Job otherJob = (Job) theOther;
+		return myJobName.equals(otherJob.myJobName) && myStartDate.equals(otherJob.myStartDate)
+				&& myEndDate.equals(otherJob.myEndDate);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(myJobName, myStartDate, myEndDate);
 	}
 
 	@Override
