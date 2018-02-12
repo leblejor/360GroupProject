@@ -11,10 +11,9 @@ import java.util.List;
  * @author Bryan Santos
  */
 public class ParkManager extends User {
-	
 	private static final int MAX_PENDING_JOBS = 20;
 	private static final int MAX_JOB_LENGTH = 3;
-	private static final int MAX_JOB_DURATION = 75;
+	private static final int MAX_SCHEDULE_WINDOW = 75;
 	private static final long serialVersionUID = 1L;
 	
 	private List<Job> myJobs;
@@ -39,25 +38,21 @@ public class ParkManager extends User {
 	 */
 	public int createJob(UrbanParksSystem ups, String theJobName, 
 			              int theStartMonth, int theStartDay, int theStartYear,
-			   			  int theEndMonth, int theEndDay, int theEndYear) {
+			   			  int theEndMonth,   int theEndDay,   int theEndYear) {
 		
-		Job theJob = new Job(theJobName, "", theStartMonth, theStartDay, theStartYear,
+		Job theJob = new Job(theJobName, theStartMonth, theStartDay, theStartYear,
 								theEndMonth, theEndDay, theEndYear);
 		
 		int successful = 0;
 		int maxJobsConflict = 1;
 		int jobTooLongConflict = 2;
 		int jobTooFarConflict = 3;
-		
-		boolean maxJobs = checkNumberOfJobsInSystem(ups);
-		boolean jobLong = checkJobDayLength(theJob);
-		boolean jobFar = checkJobEndDateMax(theJob);
-		
-		if (maxJobs) { 
+
+		if (checkNumberOfJobsInSystem(ups)) { 
 			return maxJobsConflict;
-		} else if (jobLong) {
+		} else if (checkJobDayLength(theJob)) {
 			return jobTooLongConflict;
-		} else if (jobFar) { 
+		} else if (checkJobEndDateMax(theJob)) { 
 			return jobTooFarConflict;
 		} else { 
 			ups.getPendingJobs().addJob(theJob); //System job list
@@ -74,7 +69,7 @@ public class ParkManager extends User {
 			              int theStartMonth, int theStartDay, int theStartYear,
 			   			  int theEndMonth, int theEndDay, int theEndYear) {
 		
-		Job theJob = new Job(theJobName, "", theStartMonth, theStartDay, theStartYear,
+		Job theJob = new Job(theJobName, theStartMonth, theStartDay, theStartYear,
 								theEndMonth, theEndDay, theEndYear);
 		
 		int successful = 0;
@@ -121,8 +116,8 @@ public class ParkManager extends User {
 		return conflict;
 	}
 	
-	//Same as above, but doesn't use the UrbanParkSystem. 
-	//Used for testing.
+	/* Used for testing.
+	 * Same as above, but doesn't use the UrbanParkSystem. */
 	public boolean checkNumberOfJobsInSystemLocal() {
 		boolean conflict = false;
 		
@@ -165,7 +160,7 @@ public class ParkManager extends User {
 		boolean conflict = false;
 		Calendar jobEndDay = theJob.getEndDate(); 
 		Calendar today = Calendar.getInstance();
-		today.add(Calendar.DAY_OF_YEAR, MAX_JOB_DURATION);
+		today.add(Calendar.DAY_OF_YEAR, MAX_SCHEDULE_WINDOW);
 		
 		if (today.compareTo(jobEndDay) < 0) {
 			conflict = true;
@@ -173,7 +168,7 @@ public class ParkManager extends User {
 		return conflict;
 	}
 
-	
+	/*********** Getters ***********/
 	public List<Job> getJobsList() {
 		return myJobs;
 	}
@@ -186,7 +181,7 @@ public class ParkManager extends User {
 		return MAX_JOB_LENGTH;
 	}
 	
-	public int getMaxJobDuration() {
-		return MAX_JOB_DURATION;
+	public int getMaxScheduleWindow() {
+		return MAX_SCHEDULE_WINDOW;
 	}	
 }

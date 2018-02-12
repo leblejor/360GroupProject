@@ -1,11 +1,11 @@
 package test;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+
 import static org.junit.Assert.*;
 
 import java.util.Calendar;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 
 import model.Job;
 import model.ParkManager;
@@ -91,7 +91,7 @@ public class ParkManagerTest {
 	public void checkJobEndDateMax_OneLessThanMaximum_False() {
 		Job validJobDuration = new Job();
 		Calendar jobEndDate = validJobDuration.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, myParkManager.getMaxJobDuration() - 1);
+		jobEndDate.add(Calendar.DAY_OF_YEAR, myParkManager.getMaxScheduleWindow() - 1);
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -106,7 +106,7 @@ public class ParkManagerTest {
 	public void checkJobEndDateMax_ExactlyMaximumDays_False() {
 		Job validJobDuration = new Job();
 		Calendar jobEndDate = validJobDuration.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, myParkManager.getMaxJobDuration());
+		jobEndDate.add(Calendar.DAY_OF_YEAR, myParkManager.getMaxScheduleWindow());
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -121,7 +121,7 @@ public class ParkManagerTest {
 	public void checkJobEndDateMax_OneMoreThanMaximum_True() {
 		Job invalidJobDuration = new Job();
 		Calendar jobEndDate = invalidJobDuration.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, myParkManager.getMaxJobDuration() + 1);
+		jobEndDate.add(Calendar.DAY_OF_YEAR, myParkManager.getMaxScheduleWindow() + 1);
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
