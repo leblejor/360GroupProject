@@ -1,77 +1,52 @@
 package model;
 
-
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+/**
+ * Represents a Job. A Job holds a title, a start date, and an end date. 
+ * 
+ * @version 11 February 2018
+ */
 public class Job implements java.io.Serializable {
-
+	/** SerialID for storage */
 	private static final long serialVersionUID = 1L;
 	
 	private String myJobName;
-	private String myJobDescription;
 	private Calendar myStartDate;
 	private Calendar myEndDate;
 	
-
+	/** Empty constructor. */
 	public Job() {
 		myJobName = "";
 		myStartDate = Calendar.getInstance();
 		myEndDate = Calendar.getInstance();
 	}
-	
-	public Job(String theJobName, String theJobDescription, 
-			   int theStartMonth, int theStartDay, int theStartYear,
-			   int theEndMonth, int theEndDay, int theEndYear) {
-		
+	/**
+	 * Constructor.
+	 * 
+	 * @param theJobName Title the Job will hold.
+	 * @param theStartMonth Month the Job starts in.
+	 * @param theStartDay Day the Job starts on.
+	 * @param theStartYear Year the Job starts in.
+	 * @param theEndMonth Month the Job ends in.
+	 * @param theEndDay Day the Job ends on.
+	 * @param theEndYear Year the Job ends in.
+	 */
+	public Job(String theJobName, int theStartMonth, int theStartDay, int theStartYear,
+			   					  int theEndMonth,   int theEndDay,   int theEndYear) {
 		myJobName = theJobName;
-		myJobDescription = theJobDescription;
 		myStartDate = new GregorianCalendar(theStartYear, theStartMonth, theStartDay);
 		myEndDate = new GregorianCalendar(theEndYear, theEndMonth, theEndDay);
   	}
 	
-	
-	// getters
-	public String getJobName() {
-		return myJobName;
-	}
-	
-	public String getJobDescription() {
-		return myJobDescription;
-	}
-	
-	public Calendar getStartDate() {
-		return myStartDate;
-	}
-	
-	public Calendar getEndDate() {
-		return myEndDate;
-	}
-
-	
-	
-	// setters
-	public void setName(String theJobName) {
-		myJobName = theJobName;
-	}
-	
-	public void setJobDescription(String theJobDescription) {
-		myJobDescription = theJobDescription;
-	}
-	
-	public void setStartDate(int theMonth, int theDay, int theYear) {
-		myStartDate.set(theYear, theMonth, theDay);
-	}
-	
-	public void setEndDate(int theMonth, int theDay, int theYear) {
-		myEndDate.set(theYear, theMonth, theDay);
-	}
-	
-
-	
-	// other methods
+	/**
+	 * Checks if this Job overlaps with the other Job.
+	 * 
+	 * @param theOther The other Job to compare to for overlap.
+	 * @return True if there is an overlap with this Job and the other Job, false otherwise.
+	 */
 	public boolean isOverlap(Job theOther) {
-		
 		boolean isOverlap = false;
 		Calendar theOtherStartDate = theOther.getStartDate();
 		Calendar theOtherEndDate = theOther.getEndDate();
@@ -91,29 +66,6 @@ public class Job implements java.io.Serializable {
 				|| isMyStartOtherEndDateConflicting(theOther) || isMyEndOtherStartDateConflicting(theOther);
 
 	}
-	
-	@Override
-	public String toString() {
-		
-		StringBuilder str = new StringBuilder();
-		int startYear = myStartDate.get(Calendar.YEAR);
-		int startMonth = myStartDate.get(Calendar.MONTH);
-		int startDay = myStartDate.get(Calendar.DATE);
-		
-		int endYear = myEndDate.get(Calendar.YEAR);
-		int endMonth = myEndDate.get(Calendar.MONTH);
-		int endDay = myEndDate.get(Calendar.DATE);
-		
-		str.append(myJobName + ": ");
-		str.append(startMonth + "/" + startDay + "/" + startYear);
-		str.append(" - ");
-		str.append(endMonth + "/" + endDay + "/" + endYear);
-
-		return str.toString();
-	}
-	
-	
-	//private methods for isOverlap()
 	
 	private boolean isSameStartDateConflicting(Job theOther) {
 		
@@ -149,5 +101,51 @@ public class Job implements java.io.Serializable {
 		return getEndDate().get(Calendar.DAY_OF_YEAR) == theOtherStartDate.get(Calendar.DAY_OF_YEAR) &&
 				getEndDate().get(Calendar.DAY_OF_MONTH) == theOtherStartDate.get(Calendar.DAY_OF_MONTH)
 				&& getEndDate().get(Calendar.DAY_OF_WEEK) == theOtherStartDate.get(Calendar.DAY_OF_WEEK);
+	}
+	
+	
+	/*********** Getters and Setters ***********/
+	public String getJobName() {
+		return myJobName;
+	}
+	
+	public Calendar getStartDate() {
+		return myStartDate;
+	}
+	
+	public Calendar getEndDate() {
+		return myEndDate;
+	}
+
+	public void setName(String theJobName) {
+		myJobName = theJobName;
+	}
+	
+	public void setStartDate(int theMonth, int theDay, int theYear) {
+		myStartDate.set(theYear, theMonth, theDay);
+	}
+	
+	public void setEndDate(int theMonth, int theDay, int theYear) {
+		myEndDate.set(theYear, theMonth, theDay);
+	}
+
+	@Override
+	public String toString() {
+		
+		StringBuilder str = new StringBuilder();
+		int startYear = myStartDate.get(Calendar.YEAR);
+		int startMonth = myStartDate.get(Calendar.MONTH);
+		int startDay = myStartDate.get(Calendar.DATE);
+		
+		int endYear = myEndDate.get(Calendar.YEAR);
+		int endMonth = myEndDate.get(Calendar.MONTH);
+		int endDay = myEndDate.get(Calendar.DATE);
+		
+		str.append(myJobName + ": ");
+		str.append(startMonth + "/" + startDay + "/" + startYear);
+		str.append(" - ");
+		str.append(endMonth + "/" + endDay + "/" + endYear);
+
+		return str.toString();
 	}
 }

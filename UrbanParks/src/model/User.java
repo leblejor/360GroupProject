@@ -1,18 +1,18 @@
 package model;
 
-
+/**
+ * Represents a User. User holds a user name, name, and type of user.
+ * 
+ * @version 11 February 2018
+ */
 public abstract class User implements java.io.Serializable {
-
-	
-	/**
-	 * 
-	 */
+	/** SerialID for storage */
 	private static final long serialVersionUID = 1L;
+	
 	private String myUsername;
 	private String myName;
 	private String myUserType;
 
-	
 	public User(final String theUsername, final String theName, final String theUserType) {
 		myUsername = theUsername;
 		myName = theName;
@@ -20,6 +20,7 @@ public abstract class User implements java.io.Serializable {
 		
 	}
 	
+	/*********** Getters ***********/
 	public String getDescription() {
 		return myUserType;
 	}
@@ -40,7 +41,4 @@ public abstract class User implements java.io.Serializable {
 		
 		return str.toString();
 	}
-	
-
-
 }

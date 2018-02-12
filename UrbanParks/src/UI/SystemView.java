@@ -2,7 +2,6 @@ package UI;
 
 import java.lang.Integer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -13,28 +12,22 @@ import java.util.Scanner;
  * A ParkManager can sign out, create a Job, or view their existing Jobs.
  * A Volunteer can sign out, sign up for a Job, or view their existing Jobs.
  * 
- * @author Jordan
- * @author Emerson 
+ * @author Jordan LeBle
+ * @author Emerson Millard
  * @version 11 February 2018
  */
-public class TestMain {
+public class SystemView {
 	private static boolean signedIn;
 	private static model.UrbanParksSystem ups;
 	private static Scanner input = new Scanner(System.in);
 	
+	/** Main runs program to completion. */
 	public static void main(String[] args) {
 		signedIn = false;
 		ups = new model.UrbanParksSystem();
 		
 		System.out.println("Welcome to Urban Parks!");
 		model.User user = login(ups);
-		
-		/*
-		for(Map.Entry<String, model.User> aUser : ups.getUsers().entrySet()) {
-			System.out.println(aUser.getValue().getDescription() + " " + aUser.getKey());
-		}
-		*/
-		
 		
 		while(signedIn) {
 			if(user.getDescription().equals("Volunteer")) {
@@ -46,9 +39,12 @@ public class TestMain {
 			}
 			
 			if(!signedIn) {
+				System.out.println("See you next time!");
+				System.out.println("");
 				user = login(ups);
 			}
 		}
+		System.out.println("Program terminated.");
 		
 		ups.saveJobs(ups.getPendingJobs());
 		ups.saveUsers(ups.getUsers());
@@ -56,6 +52,10 @@ public class TestMain {
 		input.close();
 	}
 	
+	/**
+	 * Displays the actions available to the Volunteer. User is prompted to select an option.
+	 * A Staff member has no actions available to carry out other than sign out.
+	 */
 	private static void staffAction() {
 		System.out.println("What would you like to do today?");
 		System.out.println("1) Sign out");
@@ -67,6 +67,14 @@ public class TestMain {
 		signedIn = false;
 	}
 	
+	/**
+	 * Prompts the user for a user name and attempts to sign in with that user name. 
+	 * When the user is signed in successfully, a welcome message is displayed. 
+	 * Inputing '1' will exit.
+	 * 
+	 * @param ups the model to run and store variables.
+	 * @return the User that was logged in.
+	 */
 	private static model.User login(model.UrbanParksSystem ups) {
 		System.out.print("Please enter your username (enter '1' to exit): ");
 		
@@ -86,7 +94,12 @@ public class TestMain {
 		return user;
 	}
 	
-
+	/**
+	 * Displays the actions available to the Volunteer. User is prompted to select an option.
+	 * A Volunteer can sign out, sign up for a Job, or view their existing Jobs.
+	 * 
+	 * @param theVolunteer the Volunteer making an action.
+	 */
 	private static void volunteerAction(model.Volunteer theVolunteer) {
 		System.out.println("What would you like to do today?");
 		System.out.println("1) Sign out");
@@ -107,18 +120,24 @@ public class TestMain {
 		}
 	}
 
-	// Method acts as the screen that volunteer users will see when they sign up for a job.
+	/**
+	 * Prompts the Volunteer to select a Job to sign up for. The Job will either
+	 * be signed up for successfully or an error message is displayed based on the selection. 
+	 * 
+	 * @param theVolunteer Volunteer signing up for a Job.
+	 */
 	private static void volunteerSignupJob(model.Volunteer theVolunteer) {
 		System.out.println("Here are the pending jobs.");
 		System.out.println("1) Go back to main menu");
 		
 		int selectionOffset = 2;
-		List<model.Job> jobListCopy = new ArrayList<model.Job>(ups.getPendingJobs().getPendingJobsList());
+		List<model.Job> jobListCopy = ups.getPendingJobs().getPendingJobsList();
 		List<model.Job> volunteerJobList = theVolunteer.getJobsList();
 		
 		// Remove all Jobs in the list that the user has already signed up for
 		for(model.Job signedUp : volunteerJobList) {
 			if(jobListCopy.contains(signedUp)) {
+				System.out.println("found");
 				jobListCopy.remove(signedUp);
 			}
 		}
@@ -134,7 +153,7 @@ public class TestMain {
 		int theSelectedOption = input.nextInt() - selectionOffset;
 		input.nextLine(); // To pick up the '\n' character in scanner
 
-		if(theSelectedOption > 0) { // input of 1 is selected, exit
+		if(theSelectedOption > 0) { // on input of 1, exit
 			int success = theVolunteer.signup(jobListCopy.get(theSelectedOption));
 			
 			if(success == 0) {
@@ -151,7 +170,11 @@ public class TestMain {
 		System.out.println("");
 	}
 	
-	// Method acts as the screen volunteers will see when they choose to view their current jobs.
+	/**
+	 * Displays the Volunteer's pending Jobs to the console in a numbered list.
+	 * 
+	 * @param theVolunteer Volunteer to display their pending Jobs for.
+	 */
 	private static void volunteerViewCurrentJobs(model.Volunteer theVolunteer) {
 		System.out.println("Here are your current jobs: ");
 				
@@ -163,16 +186,18 @@ public class TestMain {
 		System.out.println("");
 	}
 	
-	// Method acts as the screen that park managers will see when they log in.
+	/**
+	 * Displays the actions available to the ParkManager. User is prompted to select an option.
+	 * A ParkManager can sign out, create a Job, or view their existing Jobs.
+	 * 
+	 * @param theParkManager the ParkManager making an action.
+	 */
 	private static void parkManagerAction(model.ParkManager theParkManager) {
 		System.out.println("What would you like to do today?");
 		System.out.println("1) Sign out");
 		System.out.println("2) Create a new job");
 		System.out.println("3) View your current jobs");
 		System.out.print("Enter a number to decide what action you wish to take: ");
-
-		//List<model.Job> jobs = theParkManager.getJobsList();
-		//jobs.clear();// = new ArrayList<model.Job>();
 		
 		int theSelectedOption = input.nextInt();
 		input.nextLine(); // To pick up the '\n' character in scanner
@@ -187,7 +212,12 @@ public class TestMain {
 		}
 	}
 	
-	// Method acts as the screen park managers will see when they choose to create new jobs.
+	/**
+	 * Prompts the ParkManager to input information to create a Job. The Job will either
+	 * be created or display an error message based on the validity of these inputs. 
+	 * 
+	 * @param theParkManager the ParkManager creating the Job.
+	 */
 	private static void parkManagerCreateJob(model.ParkManager theParkManager) {
 		System.out.println("Please enter the following required Job Information: ");
 		
@@ -223,12 +253,17 @@ public class TestMain {
 		} else if(success == 3) {
 			System.out.println("Error - Could not create job.");
 			System.out.println("The job would be scheduled too far (" +  
-						theParkManager.getMaxJobDuration() +  " days) in advance");
+						theParkManager.getMaxScheduleWindow() +  " days) in advance");
 		}
 		
 		System.out.println("");
 	}
 	
+	/**
+	 * Displays the ParkManager's Jobs to the console in a numbered list.
+	 * 
+	 * @param theParkManager ParkManager to display their Jobs for.
+	 */
 	private static void parkManagerViewCurrentJobs(model.ParkManager theParkManager) {
 		System.out.println("Here are your current jobs: ");
 		
