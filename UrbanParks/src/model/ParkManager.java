@@ -143,11 +143,11 @@ public class ParkManager extends User {
 	 */
 	public boolean checkJobDayLength(Job theJob) {
 		boolean conflict = false;
-		Calendar jobStartDay = theJob.getStartDate();
-		jobStartDay.add(Calendar.DAY_OF_YEAR, MAX_JOB_LENGTH);
+		Object jobStartDay = theJob.getStartDate().clone();
+		((Calendar) jobStartDay).add(Calendar.DAY_OF_YEAR, MAX_JOB_LENGTH);
 	    Calendar jobEndDay = theJob.getEndDate();
 		
-	    if(jobStartDay.compareTo(jobEndDay) < 0) {
+	    if(((Calendar) jobStartDay).compareTo(jobEndDay) < 0) {
 	    	conflict = true;
 	    }
 		return conflict;
