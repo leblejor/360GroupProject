@@ -30,7 +30,13 @@ public class SystemView {
 		model.User user = login(ups);
 		
 		while(signedIn) {
-			if(user.getDescription().equals("Volunteer")) {
+			if (user == null) {
+				System.out.println("We cannot find the username you've entered");
+				System.out.println("Please try again");
+				System.out.println("----------------------------------------------------\n");
+				user = login(ups);
+			
+			} else if(user.getDescription().equals("Volunteer")) {
 				volunteerAction((model.Volunteer) user);
 			} else if(user.getDescription().equals("Park Manager")) {
 				parkManagerAction((model.ParkManager) user);
@@ -40,9 +46,11 @@ public class SystemView {
 			
 			if(!signedIn) {
 				System.out.println("See you next time!");
-				System.out.println("");
+				System.out.println("----------------------------------------------------\n");
+				System.out.println("Welcome to Urban Parks!");
 				user = login(ups);
 			}
+			
 		}
 		System.out.println("Program terminated.");
 		
@@ -57,6 +65,8 @@ public class SystemView {
 	 * A Staff member has no actions available to carry out other than sign out.
 	 */
 	private static void staffAction() {
+		System.out.println("----------------------------------------------------");
+		System.out.println("STAFF MENU\n");
 		System.out.println("What would you like to do today?");
 		System.out.println("1) Sign out");
 		System.out.print("Enter a number to decide what action you wish to take: ");
@@ -81,9 +91,17 @@ public class SystemView {
 		model.User user;
 		String userName = input.nextLine();
 		System.out.println("");
+		
 
 		if(!userName.equals("1")) {
 			user = ups.signIn(userName);
+			
+			// username not found
+			if (user == null) {
+				signedIn = true;
+				return null;
+			}
+			
 			System.out.println("Welcome, " + user.getDescription() + " " + user.getName() + ".");
 			signedIn = true;
 		} else {
@@ -101,6 +119,8 @@ public class SystemView {
 	 * @param theVolunteer the Volunteer making an action.
 	 */
 	private static void volunteerAction(model.Volunteer theVolunteer) {
+		System.out.println("----------------------------------------------------");
+		System.out.println("VOLUNTEER MENU\n");
 		System.out.println("What would you like to do today?");
 		System.out.println("1) Sign out");
 		System.out.println("2) Sign up for a new job");
@@ -127,6 +147,8 @@ public class SystemView {
 	 * @param theVolunteer Volunteer signing up for a Job.
 	 */
 	private static void volunteerSignupJob(model.Volunteer theVolunteer) {
+		System.out.println("----------------------------------------------------");
+		System.out.println("LIST OF AVAILABLE PENDING JOBS\n");
 		System.out.println("Here are the pending jobs.");
 		System.out.println("1) Go back to main menu");
 		
@@ -137,7 +159,6 @@ public class SystemView {
 		// Remove all Jobs in the list that the user has already signed up for
 		for(model.Job signedUp : volunteerJobList) {
 			if(jobListCopy.contains(signedUp)) {
-				System.out.println("found");
 				jobListCopy.remove(signedUp);
 			}
 		}
@@ -167,7 +188,8 @@ public class SystemView {
 									theVolunteer.getMinSignupDays() + " or more days from today.");
 			}
 		}
-		System.out.println("");
+		
+		
 	}
 	
 	/**
@@ -176,6 +198,9 @@ public class SystemView {
 	 * @param theVolunteer Volunteer to display their pending Jobs for.
 	 */
 	private static void volunteerViewCurrentJobs(model.Volunteer theVolunteer) {
+		
+		System.out.println("----------------------------------------------------");
+		System.out.println("VOLUNTEER LIST OF CURRENT JOBS\n");
 		System.out.println("Here are your current jobs: ");
 				
 		int count = 1;
@@ -193,6 +218,8 @@ public class SystemView {
 	 * @param theParkManager the ParkManager making an action.
 	 */
 	private static void parkManagerAction(model.ParkManager theParkManager) {
+		System.out.println("----------------------------------------------------");
+		System.out.println("PARK MANAGER MENU\n");
 		System.out.println("What would you like to do today?");
 		System.out.println("1) Sign out");
 		System.out.println("2) Create a new job");
@@ -219,6 +246,8 @@ public class SystemView {
 	 * @param theParkManager the ParkManager creating the Job.
 	 */
 	private static void parkManagerCreateJob(model.ParkManager theParkManager) {
+		System.out.println("----------------------------------------------------");
+		System.out.println("PARK MANAGER CREATE A JOB\n");
 		System.out.println("Please enter the following required Job Information: ");
 		
 		System.out.print("Job Title: ");
@@ -265,6 +294,8 @@ public class SystemView {
 	 * @param theParkManager ParkManager to display their Jobs for.
 	 */
 	private static void parkManagerViewCurrentJobs(model.ParkManager theParkManager) {
+		System.out.println("----------------------------------------------------");
+		System.out.println("PARK MANAGER LIST OF CURRENT JOBS\n");
 		System.out.println("Here are your current jobs: ");
 		
 		int count = 1;
