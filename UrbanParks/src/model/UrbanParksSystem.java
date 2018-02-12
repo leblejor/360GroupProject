@@ -53,7 +53,6 @@ public class UrbanParksSystem {
 	}
 	
 	
-	//@SuppressWarnings("unchecked") // Unneeded?
 	public void loadJobs() {
 		try {
             // Reading the object from a file
@@ -123,4 +122,7 @@ public class UrbanParksSystem {
 	public Map<String, User> getUsers() {
 		return myUsers;
 	}
+	
+
 }
+
