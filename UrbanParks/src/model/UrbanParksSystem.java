@@ -7,6 +7,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
+
+/**
+ * Handles systematic functions that the UI needs 
+ * such as signing in, loading and saving files
+ * for persistent storage.
+ * 
+ * @author Bryan Santos
+ *
+ */
+
 public class UrbanParksSystem {
 	private static final String SERIALIZED_USERS_FILE = "./storage/serializedUser.ser";
 	private static final String SERIALIZED_JOBS_FILE = "./storage/serializedJobs.ser";

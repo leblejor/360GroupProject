@@ -1,5 +1,13 @@
 package model;
 
+
+/**
+ * Holds a collection of pending jobs;
+ * Key is the JobName and Value is the Job Object
+ * 
+ * @author Bryan Santos
+ */
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -1,11 +1,11 @@
 package test;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-
 import static org.junit.Assert.*;
 
 import java.util.Calendar;
+
+import org.junit.Before;
+import org.junit.Test;
 
 import model.Job;
 import model.ParkManager;
@@ -18,7 +18,7 @@ import model.ParkManager;
 public class ParkManagerTest {	
 	private ParkManager myParkManager;
 	
-	@BeforeEach
+	@Before
 	public void setUp() throws Exception {
 		myParkManager = new ParkManager("derickzs", "Derick");		
 	}
