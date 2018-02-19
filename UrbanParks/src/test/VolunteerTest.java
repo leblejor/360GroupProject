@@ -38,7 +38,7 @@ public class VolunteerTest {
 
 	@Test
 	public void isSameDay_NoCurrentJobsYet_false() {
-		assertFalse("no prior jobs yet; return false", myVolunteer.isSameDay(myFirstJob));
+		assertFalse("no prior jobs yet; return false", myFirstJob.isSameDay(myFirstJob));
 		
 	}
 	

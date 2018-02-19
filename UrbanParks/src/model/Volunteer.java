@@ -38,12 +38,14 @@ public class Volunteer extends User {
 		int sameDayConflict = 1;
 		int minDaysConflict = 2;
 		
-		if (isSameDay(theJob)) {
-			return sameDayConflict;
-		} else if(checkDaysUntilJob(theJob)) {
+		for (Job j : myJobs) {
+			if (j.isOverlap(theJob)) {
+				return sameDayConflict;
+			}
+		} 
+		
+		if (theJob.checkDaysUntilJob(theJob, MIN_SIGNUP_DAYS)) {
 			return minDaysConflict;
-		} else {
-			myJobs.add(theJob);
 		}
 		
 		return successful;		
@@ -64,51 +66,7 @@ public class Volunteer extends User {
 		return 0;
 	}
 	
-	/**
-	 * Checks to see if the Job being signed up for conflicts with a Job in this Volunteer's
-	 * job list. Conflicts occur when there is overlap in the start and/or end days of two Jobs.
-	 * Returns true if there is a conflict, and false otherwise.
-	 * 
-	 * @param theJob the Job to check conflicts with.
-	 * @return true if there is a conflict, and false otherwise.
-	 */
-	public boolean isSameDay(Job theJob) { 
-		boolean conflict = false;
-		for(Job j : myJobs) {
-			if(j.isOverlap(theJob)) {
-				conflict = true;
-			}
-			
-		}
-		return conflict;
-	}
-	
-	/**
-	 * Checks that the Jobs start date occurs at least MIN_SIGNUP_DAYS days in the future. 
-	 * Returns true if Job starts within MIN_SIGNUP_DAYS days from today, false otherwise.
-	 * 
-	 * @param theJob the Job to check for days until it starts.
-	 * @return true if Job starts within MIN_SIGNUP_DAYS days from today, false otherwise.
-	 */
-	public boolean checkDaysUntilJob(Job theJob) {
-		boolean conflict = false;
 
-		Calendar futureDay = Calendar.getInstance();
-
-		//Add MIN_SIGNUP_DAYS days to the current date
-		futureDay.add(Calendar.DAY_OF_YEAR, MIN_SIGNUP_DAYS);
-
-		//Compare the current date +MIN_SIGNUP_DAYS with the start date of the job
-		//True if it is greater than the MIN_SIGNUP_DAYS
-		if (futureDay.compareTo(theJob.getStartDate()) > 0) {
-			conflict = true;
-		}
-		
-		
-		
-		
-		return conflict;
-	}
 
 	/*********** Getters ***********/
 	public List<Job> getJobsList() {

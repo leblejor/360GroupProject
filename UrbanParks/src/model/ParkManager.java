@@ -36,25 +36,23 @@ public class ParkManager extends User {
 	 * Returns 2 if the job start date - end date is longer than MAX_JOB_LENGTH
 	 * Returns 3 if the job end date is past the MAX_JOB_DURATION range from today
 	 */
-	public int createJob(UrbanParksSystem ups, String theJobName, 
-			              int theStartMonth, int theStartDay, int theStartYear,
-			   			  int theEndMonth,   int theEndDay,   int theEndYear) {
-		
-		Job theJob = new Job(theJobName, theStartMonth, theStartDay, theStartYear,
-								theEndMonth, theEndDay, theEndYear);
+	public int createJob(UrbanParksSystem ups, Job theJob) {
 		
 		int successful = 0;
 		int maxJobsConflict = 1;
 		int jobTooLongConflict = 2;
 		int jobTooFarConflict = 3;
+		int jobInThePastConflict = 4;
 
 		if (checkNumberOfJobsInSystem(ups)) { 
 			return maxJobsConflict;
-		} else if (checkJobDayLength(theJob)) {
+		} else if (theJob.checkJobDayLength(theJob, MAX_JOB_LENGTH)) {
 			return jobTooLongConflict;
-		} else if (checkJobEndDateMax(theJob)) { 
+		} else if (theJob.checkJobEndDateMax(theJob, MAX_SCHEDULE_WINDOW)) { 
 			return jobTooFarConflict;
-		} else { 
+		} else if (theJob.checkJobDatePast(theJob)) { 
+			return jobInThePastConflict;
+		} else { //successful 
 			ups.getPendingJobs().addJob(theJob); //System job list
 			myJobs.add(theJob); //local job list
 		}
@@ -65,29 +63,21 @@ public class ParkManager extends User {
 	
 	//Same as above, but doesn't use the UrbanParkSystem. 
 	//Used for testing.
-	public int createJobLocal(String theJobName, 
-			              int theStartMonth, int theStartDay, int theStartYear,
-			   			  int theEndMonth, int theEndDay, int theEndYear) {
-		
-		Job theJob = new Job(theJobName, theStartMonth, theStartDay, theStartYear,
-								theEndMonth, theEndDay, theEndYear);
+	public int createJobLocal(Job theJob) {
 		
 		int successful = 0;
 		int maxJobsConflict = 1;
 		int jobTooLongConflict = 2;
 		int jobTooFarConflict = 3;
-		
-		boolean maxJobs = checkNumberOfJobsInSystemLocal();
-		boolean jobLong = checkJobDayLength(theJob);
-		boolean jobFar = checkJobEndDateMax(theJob);
-		
-		if (maxJobs) { 
-			return maxJobsConflict;
-		} else if (jobLong) {
+		int jobInThePastConflict = 4;
+
+		if (theJob.checkJobDayLength(theJob, MAX_JOB_LENGTH)) {
 			return jobTooLongConflict;
-		} else if (jobFar) { 
+		} else if (theJob.checkJobEndDateMax(theJob, MAX_SCHEDULE_WINDOW)) { 
 			return jobTooFarConflict;
-		} else { 
+		} else if (theJob.checkJobDatePast(theJob)) { 
+			return jobInThePastConflict;
+		} else { //successful 
 			myJobs.add(theJob); //local job list
 		}
 		
@@ -128,45 +118,6 @@ public class ParkManager extends User {
 		return conflict;
 	}
 	
-	/**
-	 * Checks a jobs start and end dates to make sure it falls within 
-	 * the MAX_JOB_LENGTH range. A job cannot last longer than 
-	 * the MAX_JOB_LENGTH.
-	 * 
-	 * Returns false if the job has a valid job length 
-	 * Returns true if the job is longer than the valid job length
-	 */
-	public boolean checkJobDayLength(Job theJob) {
-		boolean conflict = false;
-		Object jobStartDay = theJob.getStartDate().clone();
-		((Calendar) jobStartDay).add(Calendar.DAY_OF_YEAR, MAX_JOB_LENGTH);
-	    Calendar jobEndDay = theJob.getEndDate();
-		
-	    if(((Calendar) jobStartDay).compareTo(jobEndDay) < 0) {
-	    	conflict = true;
-	    }
-		return conflict;
-	}
-	
-	/**
-	 * Checks a jobs end date to make sure it falls within the
-	 * MAX_JOB_DURATION range. A job cannot end after MAX_JOB_DURATION 
-	 * days from the current day.
-	 * 
-	 * Returns false if the job is within the MAX_JOB_DURATION range
-	 * Returns true if the job ends past the MAX_JOB_DURATION
-	 */
-	public boolean checkJobEndDateMax(Job theJob) {
-		boolean conflict = false;
-		Calendar jobEndDay = theJob.getEndDate(); 
-		Calendar today = Calendar.getInstance();
-		today.add(Calendar.DAY_OF_YEAR, MAX_SCHEDULE_WINDOW);
-		
-		if (today.compareTo(jobEndDay) < 0) {
-			conflict = true;
-		}
-		return conflict;
-	}
 
 	/*********** Getters ***********/
 	public List<Job> getJobsList() {
