@@ -24,6 +24,48 @@ public class ParkManagerTest {
 	}
 	
 	@Test
+	public void removeJob_JobExists_Equals() {
+		Calendar today = Calendar.getInstance();
+		
+		String title = "test";
+		
+		int theStartMonth = today.get(Calendar.MONTH) + 1;
+		int theStartDay = today.get(Calendar.DATE);
+		int theStartYear = today.get(Calendar.YEAR) ;
+
+		int theEndMonth = theStartMonth;
+		int theEndDay = theStartDay;
+		int theEndYear = theStartYear;
+		
+		myParkManager.createJobLocal(title, theStartMonth, theStartDay, theStartYear, theEndMonth, theEndDay, theEndYear);
+		
+		Job theJob = new Job(title, theStartMonth, theStartDay, theStartYear,
+				theEndMonth, theEndDay, theEndYear);
+		
+		assertEquals(0, myParkManager.removeJob(theJob));
+	}
+	
+	@Test
+	public void removeJob_JobDNE_Equals() {
+		Calendar today = Calendar.getInstance();
+		
+		String title = "test";
+		
+		int theStartMonth = today.get(Calendar.MONTH) + 1;
+		int theStartDay = today.get(Calendar.DATE);
+		int theStartYear = today.get(Calendar.YEAR) ;
+
+		int theEndMonth = theStartMonth;
+		int theEndDay = theStartDay;
+		int theEndYear = theStartYear;
+		
+		Job theJob = new Job(title, theStartMonth, theStartDay, theStartYear,
+				theEndMonth, theEndDay, theEndYear);
+		
+		assertEquals(1, myParkManager.removeJob(theJob));
+	}
+	
+	@Test
 	public void checkNumberOfJobsInSystem_FewerThanMaximum_False() {
 		myParkManager.createJobLocal("TestJob", 2, 14, 2018, 2, 15, 2018);
 

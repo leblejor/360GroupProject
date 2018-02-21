@@ -63,6 +63,28 @@ public class ParkManager extends User {
 	
 	}
 	
+	/**
+	 * Removes a Job from this ParkManager's list of myJobs. Will return 1 if theJob was not
+	 * found in the list of ParkMangare's job, otherwise will return 0 if successful. 
+	 * 
+	 * @param theJob Job to remove from the list.
+	 * @return 0 if removing the Job was successful, 1 if theJob was not found in the list.
+	 */
+	public int removeJob(Job theJob) {
+		// Did this similar to how createJob() works for error handling
+		int success = 0;
+		int jobDNE = 1;
+		
+		if(myJobs.contains(theJob)) {
+			myJobs.remove(theJob);
+			return success;
+		} else {
+			return jobDNE;
+		}
+	}
+	
+	
+	
 	//Same as above, but doesn't use the UrbanParkSystem. 
 	//Used for testing.
 	public int createJobLocal(String theJobName, 
