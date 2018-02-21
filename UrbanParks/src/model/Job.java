@@ -87,7 +87,7 @@ public class Job implements java.io.Serializable {
 	 * @param theJob the Job to check for days until it starts.
 	 * @return true if Job starts within MIN_SIGNUP_DAYS days from today, false otherwise.
 	 */
-	public boolean checkDaysUntilJob(Job theJob, int theMinDaySignup) {
+	public boolean checkDaysUntilJob(int theMinDaySignup) {
 		boolean conflict = false;
 
 		Calendar futureDay = Calendar.getInstance();
@@ -97,10 +97,10 @@ public class Job implements java.io.Serializable {
 
 		//Compare the current date +MIN_SIGNUP_DAYS with the start date of the job
 		//True if it is greater than the MIN_SIGNUP_DAYS
-		if (futureDay.compareTo(theJob.getStartDate()) > 0) {
+		if (futureDay.compareTo(myStartDate) > 0) {
 			conflict = true;
 		}	
-		
+		      
 		return conflict;
 	}
 
@@ -112,13 +112,12 @@ public class Job implements java.io.Serializable {
 	 * Returns false if the job has a valid job length 
 	 * Returns true if the job is longer than the valid job length
 	 */
-	public boolean checkJobDayLength(Job theJob, int theMaxJobLength) {
+	public boolean checkJobDayLength(int theMaxJobLength) {
 		boolean conflict = false;
-		Calendar jobStartDay = (Calendar) theJob.getStartDate().clone();
+		Calendar jobStartDay = (Calendar) myStartDate.clone();
 		jobStartDay.add(Calendar.DAY_OF_YEAR, theMaxJobLength);
-	    Calendar jobEndDay = theJob.getEndDate();
 		
-	    if(((Calendar) jobStartDay).compareTo(jobEndDay) < 0) {
+	    if(((Calendar) jobStartDay).compareTo(myEndDate) < 0) {
 	    	conflict = true;
 	    }
 		return conflict;
@@ -133,13 +132,12 @@ public class Job implements java.io.Serializable {
 	 * Returns false if the job is within the theMaxScheduleWindow range
 	 * Returns true if the job ends past the theMaxScheduleWindow
 	 */
-	public boolean checkJobEndDateMax(Job theJob, int theMaxScheduleWindow) {
+	public boolean checkJobEndDateMax(int theMaxScheduleWindow) {
 		boolean conflict = false;
-		Calendar jobEndDay = theJob.getEndDate(); 
 		Calendar today = Calendar.getInstance();
 		today.add(Calendar.DAY_OF_YEAR, theMaxScheduleWindow);
 		
-		if (today.compareTo(jobEndDay) < 0) {
+		if (today.compareTo(myEndDate) < 0) {
 			conflict = true;
 		}
 		return conflict;
@@ -152,16 +150,16 @@ public class Job implements java.io.Serializable {
 	 * @param theJob
 	 * @return true if a jobs start or end dates occur in the past, false otherwise.
 	 */
-	public boolean checkJobDatePast(Job theJob) {
+	public boolean checkJobDatePast() {
 		boolean conflict = false; 
 		Calendar today = Calendar.getInstance();
 		
-		if (theJob.getStartDate().compareTo(today) < 0) {
+		if (myStartDate.compareTo(today) < 0) {
 			conflict = true;
 		}
 		
-		if (theJob.getEndDate().compareTo(today) > 0) {
-			
+		if (myEndDate.compareTo(today) > 0) {
+			conflict = true;
 		}
 		return conflict;
 	}

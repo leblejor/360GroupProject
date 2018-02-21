@@ -15,11 +15,11 @@ public class Volunteer extends User {
 	private static final long serialVersionUID = 1L;
 
 	//Volunteer cannot sign up for job that begins in MIN_SIGNUP_DAYS
-	private static final int MIN_SIGNUP_DAYS = 2;
+	private static final int MIN_SIGNUP_DAYS = 3;
 	
 	private List<Job> myJobs;
 	
-	public Volunteer(final String theUsername, final String theName) {
+	public Volunteer(String theUsername, String theName) {
 		super(theUsername, theName, "Volunteer");
 		myJobs = new ArrayList<Job>();
 	}
@@ -44,17 +44,23 @@ public class Volunteer extends User {
 			}
 		} 
 		
-		if (theJob.checkDaysUntilJob(theJob, MIN_SIGNUP_DAYS)) {
+		if (theJob.checkDaysUntilJob(MIN_SIGNUP_DAYS)) {
 			return minDaysConflict;
 		}
+		
+		myJobs.add(theJob);
 		
 		return successful;		
 	}
 	
 	public int removeJob(Job theJob) {
-		
-		if (!myJobs.contains(theJob)) {
+				
+		if (theJob.checkDaysUntilJob(MIN_SIGNUP_DAYS)) { 
 			return 1;
+		}
+				
+		if (!myJobs.contains(theJob)) { //shouldn't ever happen?
+			return 2; 
 		}
 		
 		for (int i = 0; i < myJobs.size(); i++) {

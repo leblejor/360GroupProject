@@ -1,5 +1,6 @@
 package test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -27,98 +28,87 @@ public class VolunteerTest {
 	public void setUp() throws Exception {
 		myVolunteer = new Volunteer("Paolo186", "Bryan");
 		myFirstJob = new Job();
-		myFirstJob.getStartDate().add(Calendar.DATE, 3);
-		myFirstJob.getEndDate().add(Calendar.DATE, 5);
+		myFirstJob.getStartDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 1);
+		myFirstJob.getEndDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 2);
 		
 		mySecondJob = new Job();
-		mySecondJob.getStartDate().add(Calendar.DATE, 3);
-		mySecondJob.getEndDate().add(Calendar.DATE, 5);
-		
-	}
-
-	@Test
-	public void isSameDay_NoCurrentJobsYet_false() {
-		assertFalse("no prior jobs yet; return false", myFirstJob.isSameDay(myFirstJob));
+		mySecondJob.getStartDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 1);
+		mySecondJob.getEndDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 2);
 		
 	}
 	
 	@Test
-	public void isSameDay_OneJobAlreadyWithoutConflict_false() {
-		
-		myVolunteer.signup(myFirstJob);		
-		assertFalse("isSameDay() should've returned false", myVolunteer.isSameDay(new Job()));
+	public void signup_SuccessfulSignup_0() {
+		int successful = myVolunteer.signup(myFirstJob);
+
+		assertEquals(0, successful);
 	}
 
-	
 	@Test
-	public void isSameDay_OneJobAlreadyWithMyEndDayInConflictWithOtherJobStartDay_true() {
-		
-		
-		
-		mySecondJob.getStartDate().add(Calendar.DATE, 2);
-		mySecondJob.getEndDate().add(Calendar.DATE, 2);
+	public void signup_SameDayConflict_1() {
 		myVolunteer.signup(myFirstJob);
-		assertTrue("My End day is in conflict with other start day; should return true",
-				myVolunteer.isSameDay(mySecondJob));
+		int sameDayConflict = myVolunteer.signup(mySecondJob);
+
+		assertEquals(1, sameDayConflict);
 	}
 	
 	@Test
-	public void isSameDay_OneJobAlreadyWithMyStartDayInConflictWithOtherJobEndDay_true() {
+	public void signup_MinDaysConflict_2() {
+		Job jobTomorrow = new Job();
+		jobTomorrow.getStartDate().add(Calendar.DATE, 1);
 		
-		myFirstJob.getStartDate().add(Calendar.DATE, 2);
-		myFirstJob.getEndDate().add(Calendar.DATE, 2);
-
+		int minDayConflict = myVolunteer.signup(jobTomorrow);
+		
+		assertEquals(2, minDayConflict);
+	}
+	
+	@Test
+	public void removeJob_JobStartsOnSameDay_1() {
 		myVolunteer.signup(myFirstJob);
-		assertTrue("My start day is in conflict with other end day; should return true",
-				myVolunteer.isSameDay(mySecondJob));
+		myFirstJob.getStartDate().add(Calendar.DATE, -(myVolunteer.getMinSignupDays() + 1));
+		myFirstJob.getEndDate().add(Calendar.DATE, -(myVolunteer.getMinSignupDays() + 2));
+		
+		int sameDayConflict = myVolunteer.removeJob(myFirstJob);
+		
+		assertEquals(1, sameDayConflict);
 	}
 	
-
+	@Test
+	public void removeJob_MultiDayJobStartsBeforeToday_1() {
+		Job multiDayJob = new Job();
+		multiDayJob.getStartDate().add(Calendar.DATE, myVolunteer.getMinSignupDays());
+		multiDayJob.getEndDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 2);
+		
+		myVolunteer.signup(multiDayJob);
+		
+		multiDayJob.getStartDate().add(Calendar.DATE, -(myVolunteer.getMinSignupDays() + 1));
+		multiDayJob.getEndDate().add(Calendar.DATE, -(myVolunteer.getMinSignupDays() + 2));
+		
+		int jobStartsBeforeToday = myVolunteer.removeJob(multiDayJob);
+		
+		assertEquals(1, jobStartsBeforeToday);
+	}
 	
 	@Test
-	public void isSameDay_OneJobAlreadyWithOtherStartIsDuringMyJob_true() {
-		
-		mySecondJob.getStartDate().add(Calendar.DATE, 1);
-		
+	public void removeJob_JobStartsMoreThanMinDaysAway_0() {
 		myVolunteer.signup(myFirstJob);
-		assertTrue("My start day is during another job; should return true",
-				myVolunteer.isSameDay(mySecondJob));
-	}
-	
-	@Test
-	public void isSameDay_OneJobAlreadyWithOtherEndIsDuringMyJob_true() {
-		mySecondJob.getEndDate().add(Calendar.DATE, 1);
+		int jobInFuture = myVolunteer.removeJob(myFirstJob);
 		
-		myVolunteer.signup(myFirstJob);
-		assertTrue("My start day is during another job; should return true",
-				myVolunteer.isSameDay(mySecondJob));
-	}
-	
-	@Test
-	public void checkDaysUntilJob_MoreThanMinDays_False() {
-		Job jobMoreThanMinDays = new Job();
-		Calendar futureDate = jobMoreThanMinDays.getStartDate();	
-		futureDate.add(Calendar.DAY_OF_YEAR, myVolunteer.getMinSignupDays() + 1);
-
-		assertFalse(myVolunteer.checkDaysUntilJob(jobMoreThanMinDays));
+		assertEquals(0, jobInFuture);
 	}
 
 	@Test
-	public void checkDaysUntilJob_JobExactlyMinDaysLater_False() {
-		Job jobMinDaysLater = new Job();
-		Calendar futureDate = jobMinDaysLater.getStartDate();
-		futureDate.add(Calendar.DATE, myVolunteer.getMinSignupDays());
-
-		assertFalse(myVolunteer.checkDaysUntilJob(jobMinDaysLater));
-	}
-	
-	@Test
-	public void checkDaysUntilJob_JobLessThanMinDays_True() {
-		Job jobLessThanMinDays = new Job();
-		Calendar futureDate = jobLessThanMinDays.getStartDate();
-		futureDate.add(Calendar.DATE, myVolunteer.getMinSignupDays() - 1);
-
-		assertTrue(myVolunteer.checkDaysUntilJob(jobLessThanMinDays));
+	public void removeJob_JobStartsExactlyMinDaysAway_0() {
+		Job jobMinDaysAway = new Job();
+		jobMinDaysAway.getStartDate().add(Calendar.DATE, myVolunteer.getMinSignupDays());
+		jobMinDaysAway.getEndDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 1);
+		
+		myVolunteer.signup(jobMinDaysAway);
+		
+		int jobStartsExactlyMinDaysAway = myVolunteer.removeJob(jobMinDaysAway);
+		
+		assertEquals(0, jobStartsExactlyMinDaysAway);
+		
 	}
 
 }

@@ -11,9 +11,9 @@ import java.util.List;
  * @author Bryan Santos
  */
 public class ParkManager extends User {
-	private static final int MAX_PENDING_JOBS = 20;
-	private static final int MAX_JOB_LENGTH = 3;
-	private static final int MAX_SCHEDULE_WINDOW = 75;
+	private static final int MAX_PENDING_JOBS = 10;
+	private static final int MAX_JOB_LENGTH = 4;
+	private static final int MAX_SCHEDULE_WINDOW = 60;
 	private static final long serialVersionUID = 1L;
 	
 	private List<Job> myJobs;
@@ -35,6 +35,7 @@ public class ParkManager extends User {
 	 * Returns 1 there are already the maximum number of jobs in the system
 	 * Returns 2 if the job start date - end date is longer than MAX_JOB_LENGTH
 	 * Returns 3 if the job end date is past the MAX_JOB_DURATION range from today
+	 * Returns 4 if the job has a date that is in the past
 	 */
 	public int createJob(UrbanParksSystem ups, Job theJob) {
 		
@@ -46,11 +47,11 @@ public class ParkManager extends User {
 
 		if (checkNumberOfJobsInSystem(ups)) { 
 			return maxJobsConflict;
-		} else if (theJob.checkJobDayLength(theJob, MAX_JOB_LENGTH)) {
+		} else if (theJob.checkJobDayLength(MAX_JOB_LENGTH)) {
 			return jobTooLongConflict;
-		} else if (theJob.checkJobEndDateMax(theJob, MAX_SCHEDULE_WINDOW)) { 
+		} else if (theJob.checkJobEndDateMax(MAX_SCHEDULE_WINDOW)) { 
 			return jobTooFarConflict;
-		} else if (theJob.checkJobDatePast(theJob)) { 
+		} else if (theJob.checkJobDatePast()) { 
 			return jobInThePastConflict;
 		} else { //successful 
 			ups.getPendingJobs().addJob(theJob); //System job list
@@ -71,11 +72,11 @@ public class ParkManager extends User {
 		int jobTooFarConflict = 3;
 		int jobInThePastConflict = 4;
 
-		if (theJob.checkJobDayLength(theJob, MAX_JOB_LENGTH)) {
+		if (theJob.checkJobDayLength(MAX_JOB_LENGTH)) {
 			return jobTooLongConflict;
-		} else if (theJob.checkJobEndDateMax(theJob, MAX_SCHEDULE_WINDOW)) { 
+		} else if (theJob.checkJobEndDateMax(MAX_SCHEDULE_WINDOW)) { 
 			return jobTooFarConflict;
-		} else if (theJob.checkJobDatePast(theJob)) { 
+		} else if (theJob.checkJobDatePast()) { 
 			return jobInThePastConflict;
 		} else { //successful 
 			myJobs.add(theJob); //local job list
