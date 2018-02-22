@@ -15,11 +15,11 @@ public class Volunteer extends User {
 	private static final long serialVersionUID = 1L;
 
 	//Volunteer cannot sign up for job that begins in MIN_SIGNUP_DAYS
-	private static final int MIN_SIGNUP_DAYS = 2;
+	private static final int MIN_SIGNUP_DAYS = 3;
 	
 	private List<Job> myJobs;
 	
-	public Volunteer(final String theUsername, final String theName) {
+	public Volunteer(String theUsername, String theName) {
 		super(theUsername, theName, "Volunteer");
 		myJobs = new ArrayList<Job>();
 	}
@@ -38,21 +38,29 @@ public class Volunteer extends User {
 		int sameDayConflict = 1;
 		int minDaysConflict = 2;
 		
-		if (isSameDay(theJob)) {
-			return sameDayConflict;
-		} else if(checkDaysUntilJob(theJob)) {
+		for (Job j : myJobs) {
+			if (j.isOverlap(theJob)) {
+				return sameDayConflict;
+			}
+		} 
+		
+		if (theJob.checkDaysUntilJob(MIN_SIGNUP_DAYS)) {
 			return minDaysConflict;
-		} else {
-			myJobs.add(theJob);
 		}
+		
+		myJobs.add(theJob);
 		
 		return successful;		
 	}
 	
 	public int removeJob(Job theJob) {
-		
-		if (!myJobs.contains(theJob)) {
+				
+		if (theJob.checkDaysUntilJob(MIN_SIGNUP_DAYS)) { 
 			return 1;
+		}
+				
+		if (!myJobs.contains(theJob)) { //shouldn't ever happen?
+			return 2; 
 		}
 		
 		for (int i = 0; i < myJobs.size(); i++) {
@@ -64,51 +72,7 @@ public class Volunteer extends User {
 		return 0;
 	}
 	
-	/**
-	 * Checks to see if the Job being signed up for conflicts with a Job in this Volunteer's
-	 * job list. Conflicts occur when there is overlap in the start and/or end days of two Jobs.
-	 * Returns true if there is a conflict, and false otherwise.
-	 * 
-	 * @param theJob the Job to check conflicts with.
-	 * @return true if there is a conflict, and false otherwise.
-	 */
-	public boolean isSameDay(Job theJob) { 
-		boolean conflict = false;
-		for(Job j : myJobs) {
-			if(j.isOverlap(theJob)) {
-				conflict = true;
-			}
-			
-		}
-		return conflict;
-	}
-	
-	/**
-	 * Checks that the Jobs start date occurs at least MIN_SIGNUP_DAYS days in the future. 
-	 * Returns true if Job starts within MIN_SIGNUP_DAYS days from today, false otherwise.
-	 * 
-	 * @param theJob the Job to check for days until it starts.
-	 * @return true if Job starts within MIN_SIGNUP_DAYS days from today, false otherwise.
-	 */
-	public boolean checkDaysUntilJob(Job theJob) {
-		boolean conflict = false;
 
-		Calendar futureDay = Calendar.getInstance();
-
-		//Add MIN_SIGNUP_DAYS days to the current date
-		futureDay.add(Calendar.DAY_OF_YEAR, MIN_SIGNUP_DAYS);
-
-		//Compare the current date +MIN_SIGNUP_DAYS with the start date of the job
-		//True if it is greater than the MIN_SIGNUP_DAYS
-		if (futureDay.compareTo(theJob.getStartDate()) > 0) {
-			conflict = true;
-		}
-		
-		
-		
-		
-		return conflict;
-	}
 
 	/*********** Getters ***********/
 	public List<Job> getJobsList() {

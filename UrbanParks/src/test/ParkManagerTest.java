@@ -67,15 +67,17 @@ public class ParkManagerTest {
 	
 	@Test
 	public void checkNumberOfJobsInSystem_FewerThanMaximum_False() {
-		myParkManager.createJobLocal("TestJob", 2, 14, 2018, 2, 15, 2018);
+		Job validJob = new Job("TestJob", 3, 14, 2018, 3, 15, 2018);
+		myParkManager.createJobLocal(validJob);
 
 		assertFalse(myParkManager.checkNumberOfJobsInSystemLocal());
 	}
 
 	@Test
 	public void checkNumberOfJobsInSystem_OneLessThanMaximum_False() {
+		Job validJob = new Job("TestJob", 3, 14, 2018, 3, 15, 2018);
 		for (int i = 0; i < myParkManager.getMaxPendingJobs() - 1; i++) {
-			myParkManager.createJobLocal("TestJob", 2, 14, 2018, 2, 15, 2018);
+			myParkManager.createJobLocal(validJob);
 		}
 		
 		assertFalse(myParkManager.checkNumberOfJobsInSystemLocal());
@@ -83,8 +85,9 @@ public class ParkManagerTest {
 	
 	@Test
 	public void checkNumberOfJobsInSystem_ExactlyMaxJobsInSystem_True() {
+		Job validJob = new Job("TestJob", 3, 14, 2018, 3, 15, 2018);
 		for (int i = 0; i < myParkManager.getMaxPendingJobs(); i++) {
-			myParkManager.createJobLocal("TestJob", 2, 14, 2018, 2, 15, 2018);
+			myParkManager.createJobLocal(validJob);
 		}
 		
 		assertTrue(myParkManager.checkNumberOfJobsInSystemLocal());
@@ -102,7 +105,7 @@ public class ParkManagerTest {
 		
 		validLengthJob.setEndDate(month, day, year);
 		
-		assertFalse(myParkManager.checkJobDayLength(validLengthJob));		
+		assertFalse(validLengthJob.checkJobDayLength(myParkManager.getMaxJobLength()));		
 	}
 	
 	@Test 
@@ -117,7 +120,7 @@ public class ParkManagerTest {
 		
 		validLengthJob.setEndDate(month, day, year);
 		
-		assertFalse(myParkManager.checkJobDayLength(validLengthJob));	
+		assertFalse(validLengthJob.checkJobDayLength(myParkManager.getMaxJobLength()));	
 	}
 	
 	@Test
@@ -126,7 +129,7 @@ public class ParkManagerTest {
 		invalidLengthJob.setStartDate(2, 14, 2018);
 		invalidLengthJob.setEndDate(2, 14 + myParkManager.getMaxJobLength() + 1, 2018);
 		
-		assertTrue(myParkManager.checkJobDayLength(invalidLengthJob));	
+		assertTrue(invalidLengthJob.checkJobDayLength(myParkManager.getMaxJobLength()));	
 	}
 	
 	@Test
@@ -141,7 +144,7 @@ public class ParkManagerTest {
 		
 		validJobDuration.setEndDate(month, day, year);
 		
-		assertFalse(myParkManager.checkJobEndDateMax(validJobDuration));
+		assertFalse(validJobDuration.checkJobEndDateMax(myParkManager.getMaxScheduleWindow()));
 	}
 	
 	@Test
@@ -156,7 +159,7 @@ public class ParkManagerTest {
 		
 		validJobDuration.setEndDate(month, day, year);
 		
-		assertFalse(myParkManager.checkJobEndDateMax(validJobDuration));
+		assertFalse(validJobDuration.checkJobEndDateMax(myParkManager.getMaxScheduleWindow()));
 	}
 	
 	@Test
@@ -171,7 +174,7 @@ public class ParkManagerTest {
 		
 		invalidJobDuration.setEndDate(month, day, year);
 		
-		assertTrue(myParkManager.checkJobEndDateMax(invalidJobDuration));		
+		assertTrue(invalidJobDuration.checkJobEndDateMax(myParkManager.getMaxScheduleWindow()));		
 	}
 
 }
