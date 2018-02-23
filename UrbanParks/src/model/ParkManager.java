@@ -1,8 +1,7 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a Park Manager.
@@ -11,16 +10,14 @@ import java.util.List;
  * @author Bryan Santos
  */
 public class ParkManager extends User {
-	private static final int MAX_PENDING_JOBS = 10;
-	private static final int MAX_JOB_LENGTH = 4;
-	private static final int MAX_SCHEDULE_WINDOW = 60;
+	
 	private static final long serialVersionUID = 1L;
 	
-	private List<Job> myJobs;
+	private Set<Job> myJobs;
 	
 	public ParkManager(String theUsername, String theName) {
 		super(theUsername, theName, "Park Manager");
-		myJobs = new ArrayList<Job>();
+		myJobs = new HashSet<Job>();
 	}
 	
 	/**
@@ -47,14 +44,14 @@ public class ParkManager extends User {
 
 		if (checkNumberOfJobsInSystem(ups)) { 
 			return maxJobsConflict;
-		} else if (theJob.checkJobDayLength(MAX_JOB_LENGTH)) {
+		} else if (theJob.checkJobDayLength(Staff.getMaxJobLength())) {
 			return jobTooLongConflict;
-		} else if (theJob.checkJobEndDateMax(MAX_SCHEDULE_WINDOW)) { 
+		} else if (theJob.checkJobEndDateMax(Staff.getMaxScheduleWindow())) { 
 			return jobTooFarConflict;
 		} else if (theJob.checkJobDatePast()) { 
 			return jobInThePastConflict;
 		} else { //successful 
-			ups.getPendingJobs().addJob(theJob); //System job list
+			ups.addJobToCollection(theJob); //System job list
 			myJobs.add(theJob); //local job list
 		}
 		
@@ -89,14 +86,14 @@ public class ParkManager extends User {
 	public int createJobLocal(Job theJob) {
 		
 		int successful = 0;
-		int maxJobsConflict = 1;
+		int maxJobsConflict = 1; // never used???
 		int jobTooLongConflict = 2;
 		int jobTooFarConflict = 3;
 		int jobInThePastConflict = 4;
 
-		if (theJob.checkJobDayLength(MAX_JOB_LENGTH)) {
+		if (theJob.checkJobDayLength(Staff.getMaxJobLength())) {
 			return jobTooLongConflict;
-		} else if (theJob.checkJobEndDateMax(MAX_SCHEDULE_WINDOW)) { 
+		} else if (theJob.checkJobEndDateMax(Staff.getMaxScheduleWindow())) { 
 			return jobTooFarConflict;
 		} else if (theJob.checkJobDatePast()) { 
 			return jobInThePastConflict;
@@ -119,10 +116,10 @@ public class ParkManager extends User {
 	public boolean checkNumberOfJobsInSystem(UrbanParksSystem ups) {
 		boolean conflict = false;
 		
-		PendingJobs pending = ups.getPendingJobs();
-		List<Job> list = pending.getPendingJobsList();
 		
-		if (list.size() >= MAX_PENDING_JOBS) {
+		Set<Job> set = ups.getPendingJobsCollection();
+		
+		if (set.size() >= Staff.getMaxPendingJobs()) {
 			conflict = true;
 		}
 		
@@ -134,7 +131,7 @@ public class ParkManager extends User {
 	public boolean checkNumberOfJobsInSystemLocal() {
 		boolean conflict = false;
 		
-		if (myJobs.size() >= MAX_PENDING_JOBS) {
+		if (myJobs.size() >= Staff.getMaxPendingJobs()) {
 			conflict = true;
 		}
 		
@@ -143,19 +140,9 @@ public class ParkManager extends User {
 	
 
 	/*********** Getters ***********/
-	public List<Job> getJobsList() {
+	public Set<Job> getJobsList() {
 		return myJobs;
 	}
 	
-	public int getMaxPendingJobs() {
-		return MAX_PENDING_JOBS;
-	}
 	
-	public int getMaxJobLength() {
-		return MAX_JOB_LENGTH;
-	}
-	
-	public int getMaxScheduleWindow() {
-		return MAX_SCHEDULE_WINDOW;
-	}	
 }

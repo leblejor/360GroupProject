@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import model.Job;
+import model.Staff;
 import model.Volunteer;
 
 public class JobTest {
@@ -93,27 +94,27 @@ public class JobTest {
 	public void checkDaysUntilJob_MoreThanMinDays_False() {
 		Job jobMoreThanMinDays = new Job();
 		Calendar futureDate = jobMoreThanMinDays.getStartDate();	
-		futureDate.add(Calendar.DAY_OF_YEAR, myVolunteer.getMinSignupDays() + 1);
+		futureDate.add(Calendar.DAY_OF_YEAR, Staff.getMinSignUpDays() + 1);
 
-		assertFalse(jobMoreThanMinDays.checkDaysUntilJob(myVolunteer.getMinSignupDays()));
+		assertFalse(jobMoreThanMinDays.checkDaysUntilJob(Staff.getMinSignUpDays()));
 	}
 
 	@Test
 	public void checkDaysUntilJob_JobExactlyMinDaysLater_False() {
 		Job jobMinDaysLater = new Job();
 		Calendar futureDate = jobMinDaysLater.getStartDate();
-		futureDate.add(Calendar.DATE, myVolunteer.getMinSignupDays());
+		futureDate.add(Calendar.DATE, Staff.getMinSignUpDays());
 
-		assertFalse(jobMinDaysLater.checkDaysUntilJob(myVolunteer.getMinSignupDays()));
+		assertFalse(jobMinDaysLater.checkDaysUntilJob(Staff.getMinSignUpDays()));
 	}
 	
 	@Test
 	public void checkDaysUntilJob_JobLessThanMinDays_True() {
 		Job jobLessThanMinDays = new Job();
 		Calendar futureDate = jobLessThanMinDays.getStartDate();
-		futureDate.add(Calendar.DATE, myVolunteer.getMinSignupDays() - 1);
+		futureDate.add(Calendar.DATE, Staff.getMinSignUpDays() - 1);
 
-		assertTrue(jobLessThanMinDays.checkDaysUntilJob(myVolunteer.getMinSignupDays()));
+		assertTrue(jobLessThanMinDays.checkDaysUntilJob(Staff.getMinSignUpDays()));
 	}
 
 }

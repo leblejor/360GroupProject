@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -21,8 +22,10 @@ public class UrbanParksSystem {
 	private static final String SERIALIZED_USERS_FILE = "./storage/serializedUser.ser";
 	private static final String SERIALIZED_JOBS_FILE = "./storage/serializedJobs.ser";
 	
+	
 	private Map<String, User> myUsers;
-	private PendingJobs myPendingJobs;
+	//private PendingJobs myPendingJobs;
+	private Map<String, Job> myPendingJobsCollection;
 	
 	public UrbanParksSystem() {		
 		loadUsers();
@@ -53,6 +56,7 @@ public class UrbanParksSystem {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public void loadJobs() {
 		try {
             // Reading the object from a file
@@ -60,7 +64,7 @@ public class UrbanParksSystem {
             ObjectInputStream in = new ObjectInputStream(file);
              
             // Method for deserialization of object
-            myPendingJobs = (PendingJobs) in.readObject();
+            myPendingJobsCollection = (Map<String, Job>) in.readObject();
              
             in.close();
             file.close();
@@ -75,14 +79,14 @@ public class UrbanParksSystem {
 		}
 	}
 	
-	public void saveUsers(Map<String, User> theUsers) {
+	public void saveUsers() {
 		try {
             // Reading the object from a file
             FileOutputStream file = new FileOutputStream(SERIALIZED_USERS_FILE);
             ObjectOutputStream out = new ObjectOutputStream(file);
              
-            // Method for deserialization of object
-            out.writeObject(theUsers);
+            // Method for serialization of object
+            out.writeObject(myUsers);
              
             out.close();
             file.close(); 
@@ -93,14 +97,14 @@ public class UrbanParksSystem {
         } 
 	}
 
-	public void saveJobs(PendingJobs thePendingJobs) {
+	public void saveJobs() {
 		try {
             // Reading the object from a file
             FileOutputStream file = new FileOutputStream(SERIALIZED_JOBS_FILE);
             ObjectOutputStream out = new ObjectOutputStream(file);
              
-            // Method for deserialization of object
-            out.writeObject(thePendingJobs);
+            // Method for serialization of object
+            out.writeObject(myPendingJobsCollection);
              
             out.close();
             file.close();
@@ -115,13 +119,19 @@ public class UrbanParksSystem {
 		return myUsers.get(theUsername);
 	}
 	
-	public PendingJobs getPendingJobs() {
-		return myPendingJobs;
+	public Set<Job> getPendingJobsCollection() {
+		return (Set<Job>) myPendingJobsCollection.values();
+		
 	}
 	
-	public Map<String, User> getUsers() {
-		return myUsers;
+	public Job getSinglePendingJob(String theJobName) {
+		return myPendingJobsCollection.get(theJobName);
 	}
+	
+	public void addJobToCollection(Job theJob) {		
+		myPendingJobsCollection.put(theJob.getJobName(), theJob);
+	}
+	
 	
 
 }

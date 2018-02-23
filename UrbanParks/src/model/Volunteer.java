@@ -1,8 +1,7 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a volunteer.
@@ -13,15 +12,12 @@ import java.util.List;
 public class Volunteer extends User {
 	/** SerialID for storage */
 	private static final long serialVersionUID = 1L;
-
-	//Volunteer cannot sign up for job that begins in MIN_SIGNUP_DAYS
-	private static final int MIN_SIGNUP_DAYS = 3;
 	
-	private List<Job> myJobs;
+	private Set<Job> myJobs;
 	
 	public Volunteer(String theUsername, String theName) {
 		super(theUsername, theName, "Volunteer");
-		myJobs = new ArrayList<Job>();
+		myJobs = new HashSet<Job>();
 	}
 	
 	/**
@@ -44,7 +40,7 @@ public class Volunteer extends User {
 			}
 		} 
 		
-		if (theJob.checkDaysUntilJob(MIN_SIGNUP_DAYS)) {
+		if (theJob.checkDaysUntilJob(Staff.getMinSignUpDays())) {
 			return minDaysConflict;
 		}
 		
@@ -55,19 +51,15 @@ public class Volunteer extends User {
 	
 	public int removeJob(Job theJob) {
 				
-		if (theJob.checkDaysUntilJob(MIN_SIGNUP_DAYS)) { 
+		if (theJob.checkDaysUntilJob(Staff.getMinSignUpDays())) { 
 			return 1;
 		}
 				
 		if (!myJobs.contains(theJob)) { //shouldn't ever happen?
 			return 2; 
 		}
-		
-		for (int i = 0; i < myJobs.size(); i++) {
-			if (myJobs.get(i).equals(theJob)) {
-				myJobs.remove(i);
-			}
-		}
+
+		myJobs.remove(theJob);
 		
 		return 0;
 	}
@@ -75,12 +67,10 @@ public class Volunteer extends User {
 
 
 	/*********** Getters ***********/
-	public List<Job> getJobsList() {
+	
+	
+	public Set<Job> getJobsList() {
 		return myJobs;
-	}
-
-	public int getMinSignupDays() {
-		return MIN_SIGNUP_DAYS;
 	}
 	
 }
