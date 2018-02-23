@@ -15,6 +15,7 @@ public class Job implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String myJobName;
+	private String myJobDescription;
 	private Calendar myStartDate;
 	private Calendar myEndDate;
 	
@@ -35,9 +36,11 @@ public class Job implements java.io.Serializable {
 	 * @param theEndDay Day the Job ends on.
 	 * @param theEndYear Year the Job ends in.
 	 */
-	public Job(String theJobName, int theStartMonth, int theStartDay, int theStartYear,
-			   					  int theEndMonth,   int theEndDay,   int theEndYear) {
+	public Job(String theJobName, String theJobDescription,
+			int theStartMonth, int theStartDay, int theStartYear,
+			int theEndMonth,   int theEndDay,   int theEndYear) {
 		myJobName = theJobName;
+		myJobDescription = theJobDescription;
 		myStartDate = new GregorianCalendar(theStartYear, theStartMonth - 1, theStartDay);
 		myEndDate = new GregorianCalendar(theEndYear, theEndMonth - 1, theEndDay);
 		
@@ -56,23 +59,21 @@ public class Job implements java.io.Serializable {
 	 */
 	public boolean isOverlap(Job theOther) {
 		
-		boolean isOverlap = false;
 		Calendar theOtherStartDate = theOther.getStartDate();
 		Calendar theOtherEndDate = theOther.getEndDate();
 		
 		// check if otherStartDate is during myStartDate and myEndDate
 		if (theOtherStartDate.after(myStartDate) && theOtherStartDate.before(myEndDate) ) {
-			isOverlap = true;
+			return true;
 		}
 		
 		// check if otherEndDate is during my StartDate and myEndDate
-		else if (theOtherEndDate.after(myStartDate) && theOtherEndDate.before(myEndDate) ) {
-			isOverlap = true;
+		if (theOtherEndDate.after(myStartDate) && theOtherEndDate.before(myEndDate) ) {
+			return true;
 		}
 		
 		// check for other potential overlapping cases
-		return isOverlap ||
-			   isConflictingWithMyStartDate(theOtherStartDate) ||
+		return isConflictingWithMyStartDate(theOtherStartDate) ||
 			   isConflictingWithMyStartDate(theOtherEndDate) ||
 			   isConflictingWithMyEndDate(theOtherStartDate) ||
 			   isConflictingWithMyEndDate(theOtherEndDate);
@@ -189,6 +190,10 @@ public class Job implements java.io.Serializable {
 		return myJobName;
 	}
 	
+	public String getJobDescription() {
+		return myJobDescription;
+	}
+	
 	public Calendar getStartDate() {
 		return myStartDate;
 	}
@@ -197,8 +202,12 @@ public class Job implements java.io.Serializable {
 		return myEndDate;
 	}
 
-	public void setName(String theJobName) {
+	public void setJobName(String theJobName) {
 		myJobName = theJobName;
+	}
+	
+	public void setJobDescription(String theJobDescription) {
+		myJobDescription = theJobDescription;
 	}
 	
 	public void setStartDate(int theMonth, int theDay, int theYear) {
@@ -225,13 +234,15 @@ public class Job implements java.io.Serializable {
 		}
 		
 		final Job otherJob = (Job) theOther;
-		return myJobName.equals(otherJob.myJobName) && myStartDate.equals(otherJob.myStartDate)
-				&& myEndDate.equals(otherJob.myEndDate);
+		return  myJobName.equals(otherJob.myJobName) &&
+				myJobDescription.equals(otherJob.myJobDescription) &&
+				myStartDate.equals(otherJob.myStartDate) &&
+				myEndDate.equals(otherJob.myEndDate);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(myJobName, myStartDate, myEndDate);
+		return Objects.hash(myJobName, myJobDescription, myStartDate, myEndDate);
 	}
 
 	@Override
@@ -239,13 +250,20 @@ public class Job implements java.io.Serializable {
 		
 		StringBuilder str = new StringBuilder();
 		int startYear = myStartDate.get(Calendar.YEAR);
-		int startMonth = myStartDate.get(Calendar.MONTH);
+		
+		// add 1 due to Calendar's implementation of months (Months starts at index 0)
+		int startMonth = myStartDate.get(Calendar.MONTH) + 1; 
+		
 		int startDay = myStartDate.get(Calendar.DATE);
 		
 		int endYear = myEndDate.get(Calendar.YEAR);
-		int endMonth = myEndDate.get(Calendar.MONTH);
+		
+		// add 1 due to Calendar's implementation of months (Months starts at index 0)
+		int endMonth = myEndDate.get(Calendar.MONTH) + 1;
+		
 		int endDay = myEndDate.get(Calendar.DATE);
 		
+		// Job Description is omitted in toString() on purpose	
 		str.append(myJobName + ": ");
 		str.append(startMonth + "/" + startDay + "/" + startYear);
 		str.append(" - ");

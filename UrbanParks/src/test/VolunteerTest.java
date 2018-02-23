@@ -1,8 +1,6 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 
@@ -10,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import model.Job;
+import model.Staff;
 import model.Volunteer;
 
 /**
@@ -28,12 +27,12 @@ public class VolunteerTest {
 	public void setUp() throws Exception {
 		myVolunteer = new Volunteer("Paolo186", "Bryan");
 		myFirstJob = new Job();
-		myFirstJob.getStartDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 1);
-		myFirstJob.getEndDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 2);
+		myFirstJob.getStartDate().add(Calendar.DATE, Staff.getMinSignUpDays() + 1);
+		myFirstJob.getEndDate().add(Calendar.DATE, Staff.getMinSignUpDays() + 2);
 		
 		mySecondJob = new Job();
-		mySecondJob.getStartDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 1);
-		mySecondJob.getEndDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 2);
+		mySecondJob.getStartDate().add(Calendar.DATE, Staff.getMinSignUpDays() + 1);
+		mySecondJob.getEndDate().add(Calendar.DATE, Staff.getMinSignUpDays() + 2);
 		
 	}
 	
@@ -65,8 +64,8 @@ public class VolunteerTest {
 	@Test
 	public void removeJob_JobStartsOnSameDay_1() {
 		myVolunteer.signup(myFirstJob);
-		myFirstJob.getStartDate().add(Calendar.DATE, -(myVolunteer.getMinSignupDays() + 1));
-		myFirstJob.getEndDate().add(Calendar.DATE, -(myVolunteer.getMinSignupDays() + 2));
+		myFirstJob.getStartDate().add(Calendar.DATE, - (Staff.getMinSignUpDays() + 1));
+		myFirstJob.getEndDate().add(Calendar.DATE, - (Staff.getMinSignUpDays() + 2));
 		
 		int sameDayConflict = myVolunteer.removeJob(myFirstJob);
 		
@@ -76,13 +75,13 @@ public class VolunteerTest {
 	@Test
 	public void removeJob_MultiDayJobStartsBeforeToday_1() {
 		Job multiDayJob = new Job();
-		multiDayJob.getStartDate().add(Calendar.DATE, myVolunteer.getMinSignupDays());
-		multiDayJob.getEndDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 2);
+		multiDayJob.getStartDate().add(Calendar.DATE, Staff.getMinSignUpDays());
+		multiDayJob.getEndDate().add(Calendar.DATE, Staff.getMinSignUpDays() + 2);
 		
 		myVolunteer.signup(multiDayJob);
 		
-		multiDayJob.getStartDate().add(Calendar.DATE, -(myVolunteer.getMinSignupDays() + 1));
-		multiDayJob.getEndDate().add(Calendar.DATE, -(myVolunteer.getMinSignupDays() + 2));
+		multiDayJob.getStartDate().add(Calendar.DATE, - (Staff.getMinSignUpDays() + 1));
+		multiDayJob.getEndDate().add(Calendar.DATE, - (Staff.getMinSignUpDays() + 2));
 		
 		int jobStartsBeforeToday = myVolunteer.removeJob(multiDayJob);
 		
@@ -100,8 +99,8 @@ public class VolunteerTest {
 	@Test
 	public void removeJob_JobStartsExactlyMinDaysAway_0() {
 		Job jobMinDaysAway = new Job();
-		jobMinDaysAway.getStartDate().add(Calendar.DATE, myVolunteer.getMinSignupDays());
-		jobMinDaysAway.getEndDate().add(Calendar.DATE, myVolunteer.getMinSignupDays() + 1);
+		jobMinDaysAway.getStartDate().add(Calendar.DATE, Staff.getMinSignUpDays());
+		jobMinDaysAway.getEndDate().add(Calendar.DATE, Staff.getMinSignUpDays() + 1);
 		
 		myVolunteer.signup(jobMinDaysAway);
 		

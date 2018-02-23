@@ -4,6 +4,10 @@ import java.lang.Integer;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+
+import model.Job;
+import model.Staff;
 
 /**
  * Interacts with the user. A user may be a Staff member, ParkManager, or Volunteer.
@@ -54,8 +58,8 @@ public class SystemView {
 		}
 		System.out.println("Program terminated.");
 		
-		ups.saveJobs(ups.getPendingJobs());
-		ups.saveUsers(ups.getUsers());
+		ups.saveJobs();
+		ups.saveUsers();
 		
 		input.close();
 	}
@@ -153,14 +157,12 @@ public class SystemView {
 		System.out.println("1) Go back to main menu");
 		
 		int selectionOffset = 2;
-		List<model.Job> jobListCopy = ups.getPendingJobs().getPendingJobsList();
-		List<model.Job> volunteerJobList = theVolunteer.getJobsList();
+		Set<model.Job> jobListCopy = ups.getPendingJobsCollection();
+		Set<model.Job> volunteerJobList = theVolunteer.getJobsList();
 		
 		// Remove all Jobs in the list that the user has already signed up for
 		for(model.Job signedUp : volunteerJobList) {
-			if(jobListCopy.contains(signedUp)) {
-				jobListCopy.remove(signedUp);
-			}
+				jobListCopy.remove(signedUp);	
 		}
 		
 		// Display all Jobs that Volunteer hasn't already signed up for
@@ -185,7 +187,7 @@ public class SystemView {
 			} else if(success == 2) {
 				System.out.println("Unable to sign up for job.");
 				System.out.println("You can only sign up for jobs that begin " + 
-									theVolunteer.getMinSignupDays() + " or more days from today.");
+									Staff.getMinSignUpDays() + " or more days from today.");
 			}
 		}
 		
@@ -266,23 +268,23 @@ public class SystemView {
 		int endMonth = Integer.parseInt(theEndDate.substring(0, 2));
 		int endDay = Integer.parseInt(theEndDate.substring(3, 5));
 		int endYear = Integer.parseInt(theEndDate.substring(6, 10));
-		
-		int success = theParkManager.createJob(ups, theJobTitle, startMonth, startDay, startYear, endMonth, endDay, endYear);
+		Job theJob = new Job("", theJobTitle, startMonth, startDay, startYear, endMonth, endDay, endYear);
+		int success = theParkManager.createJob(ups, theJob);
 
 		if(success == 0) {
 			System.out.println("Job successfully created!");
 		} else if(success == 1) {
 			System.out.println("Error - Could not create job.");
 			System.out.println("There are already the maximum (" + 
-						theParkManager.getMaxPendingJobs() + ") number of jobs in the system.");
+						Staff.getMaxPendingJobs() + ") number of jobs in the system.");
 		} else if(success == 2) {
 			System.out.println("Error - Could not create job.");
 			System.out.println("The duration of the job is greater than the maximum (" + 
-						theParkManager.getMaxJobLength() + " days) allowed.");
+						Staff.getMaxJobLength() + " days) allowed.");
 		} else if(success == 3) {
 			System.out.println("Error - Could not create job.");
 			System.out.println("The job would be scheduled too far (" +  
-						theParkManager.getMaxScheduleWindow() +  " days) in advance");
+						Staff.getMaxScheduleWindow() +  " days) in advance");
 		}
 		
 		System.out.println("");
