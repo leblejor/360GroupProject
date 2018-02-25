@@ -157,7 +157,7 @@ public class SystemView {
 		System.out.println("1) Go back to main menu");
 		
 		int selectionOffset = 2;
-		Set<model.Job> jobListCopy = ups.getPendingJobsCollection();
+		Set<model.Job> jobListCopy = ups.getPendingJobs();
 		Set<model.Job> volunteerJobList = theVolunteer.getJobsList();
 		
 		// Remove all Jobs in the list that the user has already signed up for
@@ -175,7 +175,9 @@ public class SystemView {
 		System.out.print("Enter a number to make your selection: ");
 		int theSelectedOption = input.nextInt() - selectionOffset;
 		input.nextLine(); // To pick up the '\n' character in scanner
-
+		
+		System.out.println("No longer able to sign up for a job this way... sorry");
+		/*
 		if(theSelectedOption > 0) { // on input of 1, exit
 			int success = theVolunteer.signup(jobListCopy.get(theSelectedOption));
 			
@@ -187,10 +189,10 @@ public class SystemView {
 			} else if(success == 2) {
 				System.out.println("Unable to sign up for job.");
 				System.out.println("You can only sign up for jobs that begin " + 
-									Staff.getMinSignUpDays() + " or more days from today.");
+						model.UrbanParksSystem.getMinTimespan() + " or more days from today.");
 			}
 		}
-		
+		*/
 		
 	}
 	
@@ -276,15 +278,15 @@ public class SystemView {
 		} else if(success == 1) {
 			System.out.println("Error - Could not create job.");
 			System.out.println("There are already the maximum (" + 
-						Staff.getMaxPendingJobs() + ") number of jobs in the system.");
+					model.UrbanParksSystem.getMaxPendingJobs() + ") number of jobs in the system.");
 		} else if(success == 2) {
 			System.out.println("Error - Could not create job.");
 			System.out.println("The duration of the job is greater than the maximum (" + 
-						Staff.getMaxJobLength() + " days) allowed.");
+					model.UrbanParksSystem.getMaxJobDuration() + " days) allowed.");
 		} else if(success == 3) {
 			System.out.println("Error - Could not create job.");
 			System.out.println("The job would be scheduled too far (" +  
-						Staff.getMaxScheduleWindow() +  " days) in advance");
+					model.UrbanParksSystem.getMaxTimespan() +  " days) in advance");
 		}
 		
 		System.out.println("");

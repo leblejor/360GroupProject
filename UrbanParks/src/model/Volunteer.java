@@ -23,7 +23,7 @@ public class Volunteer extends User {
 	/**
 	 * This Volunteer attempts to sign up for a Job. Will return an int based on the 
 	 * outcome of attempt. Will return 0 if successful, 1 if this Volunteer already has a 
-	 * job that day, 2 if the Job starts less than MIN_SIGNUP_DAYS away.
+	 * job that day, 2 if the Job starts less than MIN_TIMESPAN away.
 	 * 
 	 * @param theJob Job this Volunteer will attempt to sign up for.
 	 * @return 0 if successful, 1 if this Volunteer already has a job that day, 
@@ -40,7 +40,7 @@ public class Volunteer extends User {
 			}
 		} 
 		
-		if (theJob.checkDaysUntilJob(Staff.getMinSignUpDays())) {
+		if (theJob.checkDaysUntilJob(UrbanParksSystem.getMinTimespan())) {
 			return minDaysConflict;
 		}
 		
@@ -49,9 +49,17 @@ public class Volunteer extends User {
 		return successful;		
 	}
 	
+	/**
+	 * 
+	 * @param theJob
+	 * @return
+	 */
 	public int removeJob(Job theJob) {
-				
-		if (theJob.checkDaysUntilJob(Staff.getMinSignUpDays())) { 
+		int successful = 0;
+		int sameDayConflict = 1;
+		int minDaysConflict = 2;
+		
+		if (theJob.checkDaysUntilJob(UrbanParksSystem.getMinTimespan())) { 
 			return 1;
 		}
 				
@@ -67,7 +75,6 @@ public class Volunteer extends User {
 
 
 	/*********** Getters ***********/
-	
 	
 	public Set<Job> getJobsList() {
 		return myJobs;

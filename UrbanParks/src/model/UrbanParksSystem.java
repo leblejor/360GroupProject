@@ -22,10 +22,13 @@ public class UrbanParksSystem {
 	private static final String SERIALIZED_USERS_FILE = "./storage/serializedUser.ser";
 	private static final String SERIALIZED_JOBS_FILE = "./storage/serializedJobs.ser";
 	
+	private static int MAX_PENDING_JOBS = 10;
+	private static final int MAX_JOB_DURATION = 4;
+	private static final int MAX_TIMESPAN = 60;
+	private static final int MIN_TIMESPAN = 3;
 	
 	private Map<String, User> myUsers;
-	//private PendingJobs myPendingJobs;
-	private Map<String, Job> myPendingJobsCollection;
+	private Map<String, Job> myPendingJobsCollection; // TODO: Make this a HashSet
 	
 	public UrbanParksSystem() {		
 		loadUsers();
@@ -50,7 +53,6 @@ public class UrbanParksSystem {
             ex.printStackTrace();
             
         } catch (ClassNotFoundException e) {
-			
 			e.printStackTrace();
 		}
 	}
@@ -74,7 +76,6 @@ public class UrbanParksSystem {
             ex.printStackTrace();
             
         } catch (ClassNotFoundException e) {
-			
 			e.printStackTrace();
 		}
 	}
@@ -118,21 +119,42 @@ public class UrbanParksSystem {
 	public User signIn(String theUsername) {
 		return myUsers.get(theUsername);
 	}
-	
-	public Set<Job> getPendingJobsCollection() {
-		return (Set<Job>) myPendingJobsCollection.values();
-		
-	}
-	
-	public Job getSinglePendingJob(String theJobName) {
-		return myPendingJobsCollection.get(theJobName);
-	}
-	
+
 	public void addJobToCollection(Job theJob) {		
 		myPendingJobsCollection.put(theJob.getJobName(), theJob);
 	}
 	
 	
+	/*********** Getters & Setters ***********/
+	
+	public Set<Job> getPendingJobs() {
+		return (Set<Job>) myPendingJobsCollection.values();
+	}
+	
+	/*
+	public Job getSinglePendingJob(String theJobName) {
+		return myPendingJobsCollection.get(theJobName);
+	}
+	*/
+	public static int getMaxPendingJobs() {
+		return MAX_PENDING_JOBS;
+	}
+	
+	public static int getMaxJobDuration() {
+		return MAX_JOB_DURATION;
+	}
+	
+	public static int getMaxTimespan() {
+		return MAX_TIMESPAN;
+	}
+	
+	public static int getMinTimespan() {
+		return MIN_TIMESPAN;
+	}
+	
+	public void setMaxPendingJobs(int theMaxJobs) {
+		MAX_PENDING_JOBS = theMaxJobs;
+	}
 
 }
 

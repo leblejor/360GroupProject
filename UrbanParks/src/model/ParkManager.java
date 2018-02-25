@@ -10,7 +10,7 @@ import java.util.Set;
  * @author Bryan Santos
  */
 public class ParkManager extends User {
-	
+	/** SerialID for storage */
 	private static final long serialVersionUID = 1L;
 	
 	private Set<Job> myJobs;
@@ -21,21 +21,23 @@ public class ParkManager extends User {
 	}
 	
 	/**
-	 * Creates a job and puts it into the UrbanParksSystem.
-	 * Performs various checks to make sure the job is valid. 
-	 * A job is valid and is added to the system if:
-	 * 1) There are less than the maximum jobs already in the system
-	 * 2) The start date - end date of a job is less than MAX_JOB_LENGTH
-	 * 3) the end date of the job is within the MAX_JOB_DURATION range from today
+	 * Attempts to create a valid job and put it into the UrbanParksSystem.
 	 * 
-	 * Returns 0 if the job is valid, the job is added to the system
-	 * Returns 1 there are already the maximum number of jobs in the system
-	 * Returns 2 if the job start date - end date is longer than MAX_JOB_LENGTH
-	 * Returns 3 if the job end date is past the MAX_JOB_DURATION range from today
-	 * Returns 4 if the job has a date that is in the past
+	 * A job is valid and is added to the system iff:
+	 *    There are less than the MAX_PENDING_JOBS already in the system
+	 * && The Job's duration (end date - start date)  is less than MAX_JOB_DURATION
+	 * && The end date of the job is within MAX_TIMESPAN days from today
+	 * && The Job does not occur in the past
+	 * 
+	 * @param ups UrbanParksSystem running the program
+	 * @param theJob The Job to create in UrbanParksSystem
+	 * @return 0 if the job is valid and is added to the system,
+	 * 1 if there are already the maximum number of jobs in the system,
+	 * 2 if the job duration is longer than the maximum job duration,
+	 * 3 if the job occurs past the maximum timespan from today
+	 * 4 if the job has a start or end date that is in the past
 	 */
 	public int createJob(UrbanParksSystem ups, Job theJob) {
-		
 		int successful = 0;
 		int maxJobsConflict = 1;
 		int jobTooLongConflict = 2;
@@ -44,30 +46,27 @@ public class ParkManager extends User {
 
 		if (checkNumberOfJobsInSystem(ups)) { 
 			return maxJobsConflict;
-		} else if (theJob.checkJobDayLength(Staff.getMaxJobLength())) {
+		} else if (theJob.checkJobDayLength(UrbanParksSystem.getMaxJobDuration())) {
 			return jobTooLongConflict;
-		} else if (theJob.checkJobEndDateMax(Staff.getMaxScheduleWindow())) { 
+		} else if (theJob.checkJobEndDateMax(UrbanParksSystem.getMaxTimespan())) { 
 			return jobTooFarConflict;
 		} else if (theJob.checkJobDatePast()) { 
 			return jobInThePastConflict;
 		} else { //successful 
 			ups.addJobToCollection(theJob); //System job list
 			myJobs.add(theJob); //local job list
+			return successful;
 		}
-		
-		return successful;
-	
 	}
 	
 	/**
 	 * Removes a Job from this ParkManager's list of myJobs. Will return 1 if theJob was not
-	 * found in the list of ParkMangare's job, otherwise will return 0 if successful. 
+	 * found in the list of ParkMangare's jobs, otherwise will return 0 if successful. 
 	 * 
 	 * @param theJob Job to remove from the list.
 	 * @return 0 if removing the Job was successful, 1 if theJob was not found in the list.
 	 */
 	public int removeJob(Job theJob) {
-		// Did this similar to how createJob() works for error handling
 		int success = 0;
 		int jobDNE = 1;
 		
@@ -81,28 +80,15 @@ public class ParkManager extends User {
 	
 	
 	
-	//Same as above, but doesn't use the UrbanParkSystem. 
-	//Used for testing.
-	public int createJobLocal(Job theJob) {
-		
-		int successful = 0;
-		int maxJobsConflict = 1; // never used???
-		int jobTooLongConflict = 2;
-		int jobTooFarConflict = 3;
-		int jobInThePastConflict = 4;
-
-		if (theJob.checkJobDayLength(Staff.getMaxJobLength())) {
-			return jobTooLongConflict;
-		} else if (theJob.checkJobEndDateMax(Staff.getMaxScheduleWindow())) { 
-			return jobTooFarConflict;
-		} else if (theJob.checkJobDatePast()) { 
-			return jobInThePastConflict;
-		} else { //successful 
-			myJobs.add(theJob); //local job list
-		}
-		
-		return successful;
-	
+	/**
+	 * SHOULD ONLY BE USED FOR TESTING.
+	 * Adds theJob to this ParkManager's myJobs without any checks. 
+	 * Does not use UrbanParksSystem.
+	 * 
+	 * @param theJob Job to add to this ParkManager's myJobs
+	 */
+	public void createJobLocal(Job theJob) {
+			myJobs.add(theJob);	
 	}
 	
 	/**
@@ -116,10 +102,9 @@ public class ParkManager extends User {
 	public boolean checkNumberOfJobsInSystem(UrbanParksSystem ups) {
 		boolean conflict = false;
 		
+		Set<Job> set = ups.getPendingJobs();
 		
-		Set<Job> set = ups.getPendingJobsCollection();
-		
-		if (set.size() >= Staff.getMaxPendingJobs()) {
+		if (set.size() >= UrbanParksSystem.getMaxPendingJobs()) {
 			conflict = true;
 		}
 		
@@ -131,7 +116,7 @@ public class ParkManager extends User {
 	public boolean checkNumberOfJobsInSystemLocal() {
 		boolean conflict = false;
 		
-		if (myJobs.size() >= Staff.getMaxPendingJobs()) {
+		if (myJobs.size() >= UrbanParksSystem.getMaxPendingJobs()) {
 			conflict = true;
 		}
 		

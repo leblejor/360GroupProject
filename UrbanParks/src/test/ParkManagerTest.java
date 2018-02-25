@@ -30,9 +30,9 @@ public class ParkManagerTest {
 		
 		String title = "test";
 		
-		int theStartMonth = today.get(Calendar.MONTH) + 1;
+		int theStartMonth = today.get(Calendar.MONTH) + 1; //Doesn't work when today's month is DEC
 		int theStartDay = today.get(Calendar.DATE);
-		int theStartYear = today.get(Calendar.YEAR) ;
+		int theStartYear = today.get(Calendar.YEAR);
 
 		int theEndMonth = theStartMonth;
 		int theEndDay = theStartDay;
@@ -77,7 +77,7 @@ public class ParkManagerTest {
 	@Test
 	public void checkNumberOfJobsInSystem_OneLessThanMaximum_False() {
 		Job validJob = new Job("TestJob", "", 3, 14, 2018, 3, 15, 2018);
-		for (int i = 0; i < Staff.getMaxPendingJobs() - 1; i++) {
+		for (int i = 0; i < model.UrbanParksSystem.getMaxPendingJobs() - 1; i++) {
 			myParkManager.createJobLocal(validJob);
 		}
 		
@@ -87,7 +87,7 @@ public class ParkManagerTest {
 	@Test
 	public void checkNumberOfJobsInSystem_ExactlyMaxJobsInSystem_True() {
 		Job validJob = new Job("TestJob", "", 3, 14, 2018, 3, 15, 2018);
-		for (int i = 0; i < Staff.getMaxPendingJobs(); i++) {
+		for (int i = 0; i < model.UrbanParksSystem.getMaxPendingJobs(); i++) {
 			myParkManager.createJobLocal(validJob);
 		}
 		
@@ -98,7 +98,7 @@ public class ParkManagerTest {
 	public void checkJobDayLength_OneLessThanMaximumDays_False() {
 		Job validLengthJob = new Job();
 		Calendar jobEndDate = validLengthJob.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, Staff.getMaxJobLength() - 1);
+		jobEndDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMaxJobDuration() - 1);
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -106,14 +106,14 @@ public class ParkManagerTest {
 		
 		validLengthJob.setEndDate(month, day, year);
 		
-		assertFalse(validLengthJob.checkJobDayLength(Staff.getMaxJobLength()));		
+		assertFalse(validLengthJob.checkJobDayLength(model.UrbanParksSystem.getMaxJobDuration()));		
 	}
 	
 	@Test 
 	public void checkJobDayLength_ExactlyMaximumDays_False() {
 		Job validLengthJob = new Job();
 		Calendar jobEndDate = validLengthJob.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, Staff.getMaxJobLength());
+		jobEndDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMaxJobDuration());
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -121,23 +121,23 @@ public class ParkManagerTest {
 		
 		validLengthJob.setEndDate(month, day, year);
 		
-		assertFalse(validLengthJob.checkJobDayLength(Staff.getMaxJobLength()));	
+		assertFalse(validLengthJob.checkJobDayLength(model.UrbanParksSystem.getMaxJobDuration()));	
 	}
 	
 	@Test
 	public void checkJobDayLength_OneMoreThanMaximum_True() {
 		Job invalidLengthJob = new Job();
 		invalidLengthJob.setStartDate(2, 14, 2018);
-		invalidLengthJob.setEndDate(2, 14 + Staff.getMaxJobLength() + 1, 2018);
+		invalidLengthJob.setEndDate(2, 14 + model.UrbanParksSystem.getMaxJobDuration() + 1, 2018);
 		
-		assertTrue(invalidLengthJob.checkJobDayLength(Staff.getMaxJobLength()));	
+		assertTrue(invalidLengthJob.checkJobDayLength(model.UrbanParksSystem.getMaxJobDuration()));	
 	}
 	
 	@Test
 	public void checkJobEndDateMax_OneLessThanMaximum_False() {
 		Job validJobDuration = new Job();
 		Calendar jobEndDate = validJobDuration.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, Staff.getMaxScheduleWindow() - 1);
+		jobEndDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMaxTimespan() - 1);
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -145,14 +145,14 @@ public class ParkManagerTest {
 		
 		validJobDuration.setEndDate(month, day, year);
 		
-		assertFalse(validJobDuration.checkJobEndDateMax(Staff.getMaxScheduleWindow()));
+		assertFalse(validJobDuration.checkJobEndDateMax(model.UrbanParksSystem.getMaxTimespan()));
 	}
 	
 	@Test
 	public void checkJobEndDateMax_ExactlyMaximumDays_False() {
 		Job validJobDuration = new Job();
 		Calendar jobEndDate = validJobDuration.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, Staff.getMaxScheduleWindow());
+		jobEndDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMaxTimespan());
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -160,14 +160,14 @@ public class ParkManagerTest {
 		
 		validJobDuration.setEndDate(month, day, year);
 		
-		assertFalse(validJobDuration.checkJobEndDateMax(Staff.getMaxScheduleWindow()));
+		assertFalse(validJobDuration.checkJobEndDateMax(model.UrbanParksSystem.getMaxTimespan()));
 	}
 	
 	@Test
 	public void checkJobEndDateMax_OneMoreThanMaximum_True() {
 		Job invalidJobDuration = new Job();
 		Calendar jobEndDate = invalidJobDuration.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, Staff.getMaxScheduleWindow() + 1);
+		jobEndDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMaxTimespan() + 1);
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -175,7 +175,7 @@ public class ParkManagerTest {
 		
 		invalidJobDuration.setEndDate(month, day, year);
 		
-		assertTrue(invalidJobDuration.checkJobEndDateMax(Staff.getMaxScheduleWindow()));		
+		assertTrue(invalidJobDuration.checkJobEndDateMax(model.UrbanParksSystem.getMaxTimespan()));		
 	}
 
 }
