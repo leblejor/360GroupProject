@@ -15,9 +15,8 @@ import java.util.Set;
  * for persistent storage.
  * 
  * @author Bryan Santos
- *
+ * @author Jordan LeBle
  */
-
 public class UrbanParksSystem {
 	private static final String SERIALIZED_USERS_FILE = "./storage/serializedUser.ser";
 	private static final String SERIALIZED_JOBS_FILE = "./storage/serializedJobs.ser";
@@ -28,15 +27,56 @@ public class UrbanParksSystem {
 	private static final int MIN_TIMESPAN = 3;
 	
 	private Map<String, User> myUsers;
-	private Map<String, Job> myPendingJobsCollection; // TODO: Make this a HashSet
+	private Map<String, Job> myPendingJobs; // TODO: Make this a HashSet
 	
 	public UrbanParksSystem() {		
 		loadUsers();
 		loadJobs();
 	}
+	
+	public User signIn(String theUsername) {
+		return myUsers.get(theUsername);
+	}
 
+	public void addJob(Job theJob) { // Should the check for MAX_PENDING_JOBS go here?
+		myPendingJobs.put(theJob.getJobName(), theJob);
+	}
+	
+	public void removeJob(Job theJob) { // Make any checks here?
+		myPendingJobs.remove(theJob.getJobName()); // Would rather remove from a set, not by name
+	}
+	
+	/*********** Getters & Setters ***********/
+	
+	public Set<Job> getPendingJobs() {
+		return (Set<Job>) myPendingJobs.values();
+	}
+
+	public static int getMaxPendingJobs() {
+		return MAX_PENDING_JOBS;
+	}
+	
+	public static int getMaxJobDuration() {
+		return MAX_JOB_DURATION;
+	}
+	
+	public static int getMaxTimespan() {
+		return MAX_TIMESPAN;
+	}
+	
+	public static int getMinTimespan() {
+		return MIN_TIMESPAN;
+	}
+	
+	public void setMaxPendingJobs(int theMaxJobs) {
+		MAX_PENDING_JOBS = theMaxJobs;
+	}
+
+	
+	/*********** Load & Save ***********/
+	
 	@SuppressWarnings("unchecked")
-	public void loadUsers() {
+	private void loadUsers() {
 		try {
             // Reading the object from a file
             FileInputStream file = new FileInputStream(SERIALIZED_USERS_FILE);
@@ -57,16 +97,15 @@ public class UrbanParksSystem {
 		}
 	}
 	
-	
 	@SuppressWarnings("unchecked")
-	public void loadJobs() {
+	private void loadJobs() {
 		try {
             // Reading the object from a file
             FileInputStream file = new FileInputStream(SERIALIZED_JOBS_FILE);
             ObjectInputStream in = new ObjectInputStream(file);
              
             // Method for deserialization of object
-            myPendingJobsCollection = (Map<String, Job>) in.readObject();
+            myPendingJobs = (Map<String, Job>) in.readObject();
              
             in.close();
             file.close();
@@ -105,7 +144,7 @@ public class UrbanParksSystem {
             ObjectOutputStream out = new ObjectOutputStream(file);
              
             // Method for serialization of object
-            out.writeObject(myPendingJobsCollection);
+            out.writeObject(myPendingJobs);
              
             out.close();
             file.close();
@@ -115,46 +154,5 @@ public class UrbanParksSystem {
             ex.printStackTrace();
         }
 	}
-	
-	public User signIn(String theUsername) {
-		return myUsers.get(theUsername);
-	}
-
-	public void addJobToCollection(Job theJob) {		
-		myPendingJobsCollection.put(theJob.getJobName(), theJob);
-	}
-	
-	
-	/*********** Getters & Setters ***********/
-	
-	public Set<Job> getPendingJobs() {
-		return (Set<Job>) myPendingJobsCollection.values();
-	}
-	
-	/*
-	public Job getSinglePendingJob(String theJobName) {
-		return myPendingJobsCollection.get(theJobName);
-	}
-	*/
-	public static int getMaxPendingJobs() {
-		return MAX_PENDING_JOBS;
-	}
-	
-	public static int getMaxJobDuration() {
-		return MAX_JOB_DURATION;
-	}
-	
-	public static int getMaxTimespan() {
-		return MAX_TIMESPAN;
-	}
-	
-	public static int getMinTimespan() {
-		return MIN_TIMESPAN;
-	}
-	
-	public void setMaxPendingJobs(int theMaxJobs) {
-		MAX_PENDING_JOBS = theMaxJobs;
-	}
-
 }
 

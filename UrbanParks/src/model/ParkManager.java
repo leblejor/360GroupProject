@@ -8,6 +8,7 @@ import java.util.Set;
  * 
  * @author Derick Salamanca
  * @author Bryan Santos
+ * @author Jordan LeBle
  */
 public class ParkManager extends User {
 	/** SerialID for storage */
@@ -53,7 +54,7 @@ public class ParkManager extends User {
 		} else if (theJob.checkJobDatePast()) { 
 			return jobInThePastConflict;
 		} else { //successful 
-			ups.addJobToCollection(theJob); //System job list
+			ups.addJob(theJob); //System job list
 			myJobs.add(theJob); //local job list
 			return successful;
 		}
@@ -66,19 +67,21 @@ public class ParkManager extends User {
 	 * @param theJob Job to remove from the list.
 	 * @return 0 if removing the Job was successful, 1 if theJob was not found in the list.
 	 */
-	public int removeJob(Job theJob) {
+	public int removeJob(UrbanParksSystem ups, Job theJob) {
 		int success = 0;
 		int jobDNE = 1;
+		int minDaysConflict = 2;
 		
-		if(myJobs.contains(theJob)) {
+		if (!myJobs.contains(theJob)) { //shouldn't ever happen?
+			return jobDNE; 
+		} else if (theJob.isBeforeMinTimespan()) {
+			return minDaysConflict;
+		} else {
+			ups.removeJob(theJob);
 			myJobs.remove(theJob);
 			return success;
-		} else {
-			return jobDNE;
 		}
 	}
-	
-	
 	
 	/**
 	 * SHOULD ONLY BE USED FOR TESTING.
@@ -91,6 +94,27 @@ public class ParkManager extends User {
 			myJobs.add(theJob);	
 	}
 	
+	/**
+	 * SHOULD ONLY BE USED FOR TESTING.
+	 * Removes theJob from this ParkManager's myJobs without updates to UrbanParksSystem. 
+	 * Does not use UrbanParksSystem.
+	 * 
+	 * @param theJob Job to remove from this ParkManager's myJobs
+	 */
+	public int removeJobLocal(Job theJob) {
+		int success = 0;
+		int jobDNE = 1;
+		int minDaysConflict = 2;
+		
+		if (!myJobs.contains(theJob)) { //shouldn't ever happen?
+			return jobDNE; 
+		} else if (theJob.isBeforeMinTimespan()) {
+			return minDaysConflict;
+		} else {
+			myJobs.remove(theJob);
+			return success;
+		}
+	}
 	/**
 	 * Takes the UrbanParksSystem, which contains the serialized object
 	 * for the list of current pending jobs. There cannot be more than

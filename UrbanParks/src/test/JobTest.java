@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import model.Job;
-import model.Staff;
 import model.Volunteer;
 
 public class JobTest {
@@ -84,19 +83,13 @@ public class JobTest {
 				myFirstJob.isOverlap(mySecondJob));
 	}
 	
-	
-	
-	
-	
-	
-	
 	@Test
 	public void checkDaysUntilJob_MoreThanMinDays_False() {
 		Job jobMoreThanMinDays = new Job();
 		Calendar futureDate = jobMoreThanMinDays.getStartDate();	
 		futureDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan() + 1);
 
-		assertFalse(jobMoreThanMinDays.checkDaysUntilJob(model.UrbanParksSystem.getMinTimespan()));
+		assertFalse(jobMoreThanMinDays.isBeforeMinTimespan());
 	}
 
 	@Test
@@ -105,7 +98,7 @@ public class JobTest {
 		Calendar futureDate = jobMinDaysLater.getStartDate();
 		futureDate.add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan());
 
-		assertFalse(jobMinDaysLater.checkDaysUntilJob(model.UrbanParksSystem.getMinTimespan()));
+		assertFalse(jobMinDaysLater.isBeforeMinTimespan());
 	}
 	
 	@Test
@@ -114,7 +107,7 @@ public class JobTest {
 		Calendar futureDate = jobLessThanMinDays.getStartDate();
 		futureDate.add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() - 1);
 
-		assertTrue(jobLessThanMinDays.checkDaysUntilJob(model.UrbanParksSystem.getMinTimespan()));
+		assertTrue(jobLessThanMinDays.isBeforeMinTimespan());
 	}
 
 }

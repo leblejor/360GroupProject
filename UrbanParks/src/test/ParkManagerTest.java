@@ -9,12 +9,12 @@ import org.junit.Test;
 
 import model.Job;
 import model.ParkManager;
-import model.Staff;
 
 /**
  * Junit testing for the ParkManger class.
  * 
  * @author Derick Salamanca
+ * @author Jordan LeBle
  */
 public class ParkManagerTest {	
 	private ParkManager myParkManager;
@@ -25,45 +25,58 @@ public class ParkManagerTest {
 	}
 	
 	@Test
-	public void removeJob_JobExists_Equals() {
-		Calendar today = Calendar.getInstance();
-		
-		String title = "test";
-		
-		int theStartMonth = today.get(Calendar.MONTH) + 1; //Doesn't work when today's month is DEC
-		int theStartDay = today.get(Calendar.DATE);
-		int theStartYear = today.get(Calendar.YEAR);
-
-		int theEndMonth = theStartMonth;
-		int theEndDay = theStartDay;
-		int theEndYear = theStartYear;
-		
-		Job theJob = new Job(title, "", theStartMonth, theStartDay, theStartYear,
-				theEndMonth, theEndDay, theEndYear);
-		
+	public void removeJob_JobStartsToday_2() {
+		// Create Job that starts and ends today
+		Job theJob = new Job();
 		myParkManager.createJobLocal(theJob);
 
-		assertEquals(0, myParkManager.removeJob(theJob));
+		assertEquals(2, myParkManager.removeJobLocal(theJob));
 	}
 	
 	@Test
-	public void removeJob_JobDNE_Equals() {
-		Calendar today = Calendar.getInstance();
+	public void removeJob_MultiDayJobStartsBeforeToday_2() {
+		// Create Job that starts the day before today, and ends the day after today
+		Calendar yesterday = Calendar.getInstance();
+		yesterday.add(Calendar.DAY_OF_YEAR, -1);
+		Calendar tomorrow = Calendar.getInstance();
+		tomorrow.add(Calendar.DAY_OF_YEAR, 1);
 		
-		String title = "test";
-		
-		int theStartMonth = today.get(Calendar.MONTH) + 1;
-		int theStartDay = today.get(Calendar.DATE);
-		int theStartYear = today.get(Calendar.YEAR) ;
+		Job aJob = new Job("", "", yesterday.get(Calendar.MONTH), 
+				yesterday.get(Calendar.DAY_OF_MONTH),yesterday.get(Calendar.YEAR), 
+				tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DAY_OF_MONTH) + 1, 
+				tomorrow.get(Calendar.YEAR));
 
-		int theEndMonth = theStartMonth;
-		int theEndDay = theStartDay;
-		int theEndYear = theStartYear;
+		myParkManager.createJobLocal(aJob);
 		
-		Job theJob = new Job(title, "", theStartMonth, theStartDay, theStartYear,
-				theEndMonth, theEndDay, theEndYear);
+		int jobStartsBeforeToday = myParkManager.removeJobLocal(aJob);
 		
-		assertEquals(1, myParkManager.removeJob(theJob));
+		assertEquals(2, jobStartsBeforeToday);
+	}
+	
+	@Test
+	public void removeJob_JobStartsMoreThanMinDaysAway_0() {
+		Job aJob = new Job();
+		aJob.getStartDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() + 1);
+		aJob.getEndDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() + 2);
+		
+		myParkManager.createJobLocal(aJob);
+		int jobInFuture = myParkManager.removeJobLocal(aJob);
+		
+		assertEquals(0, jobInFuture);
+	}
+
+	@Test
+	public void removeJob_JobStartsExactlyMinDaysAway_0() {
+		Job jobMinDaysAway = new Job();
+		jobMinDaysAway.getStartDate().add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan());
+		jobMinDaysAway.getEndDate().add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan());
+		
+		myParkManager.createJobLocal(jobMinDaysAway);
+		
+		int jobStartsExactlyMinDaysAway = myParkManager.removeJobLocal(jobMinDaysAway);
+		
+		assertEquals(0, jobStartsExactlyMinDaysAway);
+		
 	}
 	
 	@Test

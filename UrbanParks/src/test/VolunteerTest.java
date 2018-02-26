@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import model.Job;
-import model.Staff;
 import model.Volunteer;
 
 /**
@@ -16,98 +15,125 @@ import model.Volunteer;
  * 
  * @author Derick Salamanca
  * @author Bryan Santos
+ * @author Jordan LeBle
  */
 public class VolunteerTest {
 
 	private Volunteer myVolunteer;
-	private Job myFirstJob;
-	private Job mySecondJob;
+	
+	private Calendar yesterday;
+	private Calendar today;
+	private Calendar tomorrow;
+	
+	private Calendar lessThanMinDaysAway;
+	private Calendar minDaysAway;
+	private Calendar moreThanMinDaysAway;
+	private Calendar muchMoreThanMinDaysAway;
 	
 	@Before
-	public void setUp() throws Exception {
+	public void setup() throws Exception {
 		myVolunteer = new Volunteer("Paolo186", "Bryan");
-		myFirstJob = new Job();
-		myFirstJob.getStartDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() + 1);
-		myFirstJob.getEndDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() + 2);
 		
-		mySecondJob = new Job();
-		mySecondJob.getStartDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() + 1);
-		mySecondJob.getEndDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() + 2);
+		yesterday = Calendar.getInstance();
+		yesterday.add(Calendar.DAY_OF_YEAR, -1);
 		
+		today = Calendar.getInstance();
+		
+		tomorrow = Calendar.getInstance(); 
+		tomorrow.add(Calendar.DAY_OF_YEAR, 1);
+		
+		lessThanMinDaysAway = Calendar.getInstance();
+		lessThanMinDaysAway.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan() - 1);
+		
+		minDaysAway = Calendar.getInstance();
+		minDaysAway.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan());
+		
+		moreThanMinDaysAway = Calendar.getInstance();
+		moreThanMinDaysAway.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan() + 1);
+		
+		muchMoreThanMinDaysAway = Calendar.getInstance();
+		muchMoreThanMinDaysAway.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan() + 2);
 	}
 	
 	@Test
-	public void signup_SuccessfulSignup_0() {
-		int successful = myVolunteer.signup(myFirstJob);
+	public void signup_JobBeginsLessThanMinDaysAway_2() {		
+		// Maybe change this? what if MIN_TIMESPAN = 1?
 
-		assertEquals(0, successful);
+		Job jobBeginsLessThanMinDaysAway = new Job("", "", lessThanMinDaysAway, lessThanMinDaysAway);
+		
+		assertEquals(2, myVolunteer.signup(jobBeginsLessThanMinDaysAway));
+	}
+	
+	@Test
+	public void signup_JobStartsMoreThanMinDaysAway_0() {
+		Job jobStartsMoreThanMinDaysAway = new Job("", "", moreThanMinDaysAway, moreThanMinDaysAway);
+		
+		assertEquals(0, myVolunteer.signup(jobStartsMoreThanMinDaysAway));
 	}
 
 	@Test
-	public void signup_SameDayConflict_1() {
-		myVolunteer.signup(myFirstJob);
-		int sameDayConflict = myVolunteer.signup(mySecondJob);
+	public void signup_JobStartsExactlyMinDaysAway_0() {
+		Job jobStartsMinDaysAway = new Job("", "", minDaysAway, minDaysAway);
 
-		assertEquals(1, sameDayConflict);
+		assertEquals(0, myVolunteer.signup(jobStartsMinDaysAway));
+	}
+
+	@Test
+	public void signup_AStartConflictsOtherEnd_1() {
+		Job aJob = new Job("", "", moreThanMinDaysAway, muchMoreThanMinDaysAway);
+		
+		Job otherJob = new Job("", "", minDaysAway, moreThanMinDaysAway);
+		
+		myVolunteer.signup(aJob);
+		
+		assertEquals(1, myVolunteer.signup(otherJob));
 	}
 	
 	@Test
-	public void signup_MinDaysConflict_2() {
-		Job jobTomorrow = new Job();
-		jobTomorrow.getStartDate().add(Calendar.DATE, 1);
+	public void signup_AnEndConflictsOtherStart_1() {
+		Job aJob = new Job("", "", minDaysAway, moreThanMinDaysAway);
 		
-		int minDayConflict = myVolunteer.signup(jobTomorrow);
+		Job otherJob = new Job("", "", moreThanMinDaysAway, muchMoreThanMinDaysAway);
 		
-		assertEquals(2, minDayConflict);
+		myVolunteer.signup(aJob);
+		
+		assertEquals(1, myVolunteer.signup(otherJob));
+	}
+	
+	
+	@Test
+	public void removeJob_JobStartsToday_2() {
+		Job aJob = new Job("", "", today, today);
+		
+		myVolunteer.signupLocal(aJob);
+		
+		assertEquals(2, myVolunteer.removeJob(aJob));
 	}
 	
 	@Test
-	public void removeJob_JobStartsOnSameDay_1() {
-		myVolunteer.signup(myFirstJob);
-		myFirstJob.getStartDate().add(Calendar.DATE, - (model.UrbanParksSystem.getMinTimespan() + 1));
-		myFirstJob.getEndDate().add(Calendar.DATE, - (model.UrbanParksSystem.getMinTimespan() + 2));
+	public void removeJob_MultiDayJobStartsBeforeToday_2() {
+		Job aJob = new Job("", "", yesterday, tomorrow);
+
+		myVolunteer.signupLocal(aJob);
 		
-		int sameDayConflict = myVolunteer.removeJob(myFirstJob);
-		
-		assertEquals(1, sameDayConflict);
-	}
-	
-	@Test
-	public void removeJob_MultiDayJobStartsBeforeToday_1() {
-		Job multiDayJob = new Job();
-		multiDayJob.getStartDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan());
-		multiDayJob.getEndDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() + 2);
-		
-		myVolunteer.signup(multiDayJob);
-		
-		multiDayJob.getStartDate().add(Calendar.DATE, - (model.UrbanParksSystem.getMinTimespan() + 1));
-		multiDayJob.getEndDate().add(Calendar.DATE, - (model.UrbanParksSystem.getMinTimespan() + 2));
-		
-		int jobStartsBeforeToday = myVolunteer.removeJob(multiDayJob);
-		
-		assertEquals(1, jobStartsBeforeToday);
+		assertEquals(2, myVolunteer.removeJob(aJob));
 	}
 	
 	@Test
 	public void removeJob_JobStartsMoreThanMinDaysAway_0() {
-		myVolunteer.signup(myFirstJob);
-		int jobInFuture = myVolunteer.removeJob(myFirstJob);
+		Job aJob = new Job("", "", moreThanMinDaysAway, moreThanMinDaysAway);
+
+		myVolunteer.signup(aJob);
 		
-		assertEquals(0, jobInFuture);
+		assertEquals(0, myVolunteer.removeJob(aJob));
 	}
 
 	@Test
 	public void removeJob_JobStartsExactlyMinDaysAway_0() {
-		Job jobMinDaysAway = new Job();
-		jobMinDaysAway.getStartDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan());
-		jobMinDaysAway.getEndDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() + 1);
-		
-		myVolunteer.signup(jobMinDaysAway);
-		
-		int jobStartsExactlyMinDaysAway = myVolunteer.removeJob(jobMinDaysAway);
-		
-		assertEquals(0, jobStartsExactlyMinDaysAway);
-		
-	}
+		Job aJob = new Job("", "", minDaysAway, minDaysAway);
 
+		myVolunteer.signup(aJob);
+		
+		assertEquals(0, myVolunteer.removeJob(aJob));
+	}
 }

@@ -8,6 +8,7 @@ import java.util.Objects;
  * Represents a Job. A Job holds a title, a start date, and an end date. 
  * 
  * @author Bryan Santos
+ * @author Jordan LeBle
  * @version 11 February 2018
  */
 public class Job implements java.io.Serializable {
@@ -19,12 +20,17 @@ public class Job implements java.io.Serializable {
 	private Calendar myStartDate;
 	private Calendar myEndDate;
 	
-	/** Empty constructor. */
+	/** 
+	 * Empty constructor. 
+	 * Creates a Job without title or description that starts and ends on date it is created.
+	 */
 	public Job() {
 		myJobName = "";
+		myJobDescription = "";
 		myStartDate = Calendar.getInstance();
 		myEndDate = Calendar.getInstance();
 	}
+	
 	/**
 	 * Constructor.
 	 * 
@@ -39,17 +45,19 @@ public class Job implements java.io.Serializable {
 	public Job(String theJobName, String theJobDescription,
 			int theStartMonth, int theStartDay, int theStartYear,
 			int theEndMonth,   int theEndDay,   int theEndYear) {
+		// NOTE: months start at 0 i.e. 0 -> January, 1 -> February, ...
 		myJobName = theJobName;
 		myJobDescription = theJobDescription;
 		myStartDate = new GregorianCalendar(theStartYear, theStartMonth - 1, theStartDay);
 		myEndDate = new GregorianCalendar(theEndYear, theEndMonth - 1, theEndDay);
-		
-
-		// months start at 0 -> January, 1 -> February, ...
-
   	}
 	
-
+	public Job(String theJobName, String theJobDescription, Calendar theStartDate, Calendar theEndDate) {
+		myJobName = theJobName;
+		myJobDescription = theJobDescription;
+		myStartDate = (Calendar) theStartDate.clone();
+		myEndDate = (Calendar) theEndDate.clone();
+	}
 	
 	/**
 	 * Checks if this Job overlaps with the other Job.
@@ -58,7 +66,6 @@ public class Job implements java.io.Serializable {
 	 * @return True if there is an overlap with this Job and the other Job, false otherwise.
 	 */
 	public boolean isOverlap(Job theOther) {
-		
 		Calendar theOtherStartDate = theOther.getStartDate();
 		Calendar theOtherEndDate = theOther.getEndDate();
 		
@@ -77,32 +84,23 @@ public class Job implements java.io.Serializable {
 			   isConflictingWithMyStartDate(theOtherEndDate) ||
 			   isConflictingWithMyEndDate(theOtherStartDate) ||
 			   isConflictingWithMyEndDate(theOtherEndDate);
-				
 	}
 	
-	
 	/**
-	 * Checks that the Jobs start date occurs at least MIN_SIGNUP_DAYS days in the future. 
-	 * Preconditions: theJob != null, theMinDaySignup >= 0
+	 * Checks if this Job's start date occurs before MIN_TIMESPAN days in the future.
 	 * 
-	 * @param theJob the Job to check for days until it starts.
-	 * @return true if Job starts within MIN_SIGNUP_DAYS days from today, false otherwise.
+	 * @return true if this Job starts within MIN_TIMESPAN days from today, false otherwise.
 	 */
-	public boolean checkDaysUntilJob(int theMinDaySignup) {
-		boolean conflict = false;
+	public boolean isBeforeMinTimespan() {
+		//Add MIN_TIMESPAN days to the current date for comparison
+		Calendar cutOff = Calendar.getInstance();
+		cutOff.add(Calendar.DAY_OF_YEAR, UrbanParksSystem.getMinTimespan());
 
-		Calendar futureDay = Calendar.getInstance();
-
-		//Add MIN_SIGNUP_DAYS days to the current date
-		futureDay.add(Calendar.DAY_OF_YEAR, theMinDaySignup);
-
-		//Compare the current date +MIN_SIGNUP_DAYS with the start date of the job
-		//True if it is greater than the MIN_SIGNUP_DAYS
-		if (futureDay.compareTo(myStartDate) > 0) {
-			conflict = true;
-		}	
-		      
-		return conflict;
+		if (cutOff.compareTo(myStartDate) > 0) { // cutOff occurs strictly AFTER myStartDate
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -218,9 +216,11 @@ public class Job implements java.io.Serializable {
 		myEndDate.set(theYear, theMonth, theDay);
 	}
 	
+	
+	/*********** Override methods ***********/
+	
 	@Override
 	public boolean equals(final Object theOther) {
-	
 		if (this == theOther) {
 			return true;
 		}
@@ -271,7 +271,4 @@ public class Job implements java.io.Serializable {
 
 		return str.toString();
 	}
-	
-	
-
 }

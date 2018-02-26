@@ -7,6 +7,7 @@ import java.util.Set;
  * Represents a volunteer.
  * 
  * @author Derick Salamanca
+ * @author Jordan LeBle
  * @version 11 February 2018
  */
 public class Volunteer extends User {
@@ -27,7 +28,7 @@ public class Volunteer extends User {
 	 * 
 	 * @param theJob Job this Volunteer will attempt to sign up for.
 	 * @return 0 if successful, 1 if this Volunteer already has a job that day, 
-	 * 2 if the Job starts less than MIN_SIGNUP_DAYS away.
+	 * 2 if the Job starts less than MIN_TIMESPAN away.
 	 */
 	public int signup(Job theJob) {
 		int successful = 0;
@@ -40,7 +41,7 @@ public class Volunteer extends User {
 			}
 		} 
 		
-		if (theJob.checkDaysUntilJob(UrbanParksSystem.getMinTimespan())) {
+		if (theJob.isBeforeMinTimespan()) {
 			return minDaysConflict;
 		}
 		
@@ -50,34 +51,43 @@ public class Volunteer extends User {
 	}
 	
 	/**
+	 * SHOULD ONLY BE USED FOR TESTING.
+	 * Adds theJob to this Volunteer's myJobs without any checks. 
 	 * 
-	 * @param theJob
-	 * @return
+	 * @param theJob Job this Volunteer will sign up for.
+	 */
+	public void signupLocal(Job theJob) {
+		myJobs.add(theJob);		
+	}
+	
+	/**
+	 * This Volunteer attempts to unvolunteer up for a Job. Will return an int based on the 
+	 * outcome of attempt. Will return 0 if successful, 1 if this Volunteer is not signed up for 
+	 * the Job, 2 if the Job starts less than MIN_TIMESPAN away.
+	 * 
+	 * @param theJob Job this Volunteer will attempt to unvolunteer for.
+	 * @return 0 if successful, 1 if this Volunteer is not signed up for the Job, 
+	 * 2 if the Job starts less than MIN_TIMESPAN away.
 	 */
 	public int removeJob(Job theJob) {
 		int successful = 0;
-		int sameDayConflict = 1;
+		int jobDNE = 1;
 		int minDaysConflict = 2;
 		
-		if (theJob.checkDaysUntilJob(UrbanParksSystem.getMinTimespan())) { 
-			return 1;
-		}
-				
 		if (!myJobs.contains(theJob)) { //shouldn't ever happen?
-			return 2; 
+			return jobDNE; 
+		} else if (theJob.isBeforeMinTimespan()) {
+			return minDaysConflict;
+		} else {
+			myJobs.remove(theJob);
+			return successful;
 		}
-
-		myJobs.remove(theJob);
-		
-		return 0;
 	}
 	
-
 
 	/*********** Getters ***********/
 	
 	public Set<Job> getJobsList() {
 		return myJobs;
 	}
-	
 }
