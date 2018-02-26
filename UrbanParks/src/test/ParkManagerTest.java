@@ -9,12 +9,12 @@ import org.junit.Test;
 
 import model.Job;
 import model.ParkManager;
-import model.Staff;
 
 /**
  * Junit testing for the ParkManger class.
  * 
  * @author Derick Salamanca
+ * @author Jordan LeBle
  */
 public class ParkManagerTest {	
 	private ParkManager myParkManager;
@@ -25,45 +25,58 @@ public class ParkManagerTest {
 	}
 	
 	@Test
-	public void removeJob_JobExists_Equals() {
-		Calendar today = Calendar.getInstance();
-		
-		String title = "test";
-		
-		int theStartMonth = today.get(Calendar.MONTH) + 1;
-		int theStartDay = today.get(Calendar.DATE);
-		int theStartYear = today.get(Calendar.YEAR) ;
-
-		int theEndMonth = theStartMonth;
-		int theEndDay = theStartDay;
-		int theEndYear = theStartYear;
-		
-		Job theJob = new Job(title, "", theStartMonth, theStartDay, theStartYear,
-				theEndMonth, theEndDay, theEndYear);
-		
+	public void removeJob_JobStartsToday_2() {
+		// Create Job that starts and ends today
+		Job theJob = new Job();
 		myParkManager.createJobLocal(theJob);
 
-		assertEquals(0, myParkManager.removeJob(theJob));
+		assertEquals(2, myParkManager.removeJobLocal(theJob));
 	}
 	
 	@Test
-	public void removeJob_JobDNE_Equals() {
-		Calendar today = Calendar.getInstance();
+	public void removeJob_MultiDayJobStartsBeforeToday_2() {
+		// Create Job that starts the day before today, and ends the day after today
+		Calendar yesterday = Calendar.getInstance();
+		yesterday.add(Calendar.DAY_OF_YEAR, -1);
+		Calendar tomorrow = Calendar.getInstance();
+		tomorrow.add(Calendar.DAY_OF_YEAR, 1);
 		
-		String title = "test";
-		
-		int theStartMonth = today.get(Calendar.MONTH) + 1;
-		int theStartDay = today.get(Calendar.DATE);
-		int theStartYear = today.get(Calendar.YEAR) ;
+		Job aJob = new Job("", "", yesterday.get(Calendar.MONTH), 
+				yesterday.get(Calendar.DAY_OF_MONTH),yesterday.get(Calendar.YEAR), 
+				tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DAY_OF_MONTH) + 1, 
+				tomorrow.get(Calendar.YEAR));
 
-		int theEndMonth = theStartMonth;
-		int theEndDay = theStartDay;
-		int theEndYear = theStartYear;
+		myParkManager.createJobLocal(aJob);
 		
-		Job theJob = new Job(title, "", theStartMonth, theStartDay, theStartYear,
-				theEndMonth, theEndDay, theEndYear);
+		int jobStartsBeforeToday = myParkManager.removeJobLocal(aJob);
 		
-		assertEquals(1, myParkManager.removeJob(theJob));
+		assertEquals(2, jobStartsBeforeToday);
+	}
+	
+	@Test
+	public void removeJob_JobStartsMoreThanMinDaysAway_0() {
+		Job aJob = new Job();
+		aJob.getStartDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() + 1);
+		aJob.getEndDate().add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() + 2);
+		
+		myParkManager.createJobLocal(aJob);
+		int jobInFuture = myParkManager.removeJobLocal(aJob);
+		
+		assertEquals(0, jobInFuture);
+	}
+
+	@Test
+	public void removeJob_JobStartsExactlyMinDaysAway_0() {
+		Job jobMinDaysAway = new Job();
+		jobMinDaysAway.getStartDate().add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan());
+		jobMinDaysAway.getEndDate().add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan());
+		
+		myParkManager.createJobLocal(jobMinDaysAway);
+		
+		int jobStartsExactlyMinDaysAway = myParkManager.removeJobLocal(jobMinDaysAway);
+		
+		assertEquals(0, jobStartsExactlyMinDaysAway);
+		
 	}
 	
 	@Test
@@ -77,7 +90,7 @@ public class ParkManagerTest {
 	@Test
 	public void checkNumberOfJobsInSystem_OneLessThanMaximum_False() {
 		Job validJob = new Job("TestJob", "", 3, 14, 2018, 3, 15, 2018);
-		for (int i = 0; i < Staff.getMaxPendingJobs() - 1; i++) {
+		for (int i = 0; i < model.UrbanParksSystem.getMaxPendingJobs() - 1; i++) {
 			myParkManager.createJobLocal(validJob);
 		}
 		
@@ -87,7 +100,7 @@ public class ParkManagerTest {
 	@Test
 	public void checkNumberOfJobsInSystem_ExactlyMaxJobsInSystem_True() {
 		Job validJob = new Job("TestJob", "", 3, 14, 2018, 3, 15, 2018);
-		for (int i = 0; i < Staff.getMaxPendingJobs(); i++) {
+		for (int i = 0; i < model.UrbanParksSystem.getMaxPendingJobs(); i++) {
 			myParkManager.createJobLocal(validJob);
 		}
 		
@@ -98,7 +111,7 @@ public class ParkManagerTest {
 	public void checkJobDayLength_OneLessThanMaximumDays_False() {
 		Job validLengthJob = new Job();
 		Calendar jobEndDate = validLengthJob.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, Staff.getMaxJobLength() - 1);
+		jobEndDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMaxJobDuration() - 1);
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -106,14 +119,14 @@ public class ParkManagerTest {
 		
 		validLengthJob.setEndDate(month, day, year);
 		
-		assertFalse(validLengthJob.checkJobDayLength(Staff.getMaxJobLength()));		
+		assertFalse(validLengthJob.checkJobDayLength(model.UrbanParksSystem.getMaxJobDuration()));		
 	}
 	
 	@Test 
 	public void checkJobDayLength_ExactlyMaximumDays_False() {
 		Job validLengthJob = new Job();
 		Calendar jobEndDate = validLengthJob.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, Staff.getMaxJobLength());
+		jobEndDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMaxJobDuration());
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -121,23 +134,23 @@ public class ParkManagerTest {
 		
 		validLengthJob.setEndDate(month, day, year);
 		
-		assertFalse(validLengthJob.checkJobDayLength(Staff.getMaxJobLength()));	
+		assertFalse(validLengthJob.checkJobDayLength(model.UrbanParksSystem.getMaxJobDuration()));	
 	}
 	
 	@Test
 	public void checkJobDayLength_OneMoreThanMaximum_True() {
 		Job invalidLengthJob = new Job();
 		invalidLengthJob.setStartDate(2, 14, 2018);
-		invalidLengthJob.setEndDate(2, 14 + Staff.getMaxJobLength() + 1, 2018);
+		invalidLengthJob.setEndDate(2, 14 + model.UrbanParksSystem.getMaxJobDuration() + 1, 2018);
 		
-		assertTrue(invalidLengthJob.checkJobDayLength(Staff.getMaxJobLength()));	
+		assertTrue(invalidLengthJob.checkJobDayLength(model.UrbanParksSystem.getMaxJobDuration()));	
 	}
 	
 	@Test
 	public void checkJobEndDateMax_OneLessThanMaximum_False() {
 		Job validJobDuration = new Job();
 		Calendar jobEndDate = validJobDuration.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, Staff.getMaxScheduleWindow() - 1);
+		jobEndDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMaxTimespan() - 1);
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -145,14 +158,14 @@ public class ParkManagerTest {
 		
 		validJobDuration.setEndDate(month, day, year);
 		
-		assertFalse(validJobDuration.checkJobEndDateMax(Staff.getMaxScheduleWindow()));
+		assertFalse(validJobDuration.checkJobEndDateMax(model.UrbanParksSystem.getMaxTimespan()));
 	}
 	
 	@Test
 	public void checkJobEndDateMax_ExactlyMaximumDays_False() {
 		Job validJobDuration = new Job();
 		Calendar jobEndDate = validJobDuration.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, Staff.getMaxScheduleWindow());
+		jobEndDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMaxTimespan());
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -160,14 +173,14 @@ public class ParkManagerTest {
 		
 		validJobDuration.setEndDate(month, day, year);
 		
-		assertFalse(validJobDuration.checkJobEndDateMax(Staff.getMaxScheduleWindow()));
+		assertFalse(validJobDuration.checkJobEndDateMax(model.UrbanParksSystem.getMaxTimespan()));
 	}
 	
 	@Test
 	public void checkJobEndDateMax_OneMoreThanMaximum_True() {
 		Job invalidJobDuration = new Job();
 		Calendar jobEndDate = invalidJobDuration.getEndDate();
-		jobEndDate.add(Calendar.DAY_OF_YEAR, Staff.getMaxScheduleWindow() + 1);
+		jobEndDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMaxTimespan() + 1);
 		
 		int month = jobEndDate.get(Calendar.MONTH); 
 		int day = jobEndDate.get(Calendar.DAY_OF_MONTH);
@@ -175,7 +188,7 @@ public class ParkManagerTest {
 		
 		invalidJobDuration.setEndDate(month, day, year);
 		
-		assertTrue(invalidJobDuration.checkJobEndDateMax(Staff.getMaxScheduleWindow()));		
+		assertTrue(invalidJobDuration.checkJobEndDateMax(model.UrbanParksSystem.getMaxTimespan()));		
 	}
 
 }
