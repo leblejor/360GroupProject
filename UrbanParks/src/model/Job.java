@@ -48,8 +48,8 @@ public class Job implements java.io.Serializable {
 		// NOTE: months start at 0 i.e. 0 -> January, 1 -> February, ...
 		myJobName = theJobName;
 		myJobDescription = theJobDescription;
-		myStartDate = new GregorianCalendar(theStartYear, theStartMonth - 1, theStartDay);
-		myEndDate = new GregorianCalendar(theEndYear, theEndMonth - 1, theEndDay);
+		myStartDate = new GregorianCalendar(theStartYear, theStartMonth, theStartDay);
+		myEndDate = new GregorianCalendar(theEndYear, theEndMonth, theEndDay);
   	}
 	
 	public Job(String theJobName, String theJobDescription, Calendar theStartDate, Calendar theEndDate) {
@@ -94,7 +94,7 @@ public class Job implements java.io.Serializable {
 	public boolean isBeforeMinTimespan() {
 		//Add MIN_TIMESPAN days to the current date for comparison
 		Calendar cutOff = Calendar.getInstance();
-		cutOff.add(Calendar.DAY_OF_YEAR, UrbanParksSystem.getMinTimespan());
+		cutOff.add(Calendar.DAY_OF_YEAR, Staff.getMinTimespan());
 
 		if (cutOff.compareTo(myStartDate) > 0) { // cutOff occurs strictly AFTER myStartDate
 			return true;
@@ -157,7 +157,7 @@ public class Job implements java.io.Serializable {
 			conflict = true;
 		}
 		
-		if (myEndDate.compareTo(today) > 0) {
+		if (myEndDate.compareTo(today) < 0) {
 			conflict = true;
 		}
 		return conflict;

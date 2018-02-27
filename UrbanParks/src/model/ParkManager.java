@@ -45,11 +45,11 @@ public class ParkManager extends User {
 		int jobTooFarConflict = 3;
 		int jobInThePastConflict = 4;
 
-		if (checkNumberOfJobsInSystem(ups)) { 
+		if (ups.areJobsInSystemFull()) { 
 			return maxJobsConflict;
-		} else if (theJob.checkJobDayLength(UrbanParksSystem.getMaxJobDuration())) {
+		} else if (theJob.checkJobDayLength(Staff.getMaxJobDuration())) {
 			return jobTooLongConflict;
-		} else if (theJob.checkJobEndDateMax(UrbanParksSystem.getMaxTimespan())) { 
+		} else if (theJob.checkJobEndDateMax(Staff.getMaxTimespan())) { 
 			return jobTooFarConflict;
 		} else if (theJob.checkJobDatePast()) { 
 			return jobInThePastConflict;
@@ -83,6 +83,7 @@ public class ParkManager extends User {
 		}
 	}
 	
+	// TODO: Remove "local" methods only used for testing
 	/**
 	 * SHOULD ONLY BE USED FOR TESTING.
 	 * Adds theJob to this ParkManager's myJobs without any checks. 
@@ -115,6 +116,9 @@ public class ParkManager extends User {
 			return success;
 		}
 	}
+	
+	
+	// TODO: Remove these two methods
 	/**
 	 * Takes the UrbanParksSystem, which contains the serialized object
 	 * for the list of current pending jobs. There cannot be more than
@@ -123,12 +127,13 @@ public class ParkManager extends User {
 	 * Returns false if the job can be added to the system
 	 * Returns true if the system already has MAX_PENDING_JOBS
 	 */
+	
 	public boolean checkNumberOfJobsInSystem(UrbanParksSystem ups) {
 		boolean conflict = false;
 		
 		Set<Job> set = ups.getPendingJobs();
 		
-		if (set.size() >= UrbanParksSystem.getMaxPendingJobs()) {
+		if (set.size() >= Staff.getMaxPendingJobs()) {
 			conflict = true;
 		}
 		
@@ -140,7 +145,7 @@ public class ParkManager extends User {
 	public boolean checkNumberOfJobsInSystemLocal() {
 		boolean conflict = false;
 		
-		if (myJobs.size() >= UrbanParksSystem.getMaxPendingJobs()) {
+		if (myJobs.size() >= Staff.getMaxPendingJobs()) {
 			conflict = true;
 		}
 		

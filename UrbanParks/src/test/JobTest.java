@@ -87,7 +87,7 @@ public class JobTest {
 	public void checkDaysUntilJob_MoreThanMinDays_False() {
 		Job jobMoreThanMinDays = new Job();
 		Calendar futureDate = jobMoreThanMinDays.getStartDate();	
-		futureDate.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan() + 1);
+		futureDate.add(Calendar.DAY_OF_YEAR, model.Staff.getMinTimespan() + 1);
 
 		assertFalse(jobMoreThanMinDays.isBeforeMinTimespan());
 	}
@@ -96,7 +96,7 @@ public class JobTest {
 	public void checkDaysUntilJob_JobExactlyMinDaysLater_False() {
 		Job jobMinDaysLater = new Job();
 		Calendar futureDate = jobMinDaysLater.getStartDate();
-		futureDate.add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan());
+		futureDate.add(Calendar.DATE, model.Staff.getMinTimespan());
 
 		assertFalse(jobMinDaysLater.isBeforeMinTimespan());
 	}
@@ -105,7 +105,7 @@ public class JobTest {
 	public void checkDaysUntilJob_JobLessThanMinDays_True() {
 		Job jobLessThanMinDays = new Job();
 		Calendar futureDate = jobLessThanMinDays.getStartDate();
-		futureDate.add(Calendar.DATE, model.UrbanParksSystem.getMinTimespan() - 1);
+		futureDate.add(Calendar.DATE, model.Staff.getMinTimespan() - 1);
 
 		assertTrue(jobLessThanMinDays.isBeforeMinTimespan());
 	}

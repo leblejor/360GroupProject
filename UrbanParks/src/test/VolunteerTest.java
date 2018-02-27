@@ -43,16 +43,16 @@ public class VolunteerTest {
 		tomorrow.add(Calendar.DAY_OF_YEAR, 1);
 		
 		lessThanMinDaysAway = Calendar.getInstance();
-		lessThanMinDaysAway.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan() - 1);
+		lessThanMinDaysAway.add(Calendar.DAY_OF_YEAR, model.Staff.getMinTimespan() - 1);
 		
 		minDaysAway = Calendar.getInstance();
-		minDaysAway.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan());
+		minDaysAway.add(Calendar.DAY_OF_YEAR, model.Staff.getMinTimespan());
 		
 		moreThanMinDaysAway = Calendar.getInstance();
-		moreThanMinDaysAway.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan() + 1);
+		moreThanMinDaysAway.add(Calendar.DAY_OF_YEAR, model.Staff.getMinTimespan() + 1);
 		
 		muchMoreThanMinDaysAway = Calendar.getInstance();
-		muchMoreThanMinDaysAway.add(Calendar.DAY_OF_YEAR, model.UrbanParksSystem.getMinTimespan() + 2);
+		muchMoreThanMinDaysAway.add(Calendar.DAY_OF_YEAR, model.Staff.getMinTimespan() + 2);
 	}
 	
 	@Test
