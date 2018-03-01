@@ -58,8 +58,8 @@ public class MainMenu extends JPanel {
 	/* This method is used by right panel classes to switch between panels*/
 	public void switchPanels(String theNewPanelName) {
 		
-		CardLayout cardLayout = (CardLayout) myMasterPanel.getLayout();				
-		cardLayout.show(myMasterPanel, theNewPanelName);
+		CardLayout cardLayout = (CardLayout) myRightPanel.getLayout();				
+		cardLayout.show(myRightPanel, theNewPanelName);
 		
 	}
 	
