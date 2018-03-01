@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import model.ParkManager;
 import model.UrbanParksSystem;
 import model.User;
 import model.Volunteer;
@@ -87,12 +88,12 @@ public final class UrbanParksGUI extends JFrame {
 	
 	
 
-	
+	/* This method may not be needed in this class. */
 	public void switchPanels(String theNewPanelName) {
 		
 		CardLayout cardLayout = (CardLayout) myMasterPanel.getLayout();				
 		cardLayout.show(myMasterPanel, theNewPanelName);
-		System.out.println("I should be displaying a new Panel");
+		
 	}
 	
 	public int createMainMenu() {
@@ -101,20 +102,25 @@ public final class UrbanParksGUI extends JFrame {
 			return 1;
 		}
 		
-		myMasterPanel.add(new MainMenuPanel(this, mySystem,
-				myCurrentUserType, myCurrentUser),
-				MAIN_MENU_PANEL);
 		
-		switchPanels(MAIN_MENU_PANEL);
+		
+		
 		
 		if (myCurrentUserType instanceof Volunteer) {
 			
-			// add all volunteer panels here
+			// add Volunteer MainMenu Here
+			
 
+		} else if (myCurrentUserType instanceof ParkManager) {
+			
+			// add ParkManager Menu Here
+			myMasterPanel.add(new ParkManagerMainMenu(this, mySystem,
+					myCurrentUserType, myCurrentUser),
+					MAIN_MENU_PANEL);
 		}
 		
 		
-		
+		switchPanels(MAIN_MENU_PANEL);
 		
 		return 0;
 	}
