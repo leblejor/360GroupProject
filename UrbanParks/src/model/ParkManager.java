@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents a Park Manager.
+ * Represents a Park Manager. A park manager is able to create Jobs
+ * and remove them. Jobs created or removed are added to the UrbanParksSystem
+ * where a list of all the pending jobs is stored.
  * 
  * @author Derick Salamanca
  * @author Bryan Santos
@@ -62,7 +64,8 @@ public class ParkManager extends User {
 	
 	/**
 	 * Removes a Job from this ParkManager's list of myJobs. Will return 1 if theJob was not
-	 * found in the list of ParkMangare's jobs, otherwise will return 0 if successful. 
+	 * found in the list of ParkMangare's jobs, returns 2 if the job starts within a minimum 
+	 * time span, otherwise will return 0 if successful. 
 	 * 
 	 * @param theJob Job to remove from the list.
 	 * @return 0 if removing the Job was successful, 1 if theJob was not found in the list.
@@ -83,7 +86,7 @@ public class ParkManager extends User {
 		}
 	}
 	
-	// TODO: Remove "local" methods only used for testing
+	// TODO: Remove "local" methods only used for testing.
 	/**
 	 * SHOULD ONLY BE USED FOR TESTING.
 	 * Adds theJob to this ParkManager's myJobs without any checks. 

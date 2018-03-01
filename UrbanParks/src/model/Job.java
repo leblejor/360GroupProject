@@ -5,7 +5,8 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 
 /**
- * Represents a Job. A Job holds a title, a start date, and an end date. 
+ * Represents a Job. A Job holds a title, a start date, and an end date
+ * and contains various checks to be considered a 'valid' job.
  * 
  * @author Bryan Santos
  * @author Jordan LeBle
@@ -52,6 +53,14 @@ public class Job implements java.io.Serializable {
 		myEndDate = new GregorianCalendar(theEndYear, theEndMonth, theEndDay);
   	}
 	
+	/**
+	 * Constructor that takes in Calendar objects for the start and end date.
+	 * 
+	 * @param theJobName The title of the job.
+	 * @param theJobDescription The description of the job.
+	 * @param theStartDate The start date of the job.
+	 * @param theEndDate The end date of the job.
+	 */
 	public Job(String theJobName, String theJobDescription, Calendar theStartDate, Calendar theEndDate) {
 		myJobName = theJobName;
 		myJobDescription = theJobDescription;
@@ -60,7 +69,9 @@ public class Job implements java.io.Serializable {
 	}
 	
 	/**
-	 * Checks if this Job overlaps with the other Job.
+	 * Checks if this Job overlaps with the other Job. 
+	 * A job overlaps if either the start dates and/or the end dates 
+	 * fall within the same calendar day of each other.
 	 * 
 	 * @param theOther The other Job to compare to for overlap.
 	 * @return True if there is an overlap with this Job and the other Job, false otherwise.
@@ -87,9 +98,10 @@ public class Job implements java.io.Serializable {
 	}
 	
 	/**
-	 * Checks if this Job's start date occurs before MIN_TIMESPAN days in the future.
+	 * Checks if this Job's start date occurs before a minimum
+	 * number of days in the future. Determined by the getMinTimeSpan() in the Staff class.
 	 * 
-	 * @return true if this Job starts within MIN_TIMESPAN days from today, false otherwise.
+	 * @return true if this Job starts within the minimum days from today, false otherwise.
 	 */
 	public boolean isBeforeMinTimespan() {
 		//Add MIN_TIMESPAN days to the current date for comparison
@@ -106,12 +118,17 @@ public class Job implements java.io.Serializable {
 	/**
 	 * Checks a jobs start and end dates to make sure it falls within 
 	 * the MaxJobLength range. A job cannot last longer than 
-	 * the MaxJobLength.
+	 * the MaxJobLength. the MaxJobLength must be >= 0.
 	 * 
-	 * Returns false if the job has a valid job length 
-	 * Returns true if the job is longer than the valid job length
+	 * @param theMaxJobLength The maximum length a job can be in calendar days.
+	 * @return True if the job is longer than theMaxJobLength, false otherwise.
+	 * @throws IllegalArgumentException if theMaxJobLength < 0.
 	 */
 	public boolean checkJobDayLength(int theMaxJobLength) {
+		if (theMaxJobLength < 0) {
+			throw new IllegalArgumentException("Invalid max job length: " + theMaxJobLength);
+		}
+		
 		boolean conflict = false;
 		Calendar jobStartDay = (Calendar) myStartDate.clone();
 		jobStartDay.add(Calendar.DAY_OF_YEAR, theMaxJobLength);
@@ -128,10 +145,15 @@ public class Job implements java.io.Serializable {
 	 * theMaxScheduleWindow range. A job cannot end after theMaxScheduleWindow
 	 * days from the current day.
 	 * 
-	 * Returns false if the job is within the theMaxScheduleWindow range
-	 * Returns true if the job ends past the theMaxScheduleWindow
+	 * @return true if the job ends past the theMaxScheduleWindow, false otherwise.
+	 * @throws IllegalArgumentException if theMaxScheduleWindow < 0.
 	 */
 	public boolean checkJobEndDateMax(int theMaxScheduleWindow) {
+		if (theMaxScheduleWindow < 0) {
+			throw new IllegalArgumentException("Invalid max schedule window: " 
+					+ theMaxScheduleWindow);
+		}
+		
 		boolean conflict = false;
 		Calendar today = Calendar.getInstance();
 		today.add(Calendar.DAY_OF_YEAR, theMaxScheduleWindow);
@@ -146,7 +168,6 @@ public class Job implements java.io.Serializable {
 	 * Checks a job to make sure that its start dates and 
 	 * end dates do not occur in the past.
 	 * 
-	 * @param theJob
 	 * @return true if a jobs start or end dates occur in the past, false otherwise.
 	 */
 	public boolean checkJobDatePast() {
@@ -160,6 +181,7 @@ public class Job implements java.io.Serializable {
 		if (myEndDate.compareTo(today) < 0) {
 			conflict = true;
 		}
+		
 		return conflict;
 	}
 	
@@ -180,8 +202,6 @@ public class Job implements java.io.Serializable {
 				&& myEndDate.get(Calendar.DAY_OF_WEEK) == theOther.get(Calendar.DAY_OF_WEEK);
 		
 	}
-	
-	
 	
 	/*********** Getters and Setters ***********/
 	public String getJobName() {

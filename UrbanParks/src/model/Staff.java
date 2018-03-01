@@ -11,7 +11,7 @@ public class Staff extends User {
 	private static final long serialVersionUID = 1L;
 	
 	// TODO: Put all variables in terms of staff's variables!
-	// include setter
+	// include setter.
 	private static int MAX_PENDING_JOBS = 10;
 	private static final int MAX_JOB_DURATION = 4;
 	private static final int MAX_TIMESPAN = 60;
@@ -21,6 +21,13 @@ public class Staff extends User {
 		super(theUsername, theName, "Staff");
 	}
 	
+	/**
+	 * Sets the maximum number of pending jobs in the system. theMaxJobs must be > 0.
+	 *
+	 * @param ups contains the pending jobs list for the maximum jobs to be changed.
+	 * @param theMaxJobs the maximum number of jobs in the system.
+	 * @return 0 if the process was successful, 1 if theMaxJobs is zero, 2 if theMaxJobs is negative.
+	 */
 	public int setMaxPendingJobs(UrbanParksSystem ups, int theMaxJobs) {
 		int success = 0;
 		int zeroInvalid = 1;
@@ -52,11 +59,12 @@ public class Staff extends User {
 		}
 		
 	}
+	
+	
 
 	public static int getMaxPendingJobs() {
 		return MAX_PENDING_JOBS;
 	}
-	
 	
 	public static int getMaxJobDuration() {
 		return MAX_JOB_DURATION;

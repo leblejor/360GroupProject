@@ -25,50 +25,62 @@ import java.util.Set;
 public class UrbanParksSystem {
 	private static final String SERIALIZED_USERS_FILE = "./storage/serializedUser.ser";
 	private static final String SERIALIZED_JOBS_FILE = "./storage/serializedJobs.ser";
-	
 
 	
 	private Map<String, User> myUsers;
-	private Map<String, Job> myPendingJobs; // TODO: Make this a HashSet
+	private Map<String, Job> myPendingJobs; // TODO: Make this a HashSet.
 	
 	public UrbanParksSystem() {		
 		loadUsers();
 		loadJobs();
 	}
 	
+	/**
+	 * Signs the user into the system. The username determines if the user is a 
+	 * Volunteer, ParkManager, or Staff.
+	 * 
+	 * @param theUsername the username to sign in.
+	 * @return the Volunteer/ParkManager/Staff user object based on their username
+	 */
 	public User signIn(String theUsername) {
 		return myUsers.get(theUsername);
 	}
 
+	/**
+	 * Adds theJob into the the serialized object myPendingJobs.
+	 * 
+	 * @param theJob the job to be added in the system.
+	 */
 	public void addJob(Job theJob) { // Should the check for MAX_PENDING_JOBS go here?
 		myPendingJobs.put(theJob.getJobName(), theJob);
 	}
 	
+	/**
+	 * Removes theJob  from the serialized object myPendingJobs.
+	 * 
+	 * @param theJob the job to be removed from the system.
+	 */
 	public void removeJob(Job theJob) { // Make any checks here?
 		myPendingJobs.remove(theJob.getJobName()); // Would rather remove from a set, not by name
 	}
 	
 	/**
-	 * Takes the UrbanParksSystem, which contains the serialized object
-	 * for the list of current pending jobs. There cannot be more than
-	 * MAX_PENDING_JOBS in the system.
+	 * Checks to see if the list of pending jobs is full or not, determined 
+	 * by the Staff.getMaxPendingJobs(). The list of jobs cannot exceed the maximum number.
 	 * 
-	 * Returns false if the job can be added to the system
-	 * Returns true if the system already has MAX_PENDING_JOBS
+	 * @return true if the job cannot be added to the system, false otherwise.
 	 */
 	public boolean areJobsInSystemFull() {
 		return jobsInSystem() >= Staff.getMaxPendingJobs();
 	}
+	
 
 	public int jobsInSystem() {
-		return myPendingJobs.size();
-		
-		
+		return myPendingJobs.size();			
 	}
 	
 	
-	private Job getSinglePendingJob(String string) {
-		
+	private Job getSinglePendingJob(String string) {	
 		return myPendingJobs.get(string);
 	}
 	
@@ -313,9 +325,6 @@ public class UrbanParksSystem {
 		
 	}
 	
-	
-
-
 	public static void main(String[] args) {
 		UrbanParksSystem system = new UrbanParksSystem(true);
 		User user = system.signIn("derickZ");
