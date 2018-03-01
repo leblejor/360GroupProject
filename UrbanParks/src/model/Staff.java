@@ -21,6 +21,13 @@ public class Staff extends User {
 		super(theUsername, theName, "Staff");
 	}
 	
+	/**
+	 * Sets the maximum number of pending jobs in the system. theMaxJobs must be > 0.
+	 *
+	 * @param ups contains the pending jobs list for the maximum jobs to be changed.
+	 * @param theMaxJobs the maximum number of jobs in the system.
+	 * @return 0 if the process was successful, 1 if theMaxJobs is zero, 2 if theMaxJobs is negative.
+	 */
 	public int setMaxPendingJobs(UrbanParksSystem ups, int theMaxJobs) {
 		int success = 0;
 		int zeroInvalid = 1;
@@ -52,11 +59,12 @@ public class Staff extends User {
 		}
 		
 	}
+	
+	
 
 	public static int getMaxPendingJobs() {
 		return MAX_PENDING_JOBS;
 	}
-	
 	
 	public static int getMaxJobDuration() {
 		return MAX_JOB_DURATION;
