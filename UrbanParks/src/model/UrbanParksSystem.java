@@ -28,7 +28,7 @@ public class UrbanParksSystem {
 
 	
 	private Map<String, User> myUsers;
-	private Map<String, Job> myPendingJobs; // TODO: Make this a HashSet
+	private Map<String, Job> myPendingJobs; // TODO: Make this a HashSet.
 	
 	public UrbanParksSystem() {		
 		loadUsers();

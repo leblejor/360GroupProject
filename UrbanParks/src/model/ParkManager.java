@@ -86,7 +86,7 @@ public class ParkManager extends User {
 		}
 	}
 	
-	// TODO: Remove "local" methods only used for testing
+	// TODO: Remove "local" methods only used for testing.
 	/**
 	 * SHOULD ONLY BE USED FOR TESTING.
 	 * Adds theJob to this ParkManager's myJobs without any checks. 

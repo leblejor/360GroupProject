@@ -51,7 +51,7 @@ public class Volunteer extends User {
 	}
 	
 	/**
-	 * SHOULD ONLY BE USED FOR TESTING.
+	 * SHOULD ONLY BE USED FOR TESTING
 	 * Adds theJob to this Volunteer's myJobs without any checks. 
 	 * 
 	 * @param theJob Job this Volunteer will sign up for.

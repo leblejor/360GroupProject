@@ -203,8 +203,6 @@ public class Job implements java.io.Serializable {
 		
 	}
 	
-	
-	
 	/*********** Getters and Setters ***********/
 	public String getJobName() {
 		return myJobName;

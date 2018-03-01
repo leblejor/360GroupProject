@@ -11,7 +11,7 @@ public class Staff extends User {
 	private static final long serialVersionUID = 1L;
 	
 	// TODO: Put all variables in terms of staff's variables!
-	// include setter
+	// include setter.
 	private static int MAX_PENDING_JOBS = 10;
 	private static final int MAX_JOB_DURATION = 4;
 	private static final int MAX_TIMESPAN = 60;

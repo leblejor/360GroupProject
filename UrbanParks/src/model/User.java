@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Represents a User. User holds a user name, name, and type of user.
+ * Represents a User. User holds a username, name, and type of user.
  * 
  * @version 11 February 2018
  */
