@@ -35,11 +35,9 @@ public class Volunteer extends User {
 		int sameDayConflict = 1;
 		int minDaysConflict = 2;
 		
-		for (Job j : myJobs) {
-			if (j.isOverlap(theJob)) {
-				return sameDayConflict;
-			}
-		} 
+		if(isConflict(theJob)) {
+			return sameDayConflict;
+		}
 		
 		if (theJob.isBeforeMinTimespan()) {
 			return minDaysConflict;
@@ -49,6 +47,21 @@ public class Volunteer extends User {
 		
 		return successful;		
 	}
+	
+	/**
+	 * Checks if theJob is already in the volunteers job list.
+	 * 
+	 * @param theJob the job to be checked.
+	 * @return true if the job is already in the job list, false otherwise.
+	 */
+	public boolean isConflict(Job theJob) {
+		for (Job j : myJobs) {
+			if (j.isOverlap(theJob)) {
+				return true;
+			}
+		} 
+		return false;
+}
 	
 	/**
 	 * SHOULD ONLY BE USED FOR TESTING

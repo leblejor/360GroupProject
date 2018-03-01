@@ -1,5 +1,10 @@
 package model;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Represents a Staff member. 
  * 
@@ -42,6 +47,36 @@ public class Staff extends User {
 			return success;
 		}
 		
+	}
+	
+	/**
+	 * Finds jobs that are within the given start and end dates and returns 
+	 * a list of them. The integer values must be valid calendar dates, and 
+	 * the start date cannot be in the future of the end date.
+	 * 
+	 * @param ups The system containing all of the pending jobs
+	 * @return A list of jobs within the date range
+	 */
+	public Set<Job> viewJobsWithinRange(UrbanParksSystem ups, int theStartMonth, int theStartDay, 
+			int theStartYear, int theEndMonth, int theEndDay, int theEndYear) {
+		Set<Job> jobs = new HashSet<Job>();
+		Calendar startDate = new GregorianCalendar(theStartYear, theStartMonth, theStartDay);
+		Calendar endDate = new GregorianCalendar(theEndYear, theEndMonth, theEndDay);
+		
+		if (startDate.compareTo(endDate) > 0) {
+			throw new IllegalArgumentException("Invalid dates, start date is after end date");
+		}
+		
+		for(Job j : ups.getPendingJobs()) {
+			//Start date and end date is within the range
+			if (startDate.compareTo(j.getStartDate()) * j.getStartDate().compareTo(endDate) > 0 &&
+					startDate.compareTo(j.getEndDate()) * j.getEndDate().compareTo(endDate) > 0) {
+				jobs.add(j);			
+			}
+		}
+		
+		
+		return jobs;
 	}
 	
 	// TODO: Remove this

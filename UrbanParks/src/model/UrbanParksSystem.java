@@ -2,6 +2,7 @@ package model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -28,7 +29,7 @@ public class UrbanParksSystem {
 
 	
 	private Map<String, User> myUsers;
-	private Map<String, Job> myPendingJobs; // TODO: Make this a HashSet.
+	private Set<Job> myPendingJobs;
 	
 	public UrbanParksSystem() {		
 		loadUsers();
@@ -52,7 +53,7 @@ public class UrbanParksSystem {
 	 * @param theJob the job to be added in the system.
 	 */
 	public void addJob(Job theJob) { // Should the check for MAX_PENDING_JOBS go here?
-		myPendingJobs.put(theJob.getJobName(), theJob);
+		myPendingJobs.add(theJob);
 	}
 	
 	/**
@@ -61,7 +62,7 @@ public class UrbanParksSystem {
 	 * @param theJob the job to be removed from the system.
 	 */
 	public void removeJob(Job theJob) { // Make any checks here?
-		myPendingJobs.remove(theJob.getJobName()); // Would rather remove from a set, not by name
+		myPendingJobs.remove(theJob); // Would rather remove from a set, not by name
 	}
 	
 	/**
@@ -81,13 +82,37 @@ public class UrbanParksSystem {
 	
 	
 	private Job getSinglePendingJob(String string) {	
-		return myPendingJobs.get(string);
+		Job job = new Job();
+		for (Job j : myPendingJobs) {
+			if(string == j.getJobName()) {
+				job = j;
+			}
+		}
+		return job;
 	}
+	
+	/**
+	 * Compares the jobs in the system and theVolunteer's jobs and returns a set 
+	 * of jobs that the volunteer can sign up for. Checks jobs that are already in
+	 * the Volunteer job list and jobs that start too 
+	 * 
+	 * @param theVolunteer the volunteer to check job list.
+	 * @return the set of valid jobs the volunteer can sign up for.
+	 */
+	public Set<Job> getVolunteerValidJobs(Volunteer theVolunteer) {
+		Set<Job> validJobs = new HashSet<Job>();
+		for(Job j : myPendingJobs) { 
+			if (!theVolunteer.isConflict(j) && j.isBeforeMinTimespan() ) { 
+				validJobs.add(j);
+			} 
+		}		
+		return validJobs;
+}
 	
 	/*********** Getters & Setters ***********/
 	
 	public Set<Job> getPendingJobs() {
-		return (Set<Job>) myPendingJobs.values();
+		return myPendingJobs;
 	}
 
 
@@ -124,7 +149,7 @@ public class UrbanParksSystem {
             ObjectInputStream in = new ObjectInputStream(file);
              
             // Method for deserialization of object
-            myPendingJobs = (Map<String, Job>) in.readObject();
+            myPendingJobs = (Set<Job>) in.readObject();
              
             in.close();
             file.close();
@@ -189,7 +214,7 @@ public class UrbanParksSystem {
 	public UrbanParksSystem(boolean k) {
 		
 		myUsers = new HashMap<String, User>();
-		myPendingJobs = new HashMap<String, Job>();
+		myPendingJobs = new HashSet<Job>();
 		//myCalendar = new Calendar();
 		
 		// read data from userList.csv and store it in myUsers
@@ -277,10 +302,7 @@ public class UrbanParksSystem {
 				addJob(job);
 				
 				
-			}
-			
-			
-			
+			}		
 			inputFile.close();
 		} catch (FileNotFoundException e) {
             e.printStackTrace();
