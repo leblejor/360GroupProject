@@ -8,13 +8,12 @@ import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import model.ParkManager;
 import model.UrbanParksSystem;
 import model.User;
+import model.Volunteer;
 
-public class ParkManagerMainMenu extends JPanel {
-
-
-	private static final long serialVersionUID = 1L;
+public class MainMenu extends JPanel {
 	
 	/* Create String constants here of your class names
 	 * This is needed for the right panel classes
@@ -25,6 +24,9 @@ public class ParkManagerMainMenu extends JPanel {
 	/*
 	 * NOTE: "jordan23" is ParkManager user. Sign in with this if you want
 	 * to test out the GUI.
+	 * 
+	 * "paolo186" is Volunteer user.
+	 * "emerson01" is Staff User.
 	 */
 	private UrbanParksGUI myGUI;
 	private UrbanParksSystem mySystem;
@@ -36,7 +38,7 @@ public class ParkManagerMainMenu extends JPanel {
 	private JPanel myRightPanel;
 	
 	
-	public ParkManagerMainMenu(UrbanParksGUI theGUI, UrbanParksSystem theSystem,
+	public MainMenu(UrbanParksGUI theGUI, UrbanParksSystem theSystem,
 			User theUserType, String theUserName) {
 		
 		myGUI = theGUI;
@@ -64,18 +66,41 @@ public class ParkManagerMainMenu extends JPanel {
 	
 	private void setUpMasterPanel() {
 		
-		// add buttonsPanel class on myLeftPanel here 
+		if (myUserType instanceof Volunteer) {
+			setUpVolunteerMenu();
+		} 
+		else if (myUserType instanceof ParkManager) {
+			setUpParkManagerMenu();
+		} 
+		else {
+			setUpStaffMenu();
+		}
 		
+		
+		myMasterPanel.add(myLeftPanel);
+		myMasterPanel.add(myRightPanel);
+		add(myMasterPanel);
+	}
+	
+	private void setUpVolunteerMenu() {
+		
+	}
+	
+	private void setUpParkManagerMenu() {
+		/* add buttonsPanel class on myLeftPanel here 
+		
+		*/
 		
 		/* add the right panel classes stuff here	
 		Example: myRightPanel.add(new CreateJobView(mySystem,
 				myCurrentUserType, myCurrentUser),
-				CREATE_JOB_PANEL);
+				CREATE_JOB_VIEW);
 				
 		*/
-		myMasterPanel.add(myLeftPanel);
-		myMasterPanel.add(myRightPanel);
-		add(myMasterPanel);
+	}
+	
+	private void setUpStaffMenu() {
+		
 	}
 	
 	/**
@@ -103,8 +128,4 @@ public class ParkManagerMainMenu extends JPanel {
 		
 		add(northPanel, BorderLayout.NORTH);
 	}
-	
-	
-	
-	
 }

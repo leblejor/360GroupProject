@@ -101,25 +101,8 @@ public final class UrbanParksGUI extends JFrame {
 		if (myCurrentUserType == null) {
 			return 1;
 		}
-		
-		
-		
-		
-		
-		if (myCurrentUserType instanceof Volunteer) {
-			
-			// add Volunteer MainMenu Here
-			
+		myMasterPanel.add(new MainMenu(this, mySystem,myCurrentUserType, myCurrentUser),MAIN_MENU_PANEL);
 
-		} else if (myCurrentUserType instanceof ParkManager) {
-			
-			// add ParkManager Menu Here
-			myMasterPanel.add(new ParkManagerMainMenu(this, mySystem,
-					myCurrentUserType, myCurrentUser),
-					MAIN_MENU_PANEL);
-		}
-		
-		
 		switchPanels(MAIN_MENU_PANEL);
 		
 		return 0;
