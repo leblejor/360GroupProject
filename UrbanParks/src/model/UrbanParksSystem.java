@@ -29,7 +29,7 @@ public class UrbanParksSystem {
 
 	
 	private Map<String, User> myUsers;
-	private Set<Job> myPendingJobs;
+	private Map<String,Job> myPendingJobs;
 	
 	public UrbanParksSystem() {		
 		loadUsers();
@@ -53,7 +53,7 @@ public class UrbanParksSystem {
 	 * @param theJob the job to be added in the system.
 	 */
 	public void addJob(Job theJob) { // Should the check for MAX_PENDING_JOBS go here?
-		myPendingJobs.add(theJob);
+		myPendingJobs.put(theJob.getJobName(), theJob);
 	}
 	
 	/**
@@ -62,7 +62,7 @@ public class UrbanParksSystem {
 	 * @param theJob the job to be removed from the system.
 	 */
 	public void removeJob(Job theJob) { // Make any checks here?
-		myPendingJobs.remove(theJob); // Would rather remove from a set, not by name
+		myPendingJobs.remove(theJob.getJobName()); // Would rather remove from a set, not by name
 	}
 	
 	/**
@@ -82,13 +82,7 @@ public class UrbanParksSystem {
 	
 	
 	private Job getSinglePendingJob(String string) {	
-		Job job = new Job();
-		for (Job j : myPendingJobs) {
-			if(string == j.getJobName()) {
-				job = j;
-			}
-		}
-		return job;
+		return myPendingJobs.get(string);
 	}
 	
 	/**
@@ -101,7 +95,7 @@ public class UrbanParksSystem {
 	 */
 	public Set<Job> getVolunteerValidJobs(Volunteer theVolunteer) {
 		Set<Job> validJobs = new HashSet<Job>();
-		for(Job j : myPendingJobs) { 
+		for(Job j : myPendingJobs.values()) { 
 			if (!theVolunteer.isConflict(j) && j.isBeforeMinTimespan() ) { 
 				validJobs.add(j);
 			} 
@@ -112,7 +106,7 @@ public class UrbanParksSystem {
 	/*********** Getters & Setters ***********/
 	
 	public Set<Job> getPendingJobs() {
-		return myPendingJobs;
+		return (Set<Job>) myPendingJobs.values();
 	}
 
 
@@ -149,7 +143,7 @@ public class UrbanParksSystem {
             ObjectInputStream in = new ObjectInputStream(file);
              
             // Method for deserialization of object
-            myPendingJobs = (Set<Job>) in.readObject();
+            myPendingJobs = (Map<String, Job>) in.readObject();
              
             in.close();
             file.close();
@@ -214,7 +208,7 @@ public class UrbanParksSystem {
 	public UrbanParksSystem(boolean k) {
 		
 		myUsers = new HashMap<String, User>();
-		myPendingJobs = new HashSet<Job>();
+		myPendingJobs = new HashMap<String, Job>();
 		//myCalendar = new Calendar();
 		
 		// read data from userList.csv and store it in myUsers
@@ -306,9 +300,7 @@ public class UrbanParksSystem {
 			inputFile.close();
 		} catch (FileNotFoundException e) {
             e.printStackTrace();
-		}
-		
-		
+		}	
 		
 	}
 	
