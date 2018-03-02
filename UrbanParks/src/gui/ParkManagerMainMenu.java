@@ -3,8 +3,12 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -21,6 +25,10 @@ public class ParkManagerMainMenu extends JPanel {
 	Example: private static final String CREATE_JOB_VIEW_ = "CreateJobView";
 	
 	*/
+	private static final String MASTER_PANEL = "MasterPanel";
+	private static final String LEFT_PANEL = "LeftPanel";
+	private static final String RIGHT_PANEL = "RightPanel";
+	private static final String CREATE_JOB_VIEW = "CreateJobView";
 	
 	/*
 	 * NOTE: "jordan23" is ParkManager user. Sign in with this if you want
@@ -35,7 +43,7 @@ public class ParkManagerMainMenu extends JPanel {
 	private JPanel myLeftPanel;
 	private JPanel myRightPanel;
 	
-	
+	private CardLayout myCardLayout;
 	public ParkManagerMainMenu(UrbanParksGUI theGUI, UrbanParksSystem theSystem,
 			User theUserType, String theUserName) {
 		
@@ -47,6 +55,7 @@ public class ParkManagerMainMenu extends JPanel {
 		myMasterPanel = new JPanel(); // flow layout by default
 		myLeftPanel = new JPanel(new GridLayout());
 		myRightPanel = new JPanel(new CardLayout());
+		myCardLayout = new CardLayout();
 		
 		setLayout(new BorderLayout());
 		setUpNorthLabel();
@@ -64,8 +73,17 @@ public class ParkManagerMainMenu extends JPanel {
 	
 	private void setUpMasterPanel() {
 		
-		// add buttonsPanel class on myLeftPanel here 
+		JPanel createJobView = new CreateJobView(mySystem, myUserType, myUserName);
 		
+		// add buttonsPanel class on myLeftPanel here 
+		JButton createJobButton = new JButton("Create a Job");
+		createJobButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(RIGHT_PANEL);		
+			}		
+		});
+		
+		myLeftPanel.add(createJobView);
 		
 		/* add the right panel classes stuff here	
 		Example: myRightPanel.add(new CreateJobView(mySystem,
@@ -73,10 +91,14 @@ public class ParkManagerMainMenu extends JPanel {
 				CREATE_JOB_PANEL);
 				
 		*/
+
+
 		myMasterPanel.add(myLeftPanel);
 		myMasterPanel.add(myRightPanel);
 		add(myMasterPanel);
 	}
+	
+	
 	
 	/**
 	 * Displays the welcome label on the top.

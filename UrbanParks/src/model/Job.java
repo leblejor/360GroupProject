@@ -272,14 +272,14 @@ public class Job implements java.io.Serializable {
 		int startYear = myStartDate.get(Calendar.YEAR);
 		
 		// add 1 due to Calendar's implementation of months (Months starts at index 0)
-		int startMonth = myStartDate.get(Calendar.MONTH) + 1; 
+		int startMonth = myStartDate.get(Calendar.MONTH); 
 		
 		int startDay = myStartDate.get(Calendar.DATE);
 		
 		int endYear = myEndDate.get(Calendar.YEAR);
 		
 		// add 1 due to Calendar's implementation of months (Months starts at index 0)
-		int endMonth = myEndDate.get(Calendar.MONTH) + 1;
+		int endMonth = myEndDate.get(Calendar.MONTH);
 		
 		int endDay = myEndDate.get(Calendar.DATE);
 		
