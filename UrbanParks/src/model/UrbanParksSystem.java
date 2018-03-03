@@ -2,6 +2,7 @@ package model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -84,6 +85,24 @@ public class UrbanParksSystem {
 		return myPendingJobs.get(string);
 	}
 	
+	
+	/**
+	 * Compares the jobs in the system and theVolunteer's jobs and returns a set 
+	 * of jobs that the volunteer can sign up for. Checks jobs that are already in
+	 * the Volunteer job list and jobs that start too 
+	 * 
+	 * @param theVolunteer the volunteer to check job list.
+	 * @return the set of valid jobs the volunteer can sign up for.
+	 */
+	public Set<Job> getVolunteerValidJobs(Volunteer theVolunteer) {
+		Set<Job> validJobs = new HashSet<Job>();
+		for(Job j : myPendingJobs.values()) { 
+			if (!theVolunteer.isConflict(j) && j.isBeforeMinTimespan() ) { 
+				validJobs.add(j);
+			} 
+		}		
+		return validJobs;
+}
 	/*********** Getters & Setters ***********/
 	
 	public Set<Job> getPendingJobs() {
@@ -324,16 +343,6 @@ public class UrbanParksSystem {
 		
 		
 	}
-	
-	public static void main(String[] args) {
-		UrbanParksSystem system = new UrbanParksSystem(true);
-		User user = system.signIn("derickZ");
-		
-		System.out.println("Users: " + system.myUsers);
-		System.out.println("Jobs: " + system.myPendingJobs);
-		
-	}
-	
 	
 }
 
