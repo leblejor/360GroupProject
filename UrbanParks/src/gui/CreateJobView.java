@@ -1,13 +1,11 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -73,7 +71,34 @@ public class CreateJobView extends JPanel {
 				Job j = new Job(jobTitle, jobDescription, startDay[0], startDay[1], startDay[2],
 						endDay[0], endDay[1], endDay[2]);
 				
-				makejob(mySystem, j);
+				int errorCode = myUser.createJob(mySystem, j);
+				
+				if (errorCode == 0) {
+					int dialog = JOptionPane.showConfirmDialog(myMainPanel,
+							"Would you like to create this job?\n" + 
+						    j.toString(), "Job Confirmation", JOptionPane.YES_NO_OPTION);
+					if (dialog == JOptionPane.YES_OPTION) {
+						JOptionPane.showMessageDialog(myMainPanel, "Job created successfuly!");
+						mySystem.addJob(j);
+						
+						//Update view jobs list here?
+					} 
+					//If no is clicked, then the dialog box closes.
+					
+				} else if (errorCode == 1) {
+					JOptionPane.showMessageDialog(myMainPanel, "Error, pending jobs is currently full.",
+							"Error", JOptionPane.WARNING_MESSAGE);
+				} else if (errorCode == 2) {
+					JOptionPane.showMessageDialog(myMainPanel, "Error, job legnth is too long", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+				} else if (errorCode == 3) {
+					JOptionPane.showMessageDialog(myMainPanel, "Error, job is scheduled too far in the future", 
+							"Error", JOptionPane.WARNING_MESSAGE);
+				} else if (errorCode == 4) {
+					JOptionPane.showMessageDialog(myMainPanel, "Error, job date is in the past", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+				}
+				
 			}
 			
 		});
@@ -82,12 +107,6 @@ public class CreateJobView extends JPanel {
 		add(myMainPanel);
 	}
 	
-	protected void makejob(UrbanParksSystem ups, Job theJob) {
-		int j = myUser.createJob(ups, theJob);
-		
-		System.out.println(j);
-		
-	}
 
 	public int[] getDate(String theDate) {
 		int[] date = new int[3];

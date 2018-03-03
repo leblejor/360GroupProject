@@ -158,7 +158,7 @@ public class Job implements java.io.Serializable {
 		Calendar today = Calendar.getInstance();
 		today.add(Calendar.DAY_OF_YEAR, theMaxScheduleWindow);
 		
-		if (today.compareTo(myEndDate) < 0) {
+		if (today.compareTo(myEndDate) < 0 || today.compareTo(myStartDate) < 0) {
 			conflict = true;
 		}
 		return conflict;
