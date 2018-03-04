@@ -3,6 +3,8 @@ package gui;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Stack;
 
 import javax.swing.JFrame;
@@ -14,7 +16,7 @@ import model.UrbanParksSystem;
 import model.User;
 import model.Volunteer;
 
-public final class UrbanParksGUI extends JFrame {
+public final class UrbanParksGUI extends JFrame implements PropertyChangeListener {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -52,9 +54,8 @@ public final class UrbanParksGUI extends JFrame {
 	public void start() {
 		
 		setupInitialPanels();
-		setScreenToCenter();
+		maximizeFrame();
 		setMinimumWindowSize();
-		
 		setVisible(true);
 		
 		
@@ -63,6 +64,7 @@ public final class UrbanParksGUI extends JFrame {
 		
 	}
 	
+	
 	public void setupInitialPanels() {
 		
 		myMasterPanel.add(new LogInPanel(this, mySystem), LOG_IN_PANEL);
@@ -70,8 +72,13 @@ public final class UrbanParksGUI extends JFrame {
 		
 		
 		add(myMasterPanel);
-		setVisible(true);
+		//setVisible(true);
 		
+	}
+	
+	public void maximizeFrame() {
+		setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+		pack();
 	}
 	
 	public void setScreenToCenter() {
@@ -101,13 +108,23 @@ public final class UrbanParksGUI extends JFrame {
 		if (myCurrentUserType == null) {
 			return 1;
 		}
-		myMasterPanel.add(new MainMenu(this, mySystem,myCurrentUserType, myCurrentUser),MAIN_MENU_PANEL);
-
+		//myMasterPanel.removeAll();
+		MainMenu mainMenu = new MainMenu(mySystem, myCurrentUserType, myCurrentUser);
+		mainMenu.addPropertyChangeListener(this);
+		myMasterPanel.add(mainMenu, MAIN_MENU_PANEL);
+		
 		switchPanels(MAIN_MENU_PANEL);
 		
 		return 0;
 	}
 	
+	public void clearGUI() {
+		myMasterPanel.removeAll();
+		myCurrentUserType = null;
+		myCurrentUser = null;
+		start();
+
+	}
 	
 	
 	
@@ -147,6 +164,15 @@ public final class UrbanParksGUI extends JFrame {
 		
 		if (terminatingValue == JOptionPane.YES_OPTION) {
 			myStackOfPanels.clear();
+		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		
+		String propertyName = (String) evt.getPropertyName();
+		if (propertyName.equals("clearGUI")) {
+			clearGUI();
 		}
 	}
 	

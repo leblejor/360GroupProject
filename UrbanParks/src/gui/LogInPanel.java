@@ -2,10 +2,13 @@ package gui;
 
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -40,6 +43,9 @@ public class LogInPanel extends JPanel {
 	}
 	
 	public void setupPanel() {
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	    setSize(screenSize.width, screenSize.height);
+	    setPreferredSize(screenSize);
 		setLayout(new BorderLayout());
 		setupWelcomeLabel();
 		setupCenterComponents();
@@ -67,6 +73,9 @@ public class LogInPanel extends JPanel {
 		
 		welcomeLabel.setText("Welcome to Urban Parks");
 		welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
+		welcomeLabel.setBackground(Color.BLACK);
+		welcomeLabel.setForeground(Color.WHITE);
+		welcomeLabel.setOpaque(true);
 		welcomeLabel.setVisible(true);
 		add(welcomeLabel, BorderLayout.NORTH);
 	}
