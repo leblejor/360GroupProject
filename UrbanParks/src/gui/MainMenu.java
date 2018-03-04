@@ -87,14 +87,25 @@ public class MainMenu extends JPanel {
 	}
 	
 	private void setUpVolunteerMenu() {
+		String jobSignUpString = "Sign Up for a Job";
+		String viewMyJobsString = "View My Jobs";
+		
+		AbstractAction[] buttonActions = {new ButtonAction(this, jobSignUpString), new ButtonAction(this, viewMyJobsString)};		
+		String[] leftButtonNames = {jobSignUpString, viewMyJobsString};
+		
+		createLeftButtons(leftButtonNames, buttonActions);
+		
+		add(myLeftButtons, BorderLayout.WEST);
+		myRightPanel.add(new VolunteerSignUpPanel(mySystem, myUserType), jobSignUpString);
+		myRightPanel.add(new VolunteerViewCurrentJobsPanel(mySystem, myUserType), viewMyJobsString);
 		
 	}
 	
 	private void setUpParkManagerMenu() {
-		String createJobViewString = "CreateJobView";
-		String viewMyJobsString = "ViewMyJobs";
+		String createJobViewString = "Create a Job";
+		String viewMyJobsString = "View My Jobs";
 		AbstractAction[] buttonActions = {new ButtonAction(this, createJobViewString), new ButtonAction(this, viewMyJobsString)};		
-		String[] leftButtonNames = {"Create a Job", "View My Jobs"};
+		String[] leftButtonNames = {createJobViewString, viewMyJobsString};
 		
 		createLeftButtons(leftButtonNames, buttonActions);
 		
@@ -104,8 +115,8 @@ public class MainMenu extends JPanel {
 	}
 	
 	private void setUpStaffMenu() {
-		String viewJobsString = "ViewJobsOnTheseDates";
-		String changeMaxPendingJobsString = "ChangeMaxPendingJobs";
+		String viewJobsString = "View Jobs On These Dates";
+		String changeMaxPendingJobsString = "Change Max Pending Jobs";
 		AbstractAction[] buttonActions = {new ButtonAction(this, viewJobsString),
 										  new ButtonAction(this, changeMaxPendingJobsString)};		
 		
