@@ -3,8 +3,6 @@ package gui;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Stack;
 
 import javax.swing.JFrame;
@@ -16,7 +14,7 @@ import model.UrbanParksSystem;
 import model.User;
 import model.Volunteer;
 
-public final class UrbanParksGUI extends JFrame implements PropertyChangeListener {
+public final class UrbanParksGUI extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -34,6 +32,9 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
     
     public static final String LOG_IN_PANEL = "LogInPanel";
     public static final String MAIN_MENU_PANEL = "MainMenuPanel";
+    
+    public static final String VOLUNTEER_VIEW_CURRENT_JOBS_PANEL = "VolunteerViewCurrentJobsPanel";
+	public static final String VOLUNTEER_PANEL = "VolunteerPanel";
     
     private UrbanParksSystem mySystem;
 	private JPanel myMasterPanel;
@@ -54,8 +55,9 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
 	public void start() {
 		
 		setupInitialPanels();
-		maximizeFrame();
+		setScreenToCenter();
 		setMinimumWindowSize();
+		
 		setVisible(true);
 		
 		
@@ -64,7 +66,6 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
 		
 	}
 	
-	
 	public void setupInitialPanels() {
 		
 		myMasterPanel.add(new LogInPanel(this, mySystem), LOG_IN_PANEL);
@@ -72,13 +73,8 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
 		
 		
 		add(myMasterPanel);
-		//setVisible(true);
+		setVisible(true);
 		
-	}
-	
-	public void maximizeFrame() {
-		setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
-		pack();
 	}
 	
 	public void setScreenToCenter() {
@@ -108,23 +104,24 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
 		if (myCurrentUserType == null) {
 			return 1;
 		}
-		//myMasterPanel.removeAll();
-		MainMenu mainMenu = new MainMenu(mySystem, myCurrentUserType, myCurrentUser);
-		mainMenu.addPropertyChangeListener(this);
-		myMasterPanel.add(mainMenu, MAIN_MENU_PANEL);
-		
+		myMasterPanel.add(new MainMenu(this, mySystem,myCurrentUserType, myCurrentUser),MAIN_MENU_PANEL);
+
 		switchPanels(MAIN_MENU_PANEL);
+		
+		if (myCurrentUserType instanceof Volunteer) {
+			
+			myMasterPanel.add(new VolunteerPanel(this, myMasterPanel, MAIN_MENU_PANEL, (model.Volunteer) myCurrentUserType, mySystem),
+					VOLUNTEER_PANEL);
+			switchPanels(VOLUNTEER_PANEL);
+			
+			setSize(getPreferredSize());
+			setMinimumSize(getPreferredSize());
+			
+		}
 		
 		return 0;
 	}
 	
-	public void clearGUI() {
-		myMasterPanel.removeAll();
-		myCurrentUserType = null;
-		myCurrentUser = null;
-		start();
-
-	}
 	
 	
 	
@@ -166,18 +163,5 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
 			myStackOfPanels.clear();
 		}
 	}
-
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		
-		String propertyName = (String) evt.getPropertyName();
-		if (propertyName.equals("clearGUI")) {
-			clearGUI();
-		}
-	}
 	
-	
-	
-	
-
 }
