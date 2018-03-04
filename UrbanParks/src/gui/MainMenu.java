@@ -3,23 +3,27 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import action.ButtonAction;
 import model.ParkManager;
 import model.UrbanParksSystem;
 import model.User;
 import model.Volunteer;
 
 public class MainMenu extends JPanel {
-	
-	/* Create String constants here of your class names
-	 * This is needed for the right panel classes
-	Example: private static final String CREATE_JOB_VIEW_ = "CreateJobView";
-	
-	*/
 	
 	/*
 	 * NOTE: "jordan23" is ParkManager user. Sign in with this if you want
@@ -28,43 +32,42 @@ public class MainMenu extends JPanel {
 	 * "paolo186" is Volunteer user.
 	 * "emerson01" is Staff User.
 	 */
-	private UrbanParksGUI myGUI;
+	
+
+	private static final long serialVersionUID = 1L;
 	private UrbanParksSystem mySystem;
 	private User myUserType;
 	private String myUserName;
 	
-	private JPanel myMasterPanel;
-	private JPanel myLeftPanel;
+	private Box myLeftButtons;
 	private JPanel myRightPanel;
 	
 	
-	public MainMenu(UrbanParksGUI theGUI, UrbanParksSystem theSystem,
+	public MainMenu(UrbanParksSystem theSystem,
 			User theUserType, String theUserName) {
 		
-		myGUI = theGUI;
 		mySystem = theSystem;
 		myUserType = theUserType;
 		myUserName = theUserName;
 			
-		myMasterPanel = new JPanel(); // flow layout by default
-		myLeftPanel = new JPanel(new GridLayout());
+		myLeftButtons = Box.createVerticalBox();
 		myRightPanel = new JPanel(new CardLayout());
 		
 		setLayout(new BorderLayout());
 		setUpNorthLabel();
-		setUpMasterPanel();
+		setUpMainPanel();
 	
 	}
 	/* This method is used by right panel classes to switch between panels*/
 	public void switchPanels(String theNewPanelName) {
-		
 		CardLayout cardLayout = (CardLayout) myRightPanel.getLayout();				
 		cardLayout.show(myRightPanel, theNewPanelName);
+		myRightPanel.setVisible(true);
 		
 	}
 	
 	
-	private void setUpMasterPanel() {
+	private void setUpMainPanel() {
 		
 		if (myUserType instanceof Volunteer) {
 			setUpVolunteerMenu();
@@ -77,9 +80,10 @@ public class MainMenu extends JPanel {
 		}
 		
 		
-		myMasterPanel.add(myLeftPanel);
-		myMasterPanel.add(myRightPanel);
-		add(myMasterPanel);
+		
+		myRightPanel.setVisible(false);
+		add(myRightPanel);
+		
 	}
 	
 	private void setUpVolunteerMenu() {
@@ -87,30 +91,54 @@ public class MainMenu extends JPanel {
 	}
 	
 	private void setUpParkManagerMenu() {
-		/* add buttonsPanel class on myLeftPanel here 
+		String createJobViewString = "CreateJobView";
+		String viewMyJobsString = "ViewMyJobs";
+		AbstractAction[] buttonActions = {new ButtonAction(this, createJobViewString), new ButtonAction(this, viewMyJobsString)};		
+		String[] leftButtonNames = {"Create a Job", "View My Jobs"};
 		
-		*/
+		createLeftButtons(leftButtonNames, buttonActions);
 		
-		/* add the right panel classes stuff here	
-		Example: myRightPanel.add(new CreateJobView(mySystem,
-				myCurrentUserType, myCurrentUser),
-				CREATE_JOB_VIEW);
-				
-		*/
+		add(myLeftButtons, BorderLayout.WEST);
+		myRightPanel.add(new CreateJobView(mySystem, myUserType, myUserName), createJobViewString);
+	
 	}
 	
 	private void setUpStaffMenu() {
+		String viewJobsString = "ViewJobsOnTheseDates";
+		String changeMaxPendingJobsString = "ChangeMaxPendingJobs";
+		AbstractAction[] buttonActions = {new ButtonAction(this, viewJobsString),
+										  new ButtonAction(this, changeMaxPendingJobsString)};		
+		
+		String[] leftButtonNames = {viewJobsString, changeMaxPendingJobsString};
+		createLeftButtons(leftButtonNames, buttonActions);
+		
+
+		add(myLeftButtons, BorderLayout.WEST);
+		myRightPanel.add(new StaffViewSelectedJobDates(mySystem, myUserType));
 		
 	}
+	
+	private void createLeftButtons(String[] leftButtonNames, AbstractAction[] buttonActions) {
+		int i = 0;
+		for (String name : leftButtonNames) {
+			JButton button = new JButton(name);
+			button.addActionListener(buttonActions[i]);
+			i++;
+			myLeftButtons.add(button);
+			myLeftButtons.add(Box.createVerticalStrut(10));
+		
+		}
+	}
+	
+
 	
 	/**
 	 * Displays the welcome label on the top.
 	 */
 	private void setUpNorthLabel() {
 		
-		GridLayout northLayout = new GridLayout(2, 1);
-		northLayout.setVgap(10);
-		JPanel northPanel = new JPanel(northLayout);
+		JPanel userPanel = new JPanel();
+		JPanel northPanel = new JPanel(new BorderLayout());
 		
 		JLabel menuLabel = new JLabel("Main Menu");
 		JLabel userLabel = new JLabel();
@@ -123,9 +151,38 @@ public class MainMenu extends JPanel {
 		userLabel.setHorizontalAlignment(JLabel.CENTER);
 		userLabel.setText("Welcome, " + myUserType.getDescription() + " " + myUserType.getName());
 		
-		northPanel.add(menuLabel);
-		northPanel.add(userLabel);
+		JButton signOutButton = new JButton("Sign Out");
+		signOutButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String message = "Are you sure you want to sign out?";
+				String title = "Signing out";
+				int reply = JOptionPane.showConfirmDialog(null, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (reply == JOptionPane.YES_OPTION) {
+					clearPanel();
+					firePropertyChange("clearGUI", null, null);
+				}
+			}
+			
+		});
+		
+		userPanel.add(userLabel);
+		userPanel.add(signOutButton);
+		
+		northPanel.add(menuLabel, BorderLayout.NORTH);
+		northPanel.add(userPanel);
+		
 		
 		add(northPanel, BorderLayout.NORTH);
+		
+	}
+	
+	private void clearPanel() {
+		myLeftButtons.removeAll();
+		myRightPanel.removeAll();
+		mySystem = null;
+		myUserType = null;
+		myUserName = null;
 	}
 }

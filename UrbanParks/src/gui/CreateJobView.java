@@ -106,7 +106,7 @@ public class CreateJobView extends JPanel {
 		JPanel blankPanel = new JPanel();
 		myMainPanel.add(blankPanel);
 		myMainPanel.add(createJobButton);
-		add(createJobButton);
+		//add(createJobButton);
 		add(myMainPanel);
 	}
 	
