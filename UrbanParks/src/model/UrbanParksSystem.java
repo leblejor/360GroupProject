@@ -1,6 +1,9 @@
 package model;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -85,6 +88,34 @@ public class UrbanParksSystem {
 		return myPendingJobs.get(string);
 	}
 	
+	public Set<Job> jobsWithinRange(Calendar from, Calendar to) {
+		Set<Job> jobSet = new HashSet<Job>();
+		
+		// Handles special cases of equal dates since
+		// before() and after() are both exclusive checks on dates
+		from.add(Calendar.DATE, -1);
+		to.add(Calendar.DATE, 1);
+		
+		for (Job myJob : myPendingJobs.values()) {
+			
+			Calendar myJobStart = myJob.getStartDate();
+			Calendar myJobEnd = myJob.getEndDate();
+			
+			
+			if (myJobStart.after(from) && myJobStart.before(to) &&
+				myJobEnd.after(from) && myJobEnd.before(to)) {
+				jobSet.add(myJob);
+			
+			}
+			
+				
+		}
+		
+		
+		return jobSet;
+	}
+	
+	
 	
 	/**
 	 * Compares the jobs in the system and theVolunteer's jobs and returns a set 
@@ -97,7 +128,7 @@ public class UrbanParksSystem {
 	public Set<Job> getVolunteerValidJobs(Volunteer theVolunteer) {
 		Set<Job> validJobs = new HashSet<Job>();
 		for(Job j : myPendingJobs.values()) { 
-			if (!theVolunteer.isConflict(j) && j.isBeforeMinTimespan() ) { 
+			if (j.isBeforeMinTimespan() || !theVolunteer.isConflict(j)) { 
 				validJobs.add(j);
 			} 
 		}		
@@ -106,7 +137,8 @@ public class UrbanParksSystem {
 	/*********** Getters & Setters ***********/
 	
 	public Set<Job> getPendingJobs() {
-		return (Set<Job>) myPendingJobs.values();
+		Set<Job> jobSet = new HashSet<Job>(myPendingJobs.values());
+		return jobSet;
 	}
 
 
@@ -198,7 +230,15 @@ public class UrbanParksSystem {
 	/*
 	 * Initializing new Database from csv files
 	 */
+	/*
+	public static void main(String[] args) {
+		UrbanParksSystem system = new UrbanParksSystem(true);
+		
+		//System.out.println("users: " + system.myUsers);
+		//System.out.println("jobs: " + system.myPendingJobs);
+	}
 	
+	*/
 	private Scanner inputFile;
 	
 	private static final String userListFile = "./storage/userList.csv";
@@ -281,7 +321,8 @@ public class UrbanParksSystem {
 				
 				String jobName = parsedLine[0];
 				String jobDescription = parsedLine[1];
-				
+			
+				// Java's Calendar Months start at index 0 (0 -> January...)
 				int startMonth = Integer.parseInt(parsedLine[2]);
 				int startDay = Integer.parseInt(parsedLine[3]);
 				int startYear = Integer.parseInt(parsedLine[4]);
@@ -289,10 +330,15 @@ public class UrbanParksSystem {
 				int endDay = Integer.parseInt(parsedLine[6]);
 				int endYear = Integer.parseInt(parsedLine[7]);
 				
+				
+				
 				Job job = new Job(jobName, jobDescription, 
 						          startMonth, startDay, startYear,
 						          endMonth, endDay, endYear);
 				
+				Calendar myStartDate = job.getStartDate();
+				Calendar myEndDate = job.getEndDate();
+
 				addJob(job);
 				
 				

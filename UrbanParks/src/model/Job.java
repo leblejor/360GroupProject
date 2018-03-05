@@ -49,8 +49,8 @@ public class Job implements java.io.Serializable {
 		// NOTE: months start at 0 i.e. 0 -> January, 1 -> February, ...
 		myJobName = theJobName;
 		myJobDescription = theJobDescription;
-		myStartDate = new GregorianCalendar(theStartYear, theStartMonth, theStartDay);
-		myEndDate = new GregorianCalendar(theEndYear, theEndMonth, theEndDay);
+		myStartDate = new GregorianCalendar(theStartYear, theStartMonth-1, theStartDay);
+		myEndDate = new GregorianCalendar(theEndYear, theEndMonth-1, theEndDay);
   	}
 	
 	/**
@@ -268,27 +268,55 @@ public class Job implements java.io.Serializable {
 	@Override
 	public String toString() {
 		
-		StringBuilder str = new StringBuilder();
+		StringBuilder builder = new StringBuilder(1000);
+//		builder.append("\n\n");
+		builder.append(getJobName() + ": ");
+		builder.append("\n");
+		
 		int startYear = myStartDate.get(Calendar.YEAR);
 		
 		// add 1 due to Calendar's implementation of months (Months starts at index 0)
-		int startMonth = myStartDate.get(Calendar.MONTH); 
+		int startMonth = myStartDate.get(Calendar.MONTH) + 1; 
 		
 		int startDay = myStartDate.get(Calendar.DATE);
 		
 		int endYear = myEndDate.get(Calendar.YEAR);
 		
 		// add 1 due to Calendar's implementation of months (Months starts at index 0)
-		int endMonth = myEndDate.get(Calendar.MONTH);
+		int endMonth = myEndDate.get(Calendar.MONTH) + 1;
 		
 		int endDay = myEndDate.get(Calendar.DATE);
 		
-		// Job Description is omitted in toString() on purpose	
-		str.append(myJobName + ": ");
-		str.append(startMonth + "/" + startDay + "/" + startYear);
-		str.append(" - ");
-		str.append(endMonth + "/" + endDay + "/" + endYear);
-
-		return str.toString();
+		builder.append(startMonth);
+		builder.append('/');
+		builder.append(startDay);
+		builder.append('/');
+		builder.append(startYear);
+		builder.append(" - ");
+		builder.append(endMonth);
+		builder.append('/');
+		builder.append(endDay);
+		builder.append('/');
+		builder.append(endYear);
+		builder.append('\n');
+		
+		
+		
+		return builder.toString();
+	}
+	
+	public String toStringWithDescription() {
+		
+		StringBuilder builder = new StringBuilder(1000);
+		builder.append(toString());
+		builder.append("\n");
+		builder.append("Description: ");
+		builder.append("\n");
+		builder.append(getJobDescription());
+		builder.append('\n');
+		
+		return builder.toString();
+		
+		
 	}
 }

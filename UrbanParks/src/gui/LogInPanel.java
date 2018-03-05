@@ -19,6 +19,12 @@ import javax.swing.JTextField;
 
 import model.UrbanParksSystem;
 
+
+/**
+ * 
+ * @author Bryan Santos
+ *
+ */
 public class LogInPanel extends JPanel {
 	
 
