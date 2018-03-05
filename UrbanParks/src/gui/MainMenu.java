@@ -102,8 +102,8 @@ public class MainMenu extends JPanel {
 		createLeftButtons(leftButtonNames, buttonActions);
 		
 		add(myLeftButtons, BorderLayout.WEST);
-		myRightPanel.add(new VolunteerSignUpPanel(mySystem, myUserType), jobSignUpString);
-		myRightPanel.add(new VolunteerViewCurrentJobsPanel(mySystem, myUserType), viewMyJobsString);
+		myRightPanel.add(new VolunteerViewPendingJobs(mySystem, myUserType), jobSignUpString);
+		myRightPanel.add(new VolunteerViewMyJobs(mySystem, myUserType), viewMyJobsString);
 		
 	}
 	

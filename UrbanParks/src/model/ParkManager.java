@@ -66,7 +66,7 @@ public class ParkManager extends User {
 			ups.addJob(theJob); //System job list
 			myJobs.add(theJob); //local job list
 			setChanged();
-			notifyObservers();
+			notifyObservers("Park Manager");
 			return successful;
 		}
 	}
@@ -92,7 +92,7 @@ public class ParkManager extends User {
 			ups.removeJob(theJob);
 			myJobs.remove(theJob);
 			setChanged();
-			notifyObservers();
+			notifyObservers("Park Manager");
 			return success;
 		}
 	}

@@ -53,7 +53,7 @@ public class ParkManagerViewJobs extends JPanel implements Observer {
 	
 	}
 	
-private void displaySelectedJobs(Set<Job> jobsSet) {
+	private void displaySelectedJobs(Set<Job> jobsSet) {
 		
 		myDisplayJobsBox.removeAll();
 		
@@ -104,12 +104,15 @@ private void displaySelectedJobs(Set<Job> jobsSet) {
 		myDisplayJobsBox.revalidate();		
 	}
 
-@Override
-public void update(Observable o, Object arg) {
+	@Override
+	public void update(Observable o, Object arg) {
+		String observable = (String) arg;
+		
+		if (observable.equals("Park Manager")) {
+			displaySelectedJobs(myUser.getJobsList());
+		}
 	
-	displaySelectedJobs(myUser.getJobsList());
-	
-}
+	}
 	
 	
 	

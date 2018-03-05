@@ -44,6 +44,8 @@ public class Volunteer extends User {
 		}
 		
 		myJobs.add(theJob);
+		setChanged();
+		notifyObservers("Volunteer");
 		
 		return successful;		
 	}
@@ -93,6 +95,8 @@ public class Volunteer extends User {
 			return minDaysConflict;
 		} else {
 			myJobs.remove(theJob);
+			setChanged();
+			notifyObservers("Volunteer");
 			return successful;
 		}
 	}
