@@ -1,14 +1,20 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Set;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import model.Job;
@@ -17,175 +23,94 @@ import model.User;
 import model.ParkManager;
 
 
-public class ParkManagerViewJobs extends JPanel {
+public class ParkManagerViewJobs extends JPanel implements Observer {
 	/** SerialID */
 	private static final long serialVersionUID = 1L;
 
-	/** myMasterPanel contains all the buttons representing the jobs. */
-	private JPanel myMasterPanel;
-	/** myInformationPanel contains the text describing the current job. */
-	private JPanel myInformationPanel;
-	/** volunteerMenuLabel contains the message at the top of the panel. */
-	private JLabel volunteerMenuLabel;
-	/** jobNameLabel contains the name of the currently selected job. */
-	private JLabel jobNameLabel;
-	/** jobNameLabel contains the description of the currently selected job. */
-	private JLabel jobDescriptionLabel;
-	/** cancellationConfirmation contains a message that confirms the success status of a job cancellation. */
-	private JLabel cancellationConfirmation;
-	
-	/** selectedJob contains the currently selected job by the user. */
-	private Job selectedJob;
-	
-	private UrbanParksSystem myUPS;
+	private UrbanParksSystem mySystem;
 	private ParkManager myUser;
+	private Box myDisplayJobsBox;
 	
 	public ParkManagerViewJobs(UrbanParksSystem theSystem, User theUser) {
-		myUPS = theSystem;
+		mySystem = theSystem;
 		myUser = (ParkManager) theUser;
+		myUser.addObserver(this);
 		
-		myMasterPanel = new JPanel();
-		myMasterPanel.setLayout (new BoxLayout (myMasterPanel, BoxLayout.Y_AXIS));  
-		
-		/* myInformationPanel contains a field of text displaying information about a 
-		 * specific job of the user's, and will change depending on which job is currently 
-		 * selected (selectedJob). */
-		myInformationPanel = new JPanel(new GridLayout(4,1));
-		
-		/* Fields that will be displayed in myInformationPanel. */
-		jobNameLabel = new JLabel();
-		jobDescriptionLabel = new JLabel();
-		cancellationConfirmation = new JLabel();
-		
-		/* Message at the top of the screen. */
-		volunteerMenuLabel = new JLabel();
-		
-		setupPanel(); 
+		myDisplayJobsBox = Box.createVerticalBox();
+		myDisplayJobsBox.add(Box.createVerticalStrut(3));
+		setLayout(new BorderLayout());
+		setUpNorthLabel();
+		add(myDisplayJobsBox);
 		
 	}
 	
-	/**
-	 *  Method for setting up the overall VolunteerViewCurrentJobsPanel panel.
-	 */
-	private void setupPanel() {
-		setLayout(new BorderLayout(10,10));
-		
-		/** Creates a welcome message at this.BorderLayout.NORTH */
-		setupVolunteerViewCurrentJobsWelcomeLabel(true);
-		
-		/** Sets up the myMasterPanel and myInformationPanel panels. */
-		setupViewCurrentJobsPanel();
-		
-		myMasterPanel.setVisible(true);
-		add(myMasterPanel, BorderLayout.CENTER);
-		
-	}
-	 
-	 /**
-	  *	 Creates a basic message at the top of the screen, explaining to the user that the buttons 
-	  *  in myMasterPanel represents their current list of jobs.
-	  */
-	 private void setupVolunteerViewCurrentJobsWelcomeLabel(boolean jobsExist) {
-		if (jobsExist) {
-			volunteerMenuLabel.setText("<html><br>Here are your current list of jobs: </html>");
-		} else {
-			volunteerMenuLabel.setText("<html><br>Unfortunately, you do not have any jobs associated with your account.</html>");
-		}
-		
-		volunteerMenuLabel.setHorizontalAlignment(JLabel.CENTER);
-		volunteerMenuLabel.setVisible(true);
-		add(volunteerMenuLabel, BorderLayout.NORTH);
+	private void setUpNorthLabel() {
+		JLabel myJobsLabel = new JLabel("<html><b><font color=blue>View My Jobs</font></b></html>");
+		myJobsLabel.setHorizontalAlignment(JLabel.CENTER);
+		myJobsLabel.setBackground(Color.WHITE);
+		myJobsLabel.setOpaque(true);		
+		add(myJobsLabel, BorderLayout.NORTH);
+	
 	}
 	
-	/**
-	  *	 Sets up the myMasterPanel and myInformationPanel panels.
-	  */
-	private void setupViewCurrentJobsPanel() {
-		if (!myUser.getJobsList().isEmpty()) {
-			for (model.Job availableJob : myUser.getJobsList()) {
-				JButton jobButton = new JButton(availableJob.getJobName());
-				
-				jobButton.addActionListener(new ActionListener(){  
-				    public void actionPerformed(ActionEvent e){     
-				    	selectedJob = availableJob;
-				    	setupJobInformationLabel(availableJob);
-				    	cancellationConfirmation.setVisible(false);
-				    }  
-				});
-				
-				// Button is added to myMasterPanel
-				JPanel myButtonLayout = new JPanel(new FlowLayout());
-				myButtonLayout.add(jobButton);		
-				myMasterPanel.add(myButtonLayout);
-			}
+private void displaySelectedJobs(Set<Job> jobsSet) {
+		
+		myDisplayJobsBox.removeAll();
+		
+		for (final Job job : jobsSet) { 
 			
-			setupCancelJobButton();
-		} else {
-			setupVolunteerViewCurrentJobsWelcomeLabel(false);
-		}
-	
-	}
-	
-	/**
-	  *	 Gives information about the currently selected job.
-	  */
-	private void setupJobInformationLabel(Job theJob) {
-		jobNameLabel.setText("Job Title: " + theJob.getJobName());
-		jobNameLabel.setVisible(true);
-		myInformationPanel.add(jobNameLabel);
+			JButton button = new JButton("<html><b><font color=green>" + job.toString() + "</font></b></html>");
+			button.setBackground(Color.BLACK);
 			
-		jobDescriptionLabel.setText("Job Description: " + theJob.getJobDescription());
-		jobDescriptionLabel.setVisible(true);
-		myInformationPanel.add(jobDescriptionLabel);
-		
-		myInformationPanel.setVisible(true);	
-		add(myInformationPanel, BorderLayout.SOUTH);
-	}
-	
-	/**
-	  *	 Creates the Cancel Job button.
-	  */
-	private void setupCancelJobButton() {
-		JButton cancelJobButton = new JButton("Cancel Selected Job");
-		
-		// If selectedJob is pointing to something, clicking "Cancel Selected Job" will remove 
-		// the job from the user's personal list. selectedJob then points at null so that user 
-		// can't attempt to remove an already removed job.
-		cancelJobButton.addActionListener(new ActionListener(){
-		    public void actionPerformed(ActionEvent e){       
-			    if (selectedJob != null) {
-				   	String selectedJobName = selectedJob.getJobName();
-				   	
-				    int removalStatus = myUser.removeJob(myUPS, selectedJob);
-				    if (removalStatus == 0) { 
-				    	cancellationConfirmation.setText(selectedJobName 
-				    			+ " was successfully cancelled!");
-				    } else if (removalStatus == 1) { 
-				    	cancellationConfirmation.setText(selectedJobName + " was not found! "
-				    			+ "Could not be cancelled.");
-				    } else {
-				   		cancellationConfirmation.setText(selectedJobName 
-				   				+ " could not be cancelled as it's too close to the job date!");
-				    }
-				    	
-				    cancellationConfirmation.setVisible(true);
-					myInformationPanel.add(cancellationConfirmation);
-			   	}
-			    	
-			    selectedJob = null;
-			    	
-			    // Remove and refresh remaining jobs on screen
-			    myMasterPanel.removeAll();
-			    setupViewCurrentJobsPanel();
-				
-			    // ???????????????/
-				if (myUser.getJobsList().isEmpty()) {
-					myInformationPanel.removeAll();
-					setupVolunteerViewCurrentJobsWelcomeLabel(false);
-					myMasterPanel.removeAll();
+			button.setVisible(true);
+			button.setOpaque(true);
+
+			myDisplayJobsBox.add(button);
+			myDisplayJobsBox.add(Box.createVerticalStrut(8));
+			button.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					String title = "Job Full Details";
+					Object[] options = {"Ok", "Cancel", "Remove Job"};
+					int result = JOptionPane.showOptionDialog(null, job.toStringWithDescription(), title, 
+							JOptionPane.YES_NO_CANCEL_OPTION,
+							JOptionPane.INFORMATION_MESSAGE, 
+							null, options, options[0]);
+					
+					// User selects removeJob
+					if (result == 2) {
+						String removeTitle = "Removing a Job";
+						String question = "Are you sure you want to remove this job?: \n" + job.toString();
+						
+						int confirmRemoval = JOptionPane.showConfirmDialog(null, question, removeTitle,
+								JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+						
+						if (confirmRemoval == JOptionPane.YES_OPTION) {
+							myUser.removeJob(mySystem, job);
+						}
+						
+						
+					}
+
 				}
-			    	
-		    }
-		});		
+				
+			});
+			
+			
+		}
+		myDisplayJobsBox.setVisible(true);
+		myDisplayJobsBox.repaint();
+		myDisplayJobsBox.revalidate();		
 	}
+
+@Override
+public void update(Observable o, Object arg) {
+	
+	displaySelectedJobs(myUser.getJobsList());
+	
+}
+	
+	
+	
 }
