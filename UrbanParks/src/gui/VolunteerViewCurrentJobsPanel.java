@@ -58,15 +58,12 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 	
 	private model.Job selectedJob;
 	
-	private UrbanParksGUI myGUI;
 	private model.Volunteer myUser;
 	
-	public VolunteerViewCurrentJobsPanel(UrbanParksGUI theGUI, JPanel theGUIMasterPanel, model.Volunteer theUser) {
+	public VolunteerViewCurrentJobsPanel(model.UrbanParksSystem theSystem, model.User theUser) {
 		
 		/** Store all relevant arguments as fields. */
-		
-		myGUI = theGUI;
-		myUser = theUser;
+		myUser = (model.Volunteer) theUser;
 
 		/** myMasterPanel will contain all the currently available jobs of the user in the form of buttons. */
 		
@@ -76,7 +73,7 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 		/** myInformationPanel contains a field of text displaying information about a specific job of the user's, 
 		 *  and will change depending on which job is currently selected (selectedJob). */
 		
-		myInformationPanel = new JPanel(new GridLayout(5,1));
+		myInformationPanel = new JPanel(new GridLayout(10,1));
 		
 		/** Fields that will be displayed in myInformationPanel. */
 		
@@ -186,7 +183,7 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 		jobDescriptionLabel.setVisible(true);
 		myInformationPanel.add(jobDescriptionLabel);
 		
-		jobStartDateLabel.setText("Job Start Date: " + theJob.getStartDate().MONTH + "/" + theJob.getStartDate().DAY_OF_MONTH + "/" + theJob.getStartDate().YEAR);
+		jobStartDateLabel.setText("Job Start Date: " + theJob.toString());
 		jobStartDateLabel.setVisible(true);
 		myInformationPanel.add(jobStartDateLabel);
 		
@@ -197,10 +194,8 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 		myInformationPanel.setVisible(true);	
 		add(myInformationPanel, BorderLayout.SOUTH);
 		
-		// I HAVE NO IDEA HOW TO DEAL WITH RESIZING
-		
-		myGUI.setSize(getPreferredSize());
-    	myGUI.setSize(new Dimension(800,500));
+		revalidate();
+	    repaint();
 		
 	}
 	
@@ -238,8 +233,6 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 				    	
 				    	cancellationConfirmation.setVisible(true);
 				    	myInformationPanel.add(cancellationConfirmation);
-				    	myGUI.setSize(getPreferredSize());
-				    	myGUI.setSize(new Dimension(800,500));
 				    		
 				    	selectedJob = null;
 				    	
@@ -269,6 +262,9 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 				
 				myButtonLayout.add(cancelJobButton);		
 				myMasterPanel.add(myButtonLayout);
+				
+				revalidate();
+			    repaint();
 		
 	}
 	
@@ -310,6 +306,9 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 	    	setupCancelJobButton();
 	    	
 	    }
+	    
+	    revalidate();
+	    repaint();
 		
 	}
 
