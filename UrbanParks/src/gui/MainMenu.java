@@ -132,7 +132,7 @@ public class MainMenu extends JPanel {
 
 		add(myLeftButtons, BorderLayout.WEST);
 		myRightPanel.add(new StaffViewSelectedJobDates(mySystem, myUserType), viewJobsString);
-		
+		myRightPanel.add(new StaffViewChangeMaxJobs(mySystem, myUserType), changeMaxPendingJobsString);
 	}
 	
 	private void createLeftButtons(String[] leftButtonNames, AbstractAction[] buttonActions) {
