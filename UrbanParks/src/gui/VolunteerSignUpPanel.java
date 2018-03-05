@@ -15,10 +15,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import model.Job;
-import model.UrbanParksSystem;
-import model.User;
-import model.Volunteer;
-
 
 public class VolunteerSignUpPanel extends JPanel {
 	
@@ -43,6 +39,14 @@ public class VolunteerSignUpPanel extends JPanel {
 	
 	private JLabel jobDescriptionLabel;
 	
+	/** jobStartDateLabel contains the start date of the job. */
+	
+	private JLabel jobStartDateLabel;
+	
+	/** jobEndDateLabel contains the end date of the job. */
+	
+	private JLabel jobEndDateLabel;
+	
 	/** signUpConfirmation contains a message that confirms the success status of a job signup. */
 	
 	private JLabel signUpConfirmation;
@@ -55,16 +59,14 @@ public class VolunteerSignUpPanel extends JPanel {
 	
 	private model.Job selectedJob;
 	
-	private UrbanParksGUI myGUI;
-	private Volunteer myUser;
-	private UrbanParksSystem mySystem;
+	private model.Volunteer myUser;
+	private model.UrbanParksSystem mySystem;
 	
-	public VolunteerSignUpPanel(UrbanParksSystem theSystem, User theUser) {
+	public VolunteerSignUpPanel(model.UrbanParksSystem theSystem, model.User theUser) {
 		
 		/** Store all relevant arguments as fields. */
 		
-		//myGUI = theGUI;
-		myUser = (Volunteer) theUser;
+		myUser = (model.Volunteer) theUser;
 		mySystem = theSystem;
 
 		/** myMasterPanel will contain all the currently available jobs for the user in the form of buttons. */
@@ -75,12 +77,14 @@ public class VolunteerSignUpPanel extends JPanel {
 		/** myInformationPanel contains a field of text displaying information about a specific job selected by the user, 
 		 *  and will change depending on which job is currently selected (selectedJob). */
 		
-		myInformationPanel = new JPanel(new GridLayout(4,1));
+		myInformationPanel = new JPanel(new GridLayout(10,1));
 		
 		/** Fields that will be displayed in myInformationPanel. */
 		
 		jobNameLabel = new JLabel();
 		jobDescriptionLabel = new JLabel();
+		jobStartDateLabel = new JLabel();
+		jobEndDateLabel = new JLabel();
 		signUpConfirmation = new JLabel();
 		
 		/** Message at the top of the screen. */
@@ -149,37 +153,11 @@ public class VolunteerSignUpPanel extends JPanel {
 	
 	private void setupViewCurrentJobsPanel() {
 		
-		// Iterates through all valid jobs for the user in the pending jobs list, and adds a button for each one.
-		Set<Job> jobsSet = mySystem.getVolunteerValidJobs(myUser);
-		Iterator<Job> listOfAvailableJobs = jobsSet.iterator();
-		
-		if (!jobsSet.isEmpty()) {
+		if (!mySystem.getVolunteerValidJobs(myUser).isEmpty()) {
 			
-			while (listOfAvailableJobs.hasNext()) {
-				
-				model.Job availableJob = listOfAvailableJobs.next();
-				JButton jobButton = new JButton(availableJob.getJobName());
-				
-				// When button is clicked, selectedJob will point to the associated job object.
-				// setupJobInformationLabel will make it so that text describing the selected job is printed on the GUI.
-				
-				jobButton.addActionListener(new ActionListener(){  
-				    public void actionPerformed(ActionEvent e){  
-				              
-				    	selectedJob = availableJob;
-				    	setupJobInformationLabel(availableJob);
-				    	signUpConfirmation.setVisible(false);
-				    	
-				    }  
-				});
-						
-				// Button is added to myMasterPanel, and FlowLayout is used here only for design aesthetics.
-				
-				JPanel myButtonLayout = new JPanel(new FlowLayout());
-				myButtonLayout.add(jobButton);		
-				myMasterPanel.add(myButtonLayout);
-				
-			}
+			// refreshPanel will add all available valid jobs to the list that the user may sign up for.
+			
+			refreshPanel(true);
 			
 			// After all other job buttons are added, "Sign Up For Job" button is added last.
 			
@@ -187,7 +165,7 @@ public class VolunteerSignUpPanel extends JPanel {
 			
 		}
 		
-		if (jobsSet.isEmpty()) {
+		if (mySystem.getVolunteerValidJobs(myUser).isEmpty()) {
 			
 			setupVolunteerViewCurrentJobsWelcomeLabel(false);
 			
@@ -209,13 +187,19 @@ public class VolunteerSignUpPanel extends JPanel {
 		jobDescriptionLabel.setVisible(true);
 		myInformationPanel.add(jobDescriptionLabel);
 		
+		jobStartDateLabel.setText("Job Start Date: " + theJob.getStartDate().MONTH + "/" + theJob.getStartDate().DAY_OF_MONTH + "/" + theJob.getStartDate().YEAR);
+		jobStartDateLabel.setVisible(true);
+		myInformationPanel.add(jobStartDateLabel);
+		
+		jobEndDateLabel.setText("Job End Date: " + theJob.getEndDate().MONTH + "/" + theJob.getEndDate().DAY_OF_MONTH + "/" + theJob.getEndDate().YEAR);
+		jobEndDateLabel.setVisible(true);
+		myInformationPanel.add(jobEndDateLabel);
+		
 		myInformationPanel.setVisible(true);	
 		add(myInformationPanel, BorderLayout.SOUTH);
 		
-		// I HAVE NO IDEA HOW TO DEAL WITH RESIZING
-		
-		//myGUI.setSize(getPreferredSize());
-    	//myGUI.setSize(new Dimension(800,500));
+		revalidate();
+	    repaint();
 		
 	}
 	
@@ -243,63 +227,84 @@ public class VolunteerSignUpPanel extends JPanel {
 				    	signUpConfirmation.setText(selectedJob.getJobName() + " was successfully signed up for!");
 				    	
 				   	 	signUpConfirmation.setVisible(true);
-						myInformationPanel.add(signUpConfirmation);
-				    	//myGUI.setSize(getPreferredSize());
-				    	//myGUI.setSize(new Dimension(800,500));
-				    		
-				   	}
+				   	 	myInformationPanel.add(signUpConfirmation);
+				    
+				    	selectedJob = null;
 				    	
-				    selectedJob = null;
-				    	
-				    // All the buttons in myMasterPanel are removed and re-added in order to 'refresh' the screen without the added job.
-				    	
-				    myMasterPanel.removeAll();
-				    	
-				    Iterator<Job> listOfAvailableJobs = mySystem.getVolunteerValidJobs(myUser).iterator();
+				    	// All the buttons in myMasterPanel are removed and re-added in order to 'refresh' the screen without the added job.
 					
-					if (!mySystem.getVolunteerValidJobs(myUser).isEmpty()) {
+						if (!mySystem.getVolunteerValidJobs(myUser).isEmpty()) {
 						
-						while (listOfAvailableJobs.hasNext()) {
-							
-							Job availableJob = listOfAvailableJobs.next();
-							JButton jobButton = new JButton(availableJob.getJobName());
-							
-							jobButton.addActionListener(new ActionListener(){  
-							    public void actionPerformed(ActionEvent e){  
-							              
-							    	selectedJob = availableJob;
-							    	setupJobInformationLabel(availableJob);
-							    	signUpConfirmation.setVisible(false);
-							    	
-							    }  
-							});
-							
-							JPanel myButtonLayout = new JPanel(new FlowLayout());
-							myButtonLayout.add(jobButton);		
+							refreshPanel(true);
+						
+							// After all other job buttons are added, "Sign Up For Job" button is added last.
+						
+							myButtonLayout.add(signUpJobButton);		
 							myMasterPanel.add(myButtonLayout);
-							
+						
 						}
-						
-						// After all other job buttons are added, "Sign Up For Job" button is added last.
-						
-						myButtonLayout.add(signUpJobButton);		
-						myMasterPanel.add(myButtonLayout);
-						
-					}
 					
-					if (mySystem.getVolunteerValidJobs(myUser).isEmpty()) {
+						if (mySystem.getVolunteerValidJobs(myUser).isEmpty()) {
 						
-						setupVolunteerViewCurrentJobsWelcomeLabel(false);
-						myInformationPanel.removeAll();
-						myMasterPanel.removeAll();
+							setupVolunteerViewCurrentJobsWelcomeLabel(false);
+							myInformationPanel.removeAll();
+							myMasterPanel.removeAll();
 						
-					}
+						}
+					
+				    }
 				    	
 			    }
 			});
 				
 				myButtonLayout.add(signUpJobButton);		
 				myMasterPanel.add(myButtonLayout);
+				
+				revalidate();
+			    repaint();
+		
+	}
+
+	public void refreshPanel(boolean fromInsideCurrentClass) {
+
+		// Remove all buttons currently on myMasterPanel.
+		
+	    myMasterPanel.removeAll();
+	    
+	    // Create an Iterator containing all valid Pending Jobs for the current user.
+	    
+	    Iterator<model.Job> listOfAvailableJobs = mySystem.getVolunteerValidJobs(myUser).iterator();
+
+	    // For each job, create an additional button for myMasterPanel.
+	    
+		while (listOfAvailableJobs.hasNext()) {
+				
+			model.Job availableJob = listOfAvailableJobs.next();
+			JButton jobButton = new JButton(availableJob.getJobName());
+				
+			// When button is clicked, selectedJob will point to the associated job object.
+			// setupJobInformationLabel will make it so that text describing the selected job is printed on the GUI.
+			
+			jobButton.addActionListener(new ActionListener(){  
+				public void actionPerformed(ActionEvent e){  
+				              
+					selectedJob = availableJob;
+				    setupJobInformationLabel(availableJob);
+				    signUpConfirmation.setVisible(false);
+				    	
+				    }  
+				});
+			
+				// Button is added to myMasterPanel, and FlowLayout is used here only for design aesthetics.
+				
+				JPanel myButtonLayout = new JPanel(new FlowLayout());
+				myButtonLayout.add(jobButton);		
+				myMasterPanel.add(myButtonLayout);
+				
+			}
+		
+		revalidate();
+	    repaint();
 		
 	}
 
