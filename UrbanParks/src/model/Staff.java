@@ -70,17 +70,21 @@ public class Staff extends User {
 		
 		return ups.jobsWithinRange(startDate, endDate);
 		
-//		for(Job j : ups.getPendingJobs()) {
-//			//Start date and end date is within the range
-//			if (startDate.compareTo(j.getStartDate()) * j.getStartDate().compareTo(endDate) > 0 &&
-//					startDate.compareTo(j.getEndDate()) * j.getEndDate().compareTo(endDate) > 0) {
-//				jobs.add(j);			
-//			}
-//		}
+
+	}
+	
+	public Set<Job> viewJobsWithinRange(UrbanParksSystem theSystem, Calendar theStartDate, Calendar theEndDate) {
 		
+		int startYear = theStartDate.get(Calendar.YEAR);	
+		int startMonth = theStartDate.get(Calendar.MONTH);		
+		int startDay = theStartDate.get(Calendar.DATE);		
+		int endYear = theEndDate.get(Calendar.YEAR);
+		int endMonth = theEndDate.get(Calendar.MONTH);	
+		int endDay = theEndDate.get(Calendar.DATE);
 		
-		//return jobs;
-}
+		return viewJobsWithinRange(theSystem, startMonth, startDay, startYear, endMonth, endDay, endYear);
+		
+	}
 	// TODO: Remove this
 	public int setMaxPendingJobsLocal(int theMaxJobs) {
 		int success = 0;
