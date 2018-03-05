@@ -132,28 +132,6 @@ public class ParkManager extends User {
 	}
 	
 	
-	// TODO: Remove these two methods
-	/**
-	 * Takes the UrbanParksSystem, which contains the serialized object
-	 * for the list of current pending jobs. There cannot be more than
-	 * MAX_PENDING_JOBS in the system.
-	 * 
-	 * Returns false if the job can be added to the system
-	 * Returns true if the system already has MAX_PENDING_JOBS
-	 */
-	
-	public boolean checkNumberOfJobsInSystem(UrbanParksSystem ups) {
-		boolean conflict = false;
-		
-		Set<Job> set = ups.getPendingJobs();
-		
-		if (set.size() >= Staff.getMaxPendingJobs()) {
-			conflict = true;
-		}
-		
-		return conflict;
-	}
-	
 	/* Used for testing.
 	 * Same as above, but doesn't use the UrbanParkSystem. */
 	public boolean checkNumberOfJobsInSystemLocal() {
