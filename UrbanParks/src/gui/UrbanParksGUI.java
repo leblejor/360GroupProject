@@ -5,16 +5,15 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Stack;
+
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+
 import javax.swing.JPanel;
 
-import model.ParkManager;
 import model.UrbanParksSystem;
 import model.User;
-import model.Volunteer;
+
 
 public final class UrbanParksGUI extends JFrame implements PropertyChangeListener {
 
@@ -39,18 +38,19 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
 	private JPanel myMasterPanel;
 	private User myCurrentUserType;
 	private String myCurrentUser;
-	private Stack<String> myStackOfPanels;
+	
 	
 	public UrbanParksGUI() {
 		mySystem = new UrbanParksSystem();
 		myMasterPanel = new JPanel(new CardLayout());
 		myCurrentUserType = null;
 		myCurrentUser = null;
-		myStackOfPanels = new Stack<>();
-		myStackOfPanels.add(LOG_IN_PANEL);
 		
 	}
 	
+	/**
+	 * Method that is called by the driver class starts up the whole program.
+	 */
 	public void start() {
 		
 		setupInitialPanels();
@@ -58,45 +58,40 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
 		setMinimumWindowSize();
 		setVisible(true);
 		
-		
-		// need to be recoded to listen to windowClosing method instead of this code
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 	}
 	
 	
-	public void setupInitialPanels() {
-		
-		myMasterPanel.add(new LogInPanel(this, mySystem), LOG_IN_PANEL);
+	private void setupInitialPanels() {
+		LogInPanel logIn = new LogInPanel(mySystem); 
+		logIn.addPropertyChangeListener(this);
+		myMasterPanel.add(logIn, LOG_IN_PANEL);
 		
 		
 		
 		add(myMasterPanel);
-		//setVisible(true);
 		
 	}
 	
-	public void maximizeFrame() {
+	
+	private void maximizeFrame() {
 		setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
 		pack();
 	}
 	
-	public void setScreenToCenter() {
-        pack();
-        setLocation(DEFAULT_SCREEN_WIDTH / 2 - getWidth() / 2, 
-                            DEFAULT_SCREEN_HEIGHT / 2 - getHeight() / 2);
-		
-	}
 	
-	public void setMinimumWindowSize() {
+	private void setMinimumWindowSize() {
 		setSize(getPreferredSize());
 		setMinimumSize(getPreferredSize());
 	}
 	
 	
-
-	/* This method may not be needed in this class. */
-	public void switchPanels(String theNewPanelName) {
+	/**
+	 * This method allows switching between panels in the master panel.
+	 * @param theNewPanelName The name of the panel to switch to.
+	 */
+	private void switchPanels(String theNewPanelName) {
 		
 		CardLayout cardLayout = (CardLayout) myMasterPanel.getLayout();				
 		cardLayout.show(myMasterPanel, theNewPanelName);
@@ -108,7 +103,7 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
 		if (myCurrentUserType == null) {
 			return 1;
 		}
-		//myMasterPanel.removeAll();
+		
 		MainMenu mainMenu = new MainMenu(mySystem, myCurrentUserType, myCurrentUser);
 		mainMenu.addPropertyChangeListener(this);
 		myMasterPanel.add(mainMenu, MAIN_MENU_PANEL);
@@ -128,44 +123,13 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
 	
 	
 	
-	// setters for the fields
+	
 	public void setUser(User theUserType, String theUserName) {
 		myCurrentUserType = theUserType;
 		myCurrentUser = theUserName;
 	
 	}
 	
-	
-	/**
-	 * Pops off the current panel from the stack and
-	 * sets the previous panel as the new Current Panel
-	 * @return 0 if action is valid; 1 if action attempts to remove LogIn Panel and this is not allowed
-	 *
-	 */
-	public int returnToPreviousPage() {
-		if (myStackOfPanels.size() > 1) {
-			myStackOfPanels.pop();
-			switchPanels(myStackOfPanels.peek());
-			return 1;
-		}
-		
-		return 0;
-		
-	}
-	
-	
-	public void terminateProgram() {
-
-		int terminatingValue = JOptionPane.showConfirmDialog(null,
-		"Are you sure you want to exit?",
-		"Exiting the Program",
-		JOptionPane.YES_NO_OPTION,
-		JOptionPane.QUESTION_MESSAGE);
-		
-		if (terminatingValue == JOptionPane.YES_OPTION) {
-			myStackOfPanels.clear();
-		}
-	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -173,8 +137,23 @@ public final class UrbanParksGUI extends JFrame implements PropertyChangeListene
 		String propertyName = (String) evt.getPropertyName();
 		if (propertyName.equals("clearGUI")) {
 			clearGUI();
+		} else if (propertyName.equals("logIn")) {
+			User theUserType = (User) evt.getNewValue();
+			String theUserName = theUserType.getUsername();
+			setUser(theUserType, theUserName);
+			createMainMenu();
 		}
+		
 	}
+	
+	/* For future implementations if needed
+	private void setScreenToCenter() {
+        pack();
+        setLocation(DEFAULT_SCREEN_WIDTH / 2 - getWidth() / 2, 
+                            DEFAULT_SCREEN_HEIGHT / 2 - getHeight() / 2);
+		
+	}
+	*/
 	
 	
 	

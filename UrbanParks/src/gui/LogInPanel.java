@@ -18,9 +18,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import model.UrbanParksSystem;
+import model.User;
 
 
 /**
+ * This is the JPanel class that allows the user to signIn or logIn with a userName
  * 
  * @author Bryan Santos
  *
@@ -31,15 +33,20 @@ public class LogInPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private JLabel myLogInSuccessMessage;
 	
+	
 	private JPanel myCenterMasterPanel;
+	
+	/** This JPanel contains swing components such as the JLabel and JTextField;
+	 * This goes inside myCentrerMasterPanel
+	 */
 	private JPanel myCenterComponentsPanel;
 	private UrbanParksSystem mySystem;
-	private UrbanParksGUI myGUI;
 	
 	
 	
-	public LogInPanel(UrbanParksGUI theGUI, UrbanParksSystem theSystem) {
-		myGUI = theGUI;
+	
+	public LogInPanel(UrbanParksSystem theSystem) {
+		
 		mySystem = theSystem;
 		myCenterMasterPanel = new JPanel(new GridBagLayout());
 		myCenterComponentsPanel = new JPanel(new GridLayout(2,1));
@@ -107,10 +114,16 @@ public class LogInPanel extends JPanel {
 			public void actionPerformed(ActionEvent theEvent) {
 
 				String userName = textField.getText();
-				if (isUserFound(userName)) {
-					myGUI.setUser(mySystem.signIn(userName), userName);					
-					myGUI.createMainMenu();
-					
+				User theUser = mySystem.signIn(userName);
+			
+				if (theUser != null) {					
+					myLogInSuccessMessage.setText("");
+					firePropertyChange("logIn", null, theUser);	
+				
+				} else {
+					myLogInSuccessMessage.setText("<html><b><font color=red>"
+			                + "User not found" + "</font></b></html>");
+					myLogInSuccessMessage.setVisible(true);
 				}
 			}
 		});
@@ -119,25 +132,6 @@ public class LogInPanel extends JPanel {
 
 		
 	}
-	
-	public boolean isUserFound(String theUserName) {
-		
-		
-		if (mySystem.signIn(theUserName) == null) {
-					
-			myLogInSuccessMessage.setText("<html><b><font color=red>"
-	                + "User not found" + "</font></b></html>");
-			myLogInSuccessMessage.setVisible(true);
-			return false;
-		}
-		
-		myLogInSuccessMessage.setText("");
-		return true;
-	}
-	
-	
-	
-	
 	
 
 }
