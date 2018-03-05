@@ -105,7 +105,7 @@ public class UrbanParksSystem {
 			if (myJobStart.after(from) && myJobStart.before(to) &&
 				myJobEnd.after(from) && myJobEnd.before(to)) {
 				jobSet.add(myJob);
-				System.out.println("Added: " + myJob);
+			
 			}
 			
 				

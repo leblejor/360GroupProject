@@ -23,6 +23,12 @@ import model.UrbanParksSystem;
 import model.User;
 import model.Volunteer;
 
+
+/**
+ * 
+ * @author Bryan Santos
+ *
+ */
 public class MainMenu extends JPanel {
 	
 	/*

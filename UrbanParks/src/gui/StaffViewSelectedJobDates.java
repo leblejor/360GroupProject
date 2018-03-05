@@ -22,6 +22,12 @@ import model.Staff;
 import model.UrbanParksSystem;
 import model.User;
 
+
+/**
+ * 
+ * @author Bryan Santos
+ *
+ */
 public class StaffViewSelectedJobDates extends JPanel {
 
 	
@@ -91,10 +97,8 @@ public class StaffViewSelectedJobDates extends JPanel {
 	private void getDatesFromUser() {
 		int[] startDate = getDate(myStartDayField.getText());
 		int[] endDate = getDate(myEndDayField.getText());
-		System.out.println("s1: " + Arrays.toString(startDate));
-		System.out.println("e1: " + Arrays.toString(endDate));
+		
 		Set<Job> jobsSet = myUser.viewJobsWithinRange(mySystem, startDate[0], startDate[1], startDate[2], endDate[0], endDate[1], endDate[2]);
-		System.out.println("jobSet: " + jobsSet);
 		displaySelectedJobs(jobsSet);
 		
 	}
@@ -145,20 +149,7 @@ public class StaffViewSelectedJobDates extends JPanel {
 				
 	}
 	
-	public static void main(String[] args) {
-		UrbanParksSystem system = new UrbanParksSystem();
-		Staff s = (Staff) system.signIn("emerson01");
-		String start = "02/23/2018";
-		String end = "04/30/2018";
-		Job job1 = new Job("job1", "", 02, 23, 2018, 04, 30, 2018);
-		System.out.println(job1.toString());
-		//System.out.println("----------------------");
-		Set<Job> jobs = s.viewJobsWithinRange(system, 02, 23, 2018, 04, 30, 2018);
-		
-		for (Job j : jobs) {
-			System.out.println(j);
-		}
-	}
+	
 	
 	
 	
