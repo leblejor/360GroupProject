@@ -59,24 +59,26 @@ public class Staff extends User {
 	 */
 	public Set<Job> viewJobsWithinRange(UrbanParksSystem ups, int theStartMonth, int theStartDay, 
 			int theStartYear, int theEndMonth, int theEndDay, int theEndYear) {
-		Set<Job> jobs = new HashSet<Job>();
-		Calendar startDate = new GregorianCalendar(theStartYear, theStartMonth, theStartDay);
-		Calendar endDate = new GregorianCalendar(theEndYear, theEndMonth, theEndDay);
+		//Set<Job> jobs = new HashSet<Job>();
+		Calendar startDate = new GregorianCalendar(theStartYear, theStartMonth - 1, theStartDay);
+		Calendar endDate = new GregorianCalendar(theEndYear, theEndMonth - 1, theEndDay);
 		
 		if (startDate.compareTo(endDate) > 0) {
 			throw new IllegalArgumentException("Invalid dates, start date is after end date");
 		}
 		
-		for(Job j : ups.getPendingJobs()) {
-			//Start date and end date is within the range
-			if (startDate.compareTo(j.getStartDate()) * j.getStartDate().compareTo(endDate) > 0 &&
-					startDate.compareTo(j.getEndDate()) * j.getEndDate().compareTo(endDate) > 0) {
-				jobs.add(j);			
-			}
-		}
+		return ups.jobsWithinRange(startDate, endDate);
+		
+//		for(Job j : ups.getPendingJobs()) {
+//			//Start date and end date is within the range
+//			if (startDate.compareTo(j.getStartDate()) * j.getStartDate().compareTo(endDate) > 0 &&
+//					startDate.compareTo(j.getEndDate()) * j.getEndDate().compareTo(endDate) > 0) {
+//				jobs.add(j);			
+//			}
+//		}
 		
 		
-		return jobs;
+		//return jobs;
 }
 	// TODO: Remove this
 	public int setMaxPendingJobsLocal(int theMaxJobs) {

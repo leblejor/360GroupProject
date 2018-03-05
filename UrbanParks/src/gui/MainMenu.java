@@ -125,7 +125,7 @@ public class MainMenu extends JPanel {
 		
 
 		add(myLeftButtons, BorderLayout.WEST);
-		myRightPanel.add(new StaffViewSelectedJobDates(mySystem, myUserType));
+		myRightPanel.add(new StaffViewSelectedJobDates(mySystem, myUserType), viewJobsString);
 		
 	}
 	

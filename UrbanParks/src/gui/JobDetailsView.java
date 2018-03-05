@@ -1,19 +1,17 @@
 package gui;
 
-import java.util.Set;
-
-import javax.swing.JScrollPane;
 
 import model.Job;
-import model.UrbanParksSystem;
 
-public class JobDetailsView extends JScrollPane {
+public class JobDetailsView {
 	
-	UrbanParksSystem mySystem;
-	Set<Job> myJobs;
+	Job myJob;
 	
-	public JobDetailsView(UrbanParksSystem theSystem, Set<Job> theJobs) {
-		mySystem = theSystem;
-		myJobs = theJobs;
+	public JobDetailsView(Job theJob) {
+		myJob = theJob;	
 	}
+	
+
+	
+	
 }
