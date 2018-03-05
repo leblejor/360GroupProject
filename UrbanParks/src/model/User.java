@@ -14,12 +14,18 @@ public abstract class User extends Observable implements java.io.Serializable {
 	private String myUsername;
 	private String myName;
 	private String myUserType;
-
+	
+	/**
+	 * Constructor for a User.
+	 * 
+	 * @param theUsername User's user name.
+	 * @param theName User's actual name.
+	 * @param theUserType String representation of the User's type.
+	 */
 	public User(final String theUsername, final String theName, final String theUserType) {
 		myUsername = theUsername;
 		myName = theName;
 		myUserType = theUserType;
-		
 	}
 	
 	/*********** Getters ***********/
@@ -34,6 +40,8 @@ public abstract class User extends Observable implements java.io.Serializable {
 	public String getName() {
 		return myName;
 	}
+	
+	/***** Override methods *****/
 	
 	@Override
 	public String toString() {

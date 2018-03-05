@@ -18,6 +18,12 @@ public class ParkManager extends User {
 	
 	private Set<Job> myJobs;
 	
+	/**
+	 * Constructor for ParkManager. 
+	 * 
+	 * @param theUsername User's user name.
+	 * @param theName User's actual name.
+	 */
 	public ParkManager(String theUsername, String theName) {
 		super(theUsername, theName, "Park Manager");
 		myJobs = new HashSet<Job>();
@@ -41,7 +47,6 @@ public class ParkManager extends User {
 	 * 4 if the job has a start or end date that is in the past
 	 */
 	public int createJob(UrbanParksSystem ups, Job theJob) {
-		
 		int successful = 0;
 		int maxJobsConflict = 1;
 		int jobTooLongConflict = 2;
@@ -97,7 +102,13 @@ public class ParkManager extends User {
 		}
 	}
 	
-	// TODO: Remove "local" methods only used for testing.
+	/*********** Getters ***********/
+	public Set<Job> getJobsList() {
+		return myJobs;
+	}
+	
+	/***** Testing Functions *****/
+	
 	/**
 	 * SHOULD ONLY BE USED FOR TESTING.
 	 * Adds theJob to this ParkManager's myJobs without any checks. 
@@ -131,9 +142,13 @@ public class ParkManager extends User {
 		}
 	}
 	
-	
-	/* Used for testing.
-	 * Same as above, but doesn't use the UrbanParkSystem. */
+	/**
+	 * SHOULD ONLY BE USED FOR TESTING.
+	 * Returns true if jobs in system is full, false otherwise.
+	 * Does not use UrbanParksSystem.
+	 * 
+	 * @return true if number of jobs in system is full, false otherwise.
+	 */
 	public boolean checkNumberOfJobsInSystemLocal() {
 		boolean conflict = false;
 		
@@ -145,10 +160,7 @@ public class ParkManager extends User {
 	}
 	
 
-	/*********** Getters ***********/
-	public Set<Job> getJobsList() {
-		return myJobs;
-	}
+	
 	
 	
 }
