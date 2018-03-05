@@ -1,12 +1,9 @@
 package model;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.io.FileInputStream;
@@ -14,13 +11,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Map;
 import java.util.Set;
 
 
 /**
- * Handles systematic functions that the UI needs 
- * such as signing in, loading and saving files
+ * Represents the Urban Parks System that the model will run on. 
+ * Handles systematic functions that the UI needs such as signing in, loading and saving files
  * for persistent storage.
  * 
  * @author Bryan Santos
@@ -29,11 +25,14 @@ import java.util.Set;
 public class UrbanParksSystem {
 	private static final String SERIALIZED_USERS_FILE = "./storage/serializedUser.ser";
 	private static final String SERIALIZED_JOBS_FILE = "./storage/serializedJobs.ser";
-
 	
 	private Map<String, User> myUsers;
 	private Map<String, Job> myPendingJobs; // TODO: Make this a HashSet.
 	
+	/** 
+	 * Constructor for UrbanParksSystem. 
+	 * Loads the set of Users and Jobs from previous save states. 
+	 */
 	public UrbanParksSystem() {		
 		loadUsers();
 		loadJobs();
@@ -77,17 +76,34 @@ public class UrbanParksSystem {
 	public boolean areJobsInSystemFull() {
 		return jobsInSystem() >= Staff.getMaxPendingJobs();
 	}
-	
 
+	/**
+	 * Returns the number of jobs in the system.
+	 * 
+	 * @return the number of jobs in the system.
+	 */
 	public int jobsInSystem() {
 		return myPendingJobs.size();			
 	}
 	
-	
+	/**
+	 * Returns a single Job found from a given Job's name.
+	 * 
+	 * @param string Name of Job to be found.
+	 * @return Job with the given name as it's title. 
+	 */
 	private Job getSinglePendingJob(String string) {	
 		return myPendingJobs.get(string);
 	}
 	
+	/**
+	 * Will return a set of jobs in the system within the given range. 
+	 * The lower bound is exclusive, the upper bound is inclusive.
+	 * 
+	 * @param from exclusive lower bound to range.
+	 * @param to inclusive upper bound to range.
+	 * @return Set of all jobs in system within a range (exclusive-inclusive).
+	 */
 	public Set<Job> jobsWithinRange(Calendar from, Calendar to) {
 		Set<Job> jobSet = new HashSet<Job>();
 		
@@ -97,25 +113,17 @@ public class UrbanParksSystem {
 		to.add(Calendar.DATE, 1);
 		
 		for (Job myJob : myPendingJobs.values()) {
-			
 			Calendar myJobStart = myJob.getStartDate();
 			Calendar myJobEnd = myJob.getEndDate();
-			
 			
 			if (myJobStart.after(from) && myJobStart.before(to) &&
 				myJobEnd.after(from) && myJobEnd.before(to)) {
 				jobSet.add(myJob);
-			
 			}
-			
-				
 		}
-		
-		
+
 		return jobSet;
 	}
-	
-	
 	
 	/**
 	 * Compares the jobs in the system and theVolunteer's jobs and returns a set 
@@ -133,7 +141,8 @@ public class UrbanParksSystem {
 			} 
 		}		
 		return validJobs;
-}
+	}
+	
 	/*********** Getters & Setters ***********/
 	
 	public Set<Job> getPendingJobs() {
@@ -141,8 +150,6 @@ public class UrbanParksSystem {
 		return jobSet;
 	}
 
-
-	
 	/*********** Load & Save ***********/
 	
 	@SuppressWarnings("unchecked")
@@ -227,10 +234,9 @@ public class UrbanParksSystem {
 	
 	
 	
-	/*
-	 * Initializing new Database from csv files
-	 */
-	/*
+	/*****Initializing new Database from csv files *****/
+	/* Should only be used once ever */
+	
 	public static void main(String[] args) {
 		UrbanParksSystem system = new UrbanParksSystem(true);
 		
@@ -238,7 +244,6 @@ public class UrbanParksSystem {
 		//System.out.println("jobs: " + system.myPendingJobs);
 	}
 	
-	*/
 	private Scanner inputFile;
 	
 	private static final String userListFile = "./storage/userList.csv";
@@ -246,7 +251,6 @@ public class UrbanParksSystem {
 	private static final String userJobsListFile = "./storage/userJobsList.csv";
 	
 	public UrbanParksSystem(boolean k) {
-		
 		myUsers = new HashMap<String, User>();
 		myPendingJobs = new HashMap<String, Job>();
 		//myCalendar = new Calendar();
@@ -262,10 +266,9 @@ public class UrbanParksSystem {
 		
 		saveJobs();
 		saveUsers();
-		}
+	}
 	
 	private void readUserList() {
-
 		try {
 			File userFile = new File(userListFile);
 			inputFile = new Scanner(userFile);
@@ -278,21 +281,14 @@ public class UrbanParksSystem {
 				String[] parsedLine = line.split(",");
 				User user = parseUserType(parsedLine[0], parsedLine[1], parsedLine[2]);
 				myUsers.put(parsedLine[0], user);
-				
 			}
-			
-			
 			inputFile.close();
-			
 		} catch (FileNotFoundException e) {
             e.printStackTrace();
 		}
-		
-		
 	}
 
 	private User parseUserType(String theUserName, String theUserType, String theName) {
-		
 		switch (theUserType.toLowerCase()) {
 			case "volunteer" : 
 				return new Volunteer(theUserName, theName);
@@ -306,11 +302,9 @@ public class UrbanParksSystem {
 	}
 	
 	private void readPendingJobsList() {
-		
 		try {
 			File pendingJobsFile = new File(pendingJobsListFile);
 			inputFile = new Scanner(pendingJobsFile);
-			
 
 			// read past column headers
 			inputFile.nextLine();
@@ -330,8 +324,6 @@ public class UrbanParksSystem {
 				int endDay = Integer.parseInt(parsedLine[6]);
 				int endYear = Integer.parseInt(parsedLine[7]);
 				
-				
-				
 				Job job = new Job(jobName, jobDescription, 
 						          startMonth, startDay, startYear,
 						          endMonth, endDay, endYear);
@@ -340,19 +332,11 @@ public class UrbanParksSystem {
 				Calendar myEndDate = job.getEndDate();
 
 				addJob(job);
-				
-				
 			}
-			
-			
-			
 			inputFile.close();
 		} catch (FileNotFoundException e) {
             e.printStackTrace();
 		}
-		
-		
-		
 	}
 	
 	private void readUserJobsList() {
@@ -363,32 +347,20 @@ public class UrbanParksSystem {
 			// read past column headers
 			inputFile.nextLine();
 			
-			
 			while (inputFile.hasNextLine()) {
 				String line = inputFile.nextLine();
 				String[] parsedLine = line.split(",");
 				User currentUser = myUsers.get(parsedLine[0]);
 				
 				for (int i = 1; i < parsedLine.length; i++) {
-					
-					
 					Job currentJob = getSinglePendingJob(parsedLine[i]);
-					
 					((Volunteer) currentUser).signup(currentJob);
-					
 				}
-				
 			}
-			
-			
 			inputFile.close();
-			
 		} catch (FileNotFoundException e) {
             e.printStackTrace();
 		}
-		
-		
 	}
-	
 }
 

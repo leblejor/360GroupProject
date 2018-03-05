@@ -4,7 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents a volunteer.
+ * Represents a volunteer. A Volunteer has it's list of jobs it has signed up for. 
+ * A Volunteer may add or remove from this list of jobs. 
  * 
  * @author Derick Salamanca
  * @author Jordan LeBle
@@ -16,6 +17,12 @@ public class Volunteer extends User {
 	
 	private Set<Job> myJobs;
 	
+	/**
+	 * Constructor for Volunteer. 
+	 * 
+	 * @param theUsername User's user name.
+	 * @param theName User's actual name.
+	 */
 	public Volunteer(String theUsername, String theName) {
 		super(theUsername, theName, "Volunteer");
 		myJobs = new HashSet<Job>();
@@ -37,9 +44,7 @@ public class Volunteer extends User {
 		
 		if (isConflict(theJob)) {
 			return sameDayConflict;
-		}
-		
-		if (theJob.isBeforeMinTimespan()) {
+		} else if (theJob.isBeforeMinTimespan()) {
 			return minDaysConflict;
 		}
 		
@@ -48,31 +53,6 @@ public class Volunteer extends User {
 		notifyObservers("Volunteer");
 		
 		return successful;		
-	}
-	
-	 	/**
-		 * Checks if theJob is already in the volunteers job list.
-		 * 
-		 * @param theJob the job to be checked.
-		 * @return true if the job is already in the job list, false otherwise.
-		 */
-		public boolean isConflict(Job theJob) {
-			for (Job j : myJobs) {
-				if (j.isOverlap(theJob)) {
-					return true;
-				}
-			} 
-			return false;
-	}
-		
-	/**
-	 * SHOULD ONLY BE USED FOR TESTING
-	 * Adds theJob to this Volunteer's myJobs without any checks. 
-	 * 
-	 * @param theJob Job this Volunteer will sign up for.
-	 */
-	public void signupLocal(Job theJob) {
-		myJobs.add(theJob);		
 	}
 	
 	/**
@@ -101,10 +81,36 @@ public class Volunteer extends User {
 		}
 	}
 	
+	/**
+	 * Checks if theJob is already in the volunteers job list.
+	 * 
+	 * @param theJob the job to be checked.
+	 * @return true if the job is already in the job list, false otherwise.
+	 */
+	public boolean isConflict(Job theJob) {
+		for (Job j : myJobs) {
+			if (j.isOverlap(theJob)) {
+				return true;
+			}
+		} 
+		return false;
+	}
 
 	/*********** Getters ***********/
 	
 	public Set<Job> getJobsList() {
 		return myJobs;
+	}
+	
+	/***** Test Functions *****/
+	
+	/**
+	 * SHOULD ONLY BE USED FOR TESTING
+	 * Adds theJob to this Volunteer's myJobs without any checks. 
+	 * 
+	 * @param theJob Job this Volunteer will sign up for.
+	 */
+	public void signupLocal(Job theJob) {
+		myJobs.add(theJob);		
 	}
 }
