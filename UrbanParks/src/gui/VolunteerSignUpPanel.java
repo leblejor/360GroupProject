@@ -59,16 +59,14 @@ public class VolunteerSignUpPanel extends JPanel {
 	
 	private model.Job selectedJob;
 	
-	private UrbanParksGUI myGUI;
 	private model.Volunteer myUser;
 	private model.UrbanParksSystem mySystem;
 	
-	public VolunteerSignUpPanel(UrbanParksGUI theGUI, JPanel theGUIMasterPanel, model.Volunteer theUser, model.UrbanParksSystem theSystem) {
+	public VolunteerSignUpPanel(model.UrbanParksSystem theSystem, model.User theUser) {
 		
 		/** Store all relevant arguments as fields. */
 		
-		myGUI = theGUI;
-		myUser = theUser;
+		myUser = (model.Volunteer) theUser;
 		mySystem = theSystem;
 
 		/** myMasterPanel will contain all the currently available jobs for the user in the form of buttons. */
@@ -79,7 +77,7 @@ public class VolunteerSignUpPanel extends JPanel {
 		/** myInformationPanel contains a field of text displaying information about a specific job selected by the user, 
 		 *  and will change depending on which job is currently selected (selectedJob). */
 		
-		myInformationPanel = new JPanel(new GridLayout(5,1));
+		myInformationPanel = new JPanel(new GridLayout(10,1));
 		
 		/** Fields that will be displayed in myInformationPanel. */
 		
@@ -200,10 +198,8 @@ public class VolunteerSignUpPanel extends JPanel {
 		myInformationPanel.setVisible(true);	
 		add(myInformationPanel, BorderLayout.SOUTH);
 		
-		// I HAVE NO IDEA HOW TO DEAL WITH RESIZING
-		
-		myGUI.setSize(getPreferredSize());
-    	myGUI.setSize(new Dimension(800,500));
+		revalidate();
+	    repaint();
 		
 	}
 	
@@ -232,8 +228,6 @@ public class VolunteerSignUpPanel extends JPanel {
 				    	
 				   	 	signUpConfirmation.setVisible(true);
 				   	 	myInformationPanel.add(signUpConfirmation);
-				    	myGUI.setSize(getPreferredSize());
-				    	myGUI.setSize(new Dimension(800,500));
 				    
 				    	selectedJob = null;
 				    	
@@ -265,6 +259,9 @@ public class VolunteerSignUpPanel extends JPanel {
 				
 				myButtonLayout.add(signUpJobButton);		
 				myMasterPanel.add(myButtonLayout);
+				
+				revalidate();
+			    repaint();
 		
 	}
 
@@ -305,6 +302,9 @@ public class VolunteerSignUpPanel extends JPanel {
 				myMasterPanel.add(myButtonLayout);
 				
 			}
+		
+		revalidate();
+	    repaint();
 		
 	}
 
