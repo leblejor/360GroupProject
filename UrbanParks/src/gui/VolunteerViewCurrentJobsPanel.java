@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton; 
@@ -13,9 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import model.Job;
-import model.UrbanParksSystem;
-import model.User;
-import model.Volunteer;
 
 public class VolunteerViewCurrentJobsPanel extends JPanel {
 	
@@ -44,6 +42,14 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 	
 	private JLabel jobDescriptionLabel;
 	
+	/** jobStartDateLabel contains the start date of the job. */
+	
+	private JLabel jobStartDateLabel;
+	
+	/** jobEndDateLabel contains the end date of the job. */
+	
+	private JLabel jobEndDateLabel;
+	
 	/** cancellationConfirmation contains a message that confirms the success status of a job cancellation. */
 	
 	private JLabel cancellationConfirmation;
@@ -52,15 +58,12 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 	
 	private model.Job selectedJob;
 	
-	private UrbanParksGUI myGUI;
-	private Volunteer myUser;
+	private model.Volunteer myUser;
 	
-	public VolunteerViewCurrentJobsPanel(UrbanParksSystem theSystem, User theUser) {
+	public VolunteerViewCurrentJobsPanel(model.UrbanParksSystem theSystem, model.User theUser) {
 		
 		/** Store all relevant arguments as fields. */
-		
-		//myGUI = theGUI;
-		myUser = (Volunteer) theUser;
+		myUser = (model.Volunteer) theUser;
 
 		/** myMasterPanel will contain all the currently available jobs of the user in the form of buttons. */
 		
@@ -70,12 +73,14 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 		/** myInformationPanel contains a field of text displaying information about a specific job of the user's, 
 		 *  and will change depending on which job is currently selected (selectedJob). */
 		
-		myInformationPanel = new JPanel(new GridLayout(4,1));
+		myInformationPanel = new JPanel(new GridLayout(10,1));
 		
 		/** Fields that will be displayed in myInformationPanel. */
 		
 		jobNameLabel = new JLabel();
 		jobDescriptionLabel = new JLabel();
+		jobStartDateLabel = new JLabel();
+		jobEndDateLabel = new JLabel();
 		cancellationConfirmation = new JLabel();
 		
 		/** Message at the top of the screen. */
@@ -146,36 +151,13 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 		
 		if (!myUser.getJobsList().isEmpty()) {
 
-		// Iterates through all jobs in the user's personal job list and adds a button for each one.
+			// Add buttons to myMaster Panel with refreshPanel() for every job that the user has.
+			
+			refreshPanel(true);
 		
-		for (model.Job availableJob : myUser.getJobsList()) {
-			
-			JButton jobButton = new JButton(availableJob.getJobName());
-			
-			// When button is clicked, selectedJob will point to the associated job object.
-			// setupJobInformationLabel will make it so that text describing the selected job is printed on the GUI.
-			
-			jobButton.addActionListener(new ActionListener(){  
-			    public void actionPerformed(ActionEvent e){  
-			              
-			    	selectedJob = availableJob;
-			    	setupJobInformationLabel(availableJob);
-			    	cancellationConfirmation.setVisible(false);
-			    	
-			    }  
-			});
-			
-			// Button is added to myMasterPanel, and FlowLayout is used here only for design aesthetics.
-			
-			JPanel myButtonLayout = new JPanel(new FlowLayout());
-			myButtonLayout.add(jobButton);		
-			myMasterPanel.add(myButtonLayout);
-		    
-		}
+			// After all other job buttons are added, "Cancel Selected Job" button is added last.
 		
-		// After all other job buttons are added, "Cancel Selected Job" button is added last.
-		
-		setupCancelJobButton();
+			setupCancelJobButton();
 		
 		}
 		
@@ -201,13 +183,19 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 		jobDescriptionLabel.setVisible(true);
 		myInformationPanel.add(jobDescriptionLabel);
 		
+		jobStartDateLabel.setText("Job Start Date: " + theJob.toString());
+		jobStartDateLabel.setVisible(true);
+		myInformationPanel.add(jobStartDateLabel);
+		
+		jobEndDateLabel.setText("Job End Date: " + theJob.getEndDate().MONTH + "/" + theJob.getEndDate().DAY_OF_MONTH + "/" + theJob.getEndDate().YEAR);
+		jobEndDateLabel.setVisible(true);
+		myInformationPanel.add(jobEndDateLabel);
+		
 		myInformationPanel.setVisible(true);	
 		add(myInformationPanel, BorderLayout.SOUTH);
 		
-		// I HAVE NO IDEA HOW TO DEAL WITH RESIZING
-		
-		//myGUI.setSize(getPreferredSize());
-    	//myGUI.setSize(new Dimension(800,500));
+		revalidate();
+	    repaint();
 		
 	}
 	
@@ -231,9 +219,9 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 				              
 				    if (selectedJob != null) {
 				    	
-				   	String selectedJobName = selectedJob.getJobName();
+				    	String selectedJobName = selectedJob.getJobName();
 				    		
-				    int removalStatus = myUser.removeJob(selectedJob);
+				    	int removalStatus = myUser.removeJob(selectedJob);
 				    	
 				    if (removalStatus == 0) { 
 				    	cancellationConfirmation.setText(selectedJobName + " was successfully cancelled!");
@@ -243,55 +231,84 @@ public class VolunteerViewCurrentJobsPanel extends JPanel {
 				   		cancellationConfirmation.setText(selectedJobName + " could not be cancelled as it's too close to the job date!");
 				    }
 				    	
-				    cancellationConfirmation.setVisible(true);
-					myInformationPanel.add(cancellationConfirmation);
-					//myGUI.setSize(getPreferredSize());
-				    //myGUI.setSize(new Dimension(800,500));
+				    	cancellationConfirmation.setVisible(true);
+				    	myInformationPanel.add(cancellationConfirmation);
 				    		
-				   	}
-				    	
-				    selectedJob = null;
+				    	selectedJob = null;
 				    	
 				    // All the buttons in myMasterPanel are removed and re-added in order to 'refresh' the screen without the removed job.
+				  
+				    if (removalStatus == 0) {
 				    	
-				    myMasterPanel.removeAll();
-				    	
-				    for (model.Job availableJob : myUser.getJobsList()) {
-				    		
-				    	JButton jobButton = new JButton(availableJob.getJobName());
-				    		
-				    	jobButton.addActionListener(new ActionListener(){  
-						    public void actionPerformed(ActionEvent e){  
-							              
-							    selectedJob = availableJob;
-							    setupJobInformationLabel(availableJob);
-							    cancellationConfirmation.setVisible(false);
-							    
-						    }  
-						});
-				    		
-				    		JPanel myButtonLayout = new JPanel(new FlowLayout());
-							myButtonLayout.add(jobButton);		
-							myMasterPanel.add(myButtonLayout); 
-				    		
-				    }
+				    	refreshPanel(true);
 				    
-				    myButtonLayout.add(cancelJobButton);		
-					myMasterPanel.add(myButtonLayout);
+				    	myButtonLayout.add(cancelJobButton);		
+						myMasterPanel.add(myButtonLayout);
 					
-					if (myUser.getJobsList().isEmpty()) {
+						if (myUser.getJobsList().isEmpty()) {
 						
-						myInformationPanel.removeAll();
-						setupVolunteerViewCurrentJobsWelcomeLabel(false);
-						myMasterPanel.removeAll();
+							myInformationPanel.removeAll();
+							setupVolunteerViewCurrentJobsWelcomeLabel(false);
+							myMasterPanel.removeAll();
 						
-					}
+						}
+					
+				    }
+					
+				}
 				    	
 			    }
 			});
 				
 				myButtonLayout.add(cancelJobButton);		
 				myMasterPanel.add(myButtonLayout);
+				
+				revalidate();
+			    repaint();
+		
+	}
+	
+	/** Removes and re-adds all the job buttons in myMasterPanel. Does not add back "Cancel Job" button.  */
+	
+	public void refreshPanel(boolean fromInsideCurrentClass) {
+
+		// Remove all buttons currently on myMasterPanel.
+		
+	    myMasterPanel.removeAll();
+	    
+	    // Iterates through all jobs in the user's personal job list and adds a button for each one.
+	    	
+	    for (model.Job availableJob : myUser.getJobsList()) {
+	    		
+	    	// When button is clicked, selectedJob will point to the associated job object.
+	    	// setupJobInformationLabel will make it so that text describing the selected job is printed on the GUI.
+	    	
+	    	JButton jobButton = new JButton(availableJob.getJobName());
+	    		
+	    	jobButton.addActionListener(new ActionListener(){ 
+	    		public void actionPerformed(ActionEvent e){
+				              
+	    			selectedJob = availableJob;
+	    			setupJobInformationLabel(availableJob);
+	    			cancellationConfirmation.setVisible(false);
+				    
+	    		}
+	    	});
+	    		
+	    		JPanel myButtonLayout = new JPanel(new FlowLayout());
+	    		myButtonLayout.add(jobButton);		
+	    		myMasterPanel.add(myButtonLayout); 
+	    		
+	    }
+	    
+	    if (!fromInsideCurrentClass) {
+	    	
+	    	setupCancelJobButton();
+	    	
+	    }
+	    
+	    revalidate();
+	    repaint();
 		
 	}
 
