@@ -1,11 +1,13 @@
 package model;
 
+import java.util.Observable;
+
 /**
  * Represents a User. User holds a username, name, and type of user.
  * 
  * @version 11 February 2018
  */
-public abstract class User implements java.io.Serializable {
+public abstract class User extends Observable implements java.io.Serializable {
 	/** SerialID for storage */
 	private static final long serialVersionUID = 1L;
 	

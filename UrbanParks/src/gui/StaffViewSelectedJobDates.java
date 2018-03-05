@@ -111,11 +111,10 @@ public class StaffViewSelectedJobDates extends JPanel {
 			
 			JButton button = new JButton("<html><b><font color=green>" + job.toString() + "</font></b></html>");
 			button.setBackground(Color.BLACK);
-			//button.setForeground(Color.WHITE);
+			
 			button.setVisible(true);
 			button.setOpaque(true);
-			//button.setContentAreaFilled(false);
-			//button.setBorderPainted(false);
+
 			myDisplayJobsBox.add(button);
 			myDisplayJobsBox.add(Box.createVerticalStrut(3));
 			button.addActionListener(new ActionListener() {

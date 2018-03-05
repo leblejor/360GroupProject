@@ -58,6 +58,8 @@ public class ParkManager extends User {
 		} else { //successful 
 			ups.addJob(theJob); //System job list
 			myJobs.add(theJob); //local job list
+			setChanged();
+			notifyObservers();
 			return successful;
 		}
 	}
@@ -82,6 +84,8 @@ public class ParkManager extends User {
 		} else {
 			ups.removeJob(theJob);
 			myJobs.remove(theJob);
+			setChanged();
+			notifyObservers();
 			return success;
 		}
 	}
