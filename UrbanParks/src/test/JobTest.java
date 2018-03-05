@@ -8,10 +8,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import model.Job;
+import model.Staff;
 import model.Volunteer;
 
 public class JobTest {
 
+	private final int MAX_JOB_LENGTH = 4;
+	private final int MAX_SCHEDULE_WINDOW = 60;
+	
 	private Volunteer myVolunteer;
 	private Job myFirstJob;
 	private Job mySecondJob;
@@ -82,9 +86,8 @@ public class JobTest {
 		assertTrue("My start day is during another job; should return true",
 				myFirstJob.isOverlap(mySecondJob));
 	}
-	
 	@Test
-	public void checkDaysUntilJob_MoreThanMinDays_False() {
+	public void isBeforeMinTimeSpan_MoreThanMinDays_False() {
 		Job jobMoreThanMinDays = new Job();
 		Calendar futureDate = jobMoreThanMinDays.getStartDate();	
 		futureDate.add(Calendar.DAY_OF_YEAR, model.Staff.getMinTimespan() + 1);
@@ -93,7 +96,7 @@ public class JobTest {
 	}
 
 	@Test
-	public void checkDaysUntilJob_JobExactlyMinDaysLater_False() {
+	public void isBeforeMinTimeSpan_JobExactlyMinDaysLater_False() {
 		Job jobMinDaysLater = new Job();
 		Calendar futureDate = jobMinDaysLater.getStartDate();
 		futureDate.add(Calendar.DATE, model.Staff.getMinTimespan());
@@ -102,12 +105,103 @@ public class JobTest {
 	}
 	
 	@Test
-	public void checkDaysUntilJob_JobLessThanMinDays_True() {
+	public void isBeforeMinTimeSpan_JobLessThanMinDays_True() {
 		Job jobLessThanMinDays = new Job();
 		Calendar futureDate = jobLessThanMinDays.getStartDate();
 		futureDate.add(Calendar.DATE, model.Staff.getMinTimespan() - 1);
 
 		assertTrue(jobLessThanMinDays.isBeforeMinTimespan());
 	}
+	@Test (expected = IllegalArgumentException.class)
+	public void checkJobDayLength_NegativeInteger_IllegalArgumentException() {
+		myFirstJob.checkJobDayLength(-1);
+	}
+	
+	@Test
+	public void checkJobDayLength_beforeMaxJobLength_False() {
+		Job beforeJob = new Job();
+		beforeJob.getStartDate().add(Calendar.DATE, MAX_JOB_LENGTH - 1);
+		beforeJob.getEndDate().add(Calendar.DATE, MAX_JOB_LENGTH - 1);
+		assertFalse(beforeJob.checkJobDayLength(MAX_JOB_LENGTH));
+	}
+	
+	@Test
+	public void checkJobDayLength_exactlyOnMaxJobLength_False() {
+		Job exactJob = new Job();
+		exactJob.getStartDate().add(Calendar.DATE, MAX_JOB_LENGTH);
+		exactJob.getEndDate().add(Calendar.DATE, MAX_JOB_LENGTH);
+		assertFalse(exactJob.checkJobDayLength(MAX_JOB_LENGTH));
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void checkJobEndDateMax_NegativeInteger_IllegalArgumentException() {
+		myFirstJob.checkJobDayLength(-1);
+	}
+	
+	@Test
+	public void checkJobEndDateMax_beforeMaxWindow_False() {
+		Job beforeJob = new Job();
+		beforeJob.getStartDate().add(Calendar.DATE, MAX_SCHEDULE_WINDOW - 1);
+		beforeJob.getEndDate().add(Calendar.DATE, MAX_SCHEDULE_WINDOW - 1);
+		assertFalse(beforeJob.checkJobDayLength(MAX_SCHEDULE_WINDOW));
+	}
+	
+	@Test
+	public void checkJobEndDateMax_exactlyOnMaxWindow_False() {
+		Job exactJob = new Job();
+		exactJob.getStartDate().add(Calendar.DATE, MAX_SCHEDULE_WINDOW);
+		exactJob.getEndDate().add(Calendar.DATE, MAX_SCHEDULE_WINDOW);
+		assertFalse(exactJob.checkJobEndDateMax(MAX_SCHEDULE_WINDOW));
+	}
+	
+	@Test
+	public void checkJobEndDateMax_afterMaxWindow_True() {
+		Job afterJob = new Job();
+		afterJob.getStartDate().add(Calendar.DATE, MAX_SCHEDULE_WINDOW + 1);
+		afterJob.getEndDate().add(Calendar.DATE, MAX_SCHEDULE_WINDOW + 1);
+		assertTrue(afterJob.checkJobEndDateMax(MAX_SCHEDULE_WINDOW));
+	}
+	
+	@Test
+	public void checkJobDatePast_pastStartDate_True() {
+		Job pastJobStart = new Job();
+		pastJobStart.getStartDate().add(Calendar.DATE, -1);
+		assertTrue(pastJobStart.checkJobDatePast());
+	}
+	
+	@Test
+	public void checkJobDatePast_pastEndDate_True() {
+		Job pastJobEnd = new Job();
+		pastJobEnd.getEndDate().add(Calendar.DATE, -1);
+		assertTrue(pastJobEnd.checkJobDatePast());
+	}
+	
+	@Test
+	public void checkJobDatePast_today_False() {
+		Job today = new Job();
+		
+		assertFalse(today.checkJobDatePast());
+	}
+	
+	@Test
+	public void isStartDateBeforeEndDate_JobStartAfterJobEnd_True() {
+		Job pastJobStart = new Job();
+		pastJobStart.getStartDate().add(Calendar.DATE, 1);
+		assertTrue(pastJobStart.isStartDateBeforeEndDate());
+	}
+	
+	@Test
+	public void isStartDateBeforeEndDate_sameDay_False() {
+		Job sameDayJob = new Job();
+		assertFalse(sameDayJob.isStartDateBeforeEndDate());
+	}
+	
+	@Test
+	public void isStartDateBeforeEndDate_jobEndAfterJobStart_False() {
+		Job pastEnd = new Job();
+		pastEnd.getEndDate().add(Calendar.DATE, +1);
+		assertFalse(pastEnd.isStartDateBeforeEndDate());
+	}
+
 
 }

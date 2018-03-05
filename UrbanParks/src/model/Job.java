@@ -185,6 +185,10 @@ public class Job implements java.io.Serializable {
 		return conflict;
 	}
 	
+	public boolean isStartDateBeforeEndDate() {
+		return myStartDate.compareTo(myEndDate) > 0;
+	}
+	
 	
 	//private methods for isOverlap()
 	private boolean isConflictingWithMyStartDate(Calendar theOther) {

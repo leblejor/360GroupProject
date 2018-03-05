@@ -104,7 +104,7 @@ public class ParkManagerTest {
 			myParkManager.createJobLocal(validJob);
 		}
 		
-		assertTrue(myParkManager.checkNumberOfJobsInSystemLocal());
+		assertFalse(myParkManager.checkNumberOfJobsInSystemLocal());
 	}
 	
 	@Test

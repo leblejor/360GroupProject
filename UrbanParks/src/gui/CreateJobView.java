@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 
 import model.Job;
 import model.ParkManager;
+import model.Staff;
 import model.UrbanParksSystem;
 import model.User;
 
@@ -96,6 +97,15 @@ public class CreateJobView extends JPanel {
 							"Error", JOptionPane.WARNING_MESSAGE);
 				} else if (errorCode == 4) {
 					JOptionPane.showMessageDialog(myMainPanel, "Error, job date is in the past", "Error", 
+							JOptionPane.WARNING_MESSAGE);
+				} else if (errorCode == 5) {
+					String message = "Error, at least one of the job dates is not within the allowable time span";
+					message += "Must be strictly more than: " + Staff.getMinTimespan() + " days";
+					JOptionPane.showMessageDialog(myMainPanel, message, "Error", 
+							JOptionPane.WARNING_MESSAGE);
+				} else if (errorCode == 6) {
+					String message = "Error, start date cannot occur after the end date";
+					JOptionPane.showMessageDialog(myMainPanel, message, "Error", 
 							JOptionPane.WARNING_MESSAGE);
 				}
 				

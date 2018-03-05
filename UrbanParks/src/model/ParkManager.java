@@ -41,13 +41,18 @@ public class ParkManager extends User {
 	 * 4 if the job has a start or end date that is in the past
 	 */
 	public int createJob(UrbanParksSystem ups, Job theJob) {
+		
 		int successful = 0;
 		int maxJobsConflict = 1;
 		int jobTooLongConflict = 2;
 		int jobTooFarConflict = 3;
 		int jobInThePastConflict = 4;
-
-		if (ups.areJobsInSystemFull()) { 
+		int jobWithinMinTimeSpan = 5;
+		int jobStartIsAfterJobEnd = 6;
+		
+		if (theJob.isStartDateBeforeEndDate()) {
+			return jobStartIsAfterJobEnd;
+		} else if (ups.areJobsInSystemFull()) { 
 			return maxJobsConflict;
 		} else if (theJob.checkJobDayLength(Staff.getMaxJobDuration())) {
 			return jobTooLongConflict;
@@ -55,6 +60,8 @@ public class ParkManager extends User {
 			return jobTooFarConflict;
 		} else if (theJob.checkJobDatePast()) { 
 			return jobInThePastConflict;
+		} else if (theJob.isBeforeMinTimespan()) {
+			return jobWithinMinTimeSpan;
 		} else { //successful 
 			ups.addJob(theJob); //System job list
 			myJobs.add(theJob); //local job list

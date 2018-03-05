@@ -9,6 +9,7 @@ import java.util.Set;
  * Represents a Staff member. 
  * 
  * @author Jordan LeBle
+ * @author Bryan Santos
  * @version 11 February 2018
  */
 public class Staff extends User {
